@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>관할기관 찾기</title>
+</head>
+
+<body>
+
+<h1>가까운 관할기관 찾기</h1>
+
+위도 <input id="lat"><br>
+경도 <input id="lng"><br><br>
+
+<button onclick="search()">검색</button>
+
+<div id="result"></div>
+
+<script>
+
+const offices=[
+{name:"기관A",lat:37.5665,lng:126.9780,phone:"02-1111",address:"서울"},
+{name:"기관B",lat:37.50,lng:126.90,phone:"02-2222",address:"서울"}
+]
+
+function distance(lat1, lon1, lat2, lon2) {
+
+const R = 6371
+
+const dLat = (lat2-lat1) * Math.PI/180
+const dLon = (lon2-lon1) * Math.PI/180
+
+const a =
+Math.sin(dLat/2)*Math.sin(dLat/2)+
+Math.cos(lat1*Math.PI/180)*
+Math.cos(lat2*Math.PI/180)*
+Math.sin(dLon/2)*Math.sin(dLon/2)
+
+const c = 2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a))
+
+return R*c
+}
+
+function search(){
+
+let lat=parseFloat(document.getElementById("lat").value)
+let lng=parseFloat(document.getElementById("lng").value)
+
+let result=offices.map(o=>{
+let dist=distance(lat,lng,o.lat,o.lng)
+return {...o,dist}
+})
+
+result.sort((a,b)=>a.dist-b.dist)
+
+let top2=result.slice(0,2)
+
+let html=""
+
+top2.forEach(o=>{
+html+=`
+<h3>${o.name}</h3>
+주소:${o.address}<br>
+전화:${o.phone}<br>
+거리:${o.dist.toFixed(1)} km<br><br>
+`
+})
+
+document.getElementById("result").innerHTML=html
+
+}
+
+</script>
+
+</body>
+</html>

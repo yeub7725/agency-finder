@@ -1,28 +1,66 @@
 <!DOCTYPE html>
 <html>
 <head>
-<script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=여기에API키&libraries=services"></script>  
 <meta charset="utf-8">
 <title>관할기관 찾기</title>
+
+<script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=여기에API키&libraries=services"></script>
+
 </head>
 
 <body>
 
-<h1>가까운 관할기관 찾기</h1>
+<h1>관할기관 찾기</h1>
 
-<input id="keyword" placeholder="동네 또는 지역 입력">
+<input id="keyword" placeholder="지역 또는 동네 입력">
 <button onclick="searchAddress()">검색</button>
 
 <div id="result"></div>
 
 <script>
 
-const offices=[
-{name:"기관A",lat:37.5665,lng:126.9780,phone:"02-1111",address:"서울"},
-{name:"기관B",lat:37.50,lng:126.90,phone:"02-2222",address:"서울"}
+const offices = [
+
+{
+name:"기관A",
+lat:37.5665,
+lng:126.9780,
+phone:"02-1111",
+address:"서울"
+},
+
+{
+name:"기관B",
+lat:37.50,
+lng:126.90,
+phone:"02-2222",
+address:"서울"
+}
+
 ]
 
-function distance(lat1, lon1, lat2, lon2) {
+function searchAddress(){
+
+const keyword = document.getElementById("keyword").value
+
+const geocoder = new kakao.maps.services.Geocoder()
+
+geocoder.addressSearch(keyword,function(result,status){
+
+if(status === kakao.maps.services.Status.OK){
+
+let lat = result[0].y
+let lng = result[0].x
+
+findNearest(lat,lng)
+
+}
+
+})
+
+}
+
+function distance(lat1, lon1, lat2, lon2){
 
 const R = 6371
 
@@ -40,32 +78,34 @@ const c = 2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a))
 return R*c
 }
 
-function search(){
+function findNearest(lat,lng){
 
-let lat=parseFloat(document.getElementById("lat").value)
-let lng=parseFloat(document.getElementById("lng").value)
+let result = offices.map(o=>{
 
-let result=offices.map(o=>{
-let dist=distance(lat,lng,o.lat,o.lng)
+let dist = distance(lat,lng,o.lat,o.lng)
+
 return {...o,dist}
+
 })
 
 result.sort((a,b)=>a.dist-b.dist)
 
-let top2=result.slice(0,2)
+let top2 = result.slice(0,2)
 
 let html=""
 
 top2.forEach(o=>{
-html+=`
+
+html += `
 <h3>${o.name}</h3>
-주소:${o.address}<br>
-전화:${o.phone}<br>
-거리:${o.dist.toFixed(1)} km<br><br>
+주소: ${o.address}<br>
+전화: ${o.phone}<br>
+거리: ${o.dist.toFixed(1)} km<br><br>
 `
+
 })
 
-document.getElementById("result").innerHTML=html
+document.getElementById("result").innerHTML = html
 
 }
 
@@ -73,4 +113,3 @@ document.getElementById("result").innerHTML=html
 
 </body>
 </html>
-

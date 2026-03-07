@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+<script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=여기에API키&libraries=services"></script>  
 <meta charset="utf-8">
 <title>관할기관 찾기</title>
 </head>
@@ -9,10 +10,8 @@
 
 <h1>가까운 관할기관 찾기</h1>
 
-위도 <input id="lat"><br>
-경도 <input id="lng"><br><br>
-
-<button onclick="search()">검색</button>
+<input id="keyword" placeholder="동네 또는 지역 입력">
+<button onclick="searchAddress()">검색</button>
 
 <div id="result"></div>
 
@@ -74,3 +73,4 @@ document.getElementById("result").innerHTML=html
 
 </body>
 </html>
+

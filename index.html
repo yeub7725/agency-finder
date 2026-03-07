@@ -15,15 +15,15 @@
 <div id="result"></div>
 
 <script>
-// 모든 코드 window.onload 안에 넣어 SDK 로딩 후 실행 보장
+
 window.onload = function() {
   const offices = [
-    {name:"기관A", lat:37.5665, lng:126.9780, phone:"02-1111", address:"서울"},
-    {name:"기관B", lat:37.50, lng:126.90, phone:"02-2222", address:"서울"}
+    {name:"알이비파트너스", lat:37.5665, lng:126.9780, phone:"053-760-7606", address:"대구시 동구 이노밸리로 309, 3층"},
+    {name:"서원킹스밀", lat:37.50, lng:126.90, phone:"053", address:"대구시 동구 이노밸리로 305"}
     // 필요하면 기관 추가 가능
   ];
 
-  // onclick 버튼에서 호출 가능하도록 window에 등록
+ 
   window.searchAddress = function() {
     const keyword = document.getElementById("keyword").value.trim();
     if(!keyword) return alert("검색어를 입력하세요.");
@@ -76,3 +76,4 @@ window.onload = function() {
 
 </body>
 </html>
+

@@ -3,7 +3,14 @@
 <head>
 <meta charset="utf-8">
 <title>관할기관 찾기</title>
-<script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=d791798c38589fc7cdc6bce91d9369be&libraries=services"></script>
+<!-- 카카오 JavaScript 키 적용 -->
+<script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=d791798c38589fc7cdc6bce91d9369be&libraries=services"></script>
+<style>
+  body { font-family: Arial, sans-serif; margin: 20px; }
+  input { padding: 5px; width: 300px; }
+  button { padding: 5px 10px; }
+  #result { margin-top: 20px; }
+</style>
 </head>
 <body>
 
@@ -48,7 +55,7 @@ function distance(lat1, lon1, lat2, lon2) {
   return R*c;
 }
 
-// --- 가장 가까운 기관 2개 찾기 ---
+// --- 가까운 기관 2개 찾기 ---
 function findNearest(lat, lng) {
   const result = offices.map(o => ({
     name: o.name,
@@ -61,16 +68,19 @@ function findNearest(lat, lng) {
 
   let html = "";
   top2.forEach(o => {
-    html += `<h3>${o.name}</h3>주소: ${o.address}<br>전화: ${o.phone}<br>거리: ${o.dist.toFixed(1)} km<br><br>`;
+    html += `<h3>${o.name}</h3>
+             주소: ${o.address}<br>
+             전화: ${o.phone}<br>
+             거리: ${o.dist.toFixed(1)} km<br><br>`;
   });
 
   document.getElementById("result").innerHTML = html;
 }
 
-// --- 주소 검색 함수 ---
+// --- 주소 검색 ---
 function searchAddress() {
   const keyword = document.getElementById("keyword").value.trim();
-  if(!keyword){ alert("검색어를 입력하세요"); return; }
+  if(!keyword) { alert("검색어를 입력하세요"); return; }
 
   const geocoder = new kakao.maps.services.Geocoder();
   geocoder.addressSearch(keyword, function(result, status){
@@ -79,12 +89,12 @@ function searchAddress() {
       const lng = parseFloat(result[0].x);
       findNearest(lat,lng);
     } else {
-      document.getElementById("result").innerHTML = "검색 결과가 없습니다";
+      document.getElementById("result").innerHTML = "검색 결과가 없습니다.";
     }
   });
 }
 
-// --- 이벤트 연결 (버튼 클릭 + 엔터키) ---
+// --- 버튼 클릭 + 엔터키 이벤트 연결 ---
 document.getElementById("searchBtn").addEventListener("click", searchAddress);
 document.getElementById("keyword").addEventListener("keypress", function(e){
   if(e.key === 'Enter') searchAddress();

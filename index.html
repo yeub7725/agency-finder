@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
 <meta charset="utf-8">
-<title>관할기관 찾기 (초고속 모드)</title>
+<title>관할기관 찾기 (안정화 버전)</title>
 <script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=d791798c38589fc7cdc6bce91d9369be&libraries=services"></script>
 <style>
     body, html { margin: 0; padding: 0; height: 100%; font-family: 'Malgun Gothic', sans-serif; overflow: hidden; }
@@ -16,19 +16,33 @@
 
     h1 { font-size: 1.8rem; margin-bottom: 20px; color: #222; }
     .search-container { position: relative; width: 100%; }
+    
     input#keyword { 
         padding: 14px; width: 100%; font-size: 16px; 
-        border: 2px solid #007bff; border-radius: 8px; box-sizing: border-box; outline: none;
+        border: 2px solid #ccc; border-radius: 8px; box-sizing: border-box; outline: none;
+        transition: border-color 0.2s;
     }
+    input#keyword:focus { border-color: #007bff; }
 
+    /* 후보군 리스트 디자인 강화 */
     #addressList { 
         position: absolute; top: 100%; left: 0; width: 100%;
-        border: 1px solid #ccc; background: white; z-index: 100;
-        display: none; border-radius: 8px; box-shadow: 0 8px 16px rgba(0,0,0,0.15);
-        margin-top: 5px;
+        border: 1px solid #bbb; background: white; z-index: 100;
+        display: none; border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        margin-top: 5px; overflow: hidden;
     }
-    .search-item { padding: 12px 15px; border-bottom: 1px solid #eee; cursor: pointer; font-size: 14px; transition: 0.2s; }
-    .search-item:hover, .search-item.active { background-color: #e7f3ff; color: #007bff; }
+    .search-item { 
+        padding: 15px; border-bottom: 1px solid #eee; cursor: pointer; 
+        font-size: 15px; color: #444; transition: all 0.1s; 
+    }
+    /* 선택 시 시각적 효과 강화 */
+    .search-item.active { 
+        background-color: #eef6ff !important; 
+        color: #007bff !important; 
+        font-weight: bold;
+        border-left: 5px solid #007bff;
+        box-shadow: inset 0 0 10px rgba(0,123,255,0.1);
+    }
 
     #result { margin-top: 35px; }
     .jurisdiction-info { font-weight: bold; color: #e63946; margin-bottom: 15px; display: block; font-size: 1.1rem; }
@@ -58,7 +72,7 @@
 </div>
 
 <script>
-// --- 기관 데이터 (생략 없이 유지) ---
+// 기관 데이터
 const offices = [
     {name:"한국부동산원 서울동부지사", region:"서울", lat:37.5576984952347, lng:127.079226104632, phone:"02-3394-9870~3", address:"서울시 광진구 천호대로 549, 지타워 10층"},
     {name:"한국부동산원 고양지사", region:"경기", lat:37.6526192547913, lng:126.776883538123, phone:"031-902-3573~5", address:"경기도 고양시 일산동구 중앙로 1187, 흥국생명빌딩 8층"},
@@ -83,7 +97,8 @@ const offices = [
 ];
 
 let focusedIndex = -1;
-let lastRequestTime = 0; // 최신 요청 판별용
+let debounceTimer;
+let currentAddressData = [];
 
 function getDistance(lat1, lon1, lat2, lon2){
     const R = 6371;
@@ -93,26 +108,24 @@ function getDistance(lat1, lon1, lat2, lon2){
     return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
 }
 
-// 실시간 주소 검색
-function fastSearch(isEnter = false) {
+function searchAddress(isFinal = false) {
     const keyword = document.getElementById("keyword").value.trim();
     const listEl = document.getElementById("addressList");
-    const currentTime = Date.now();
-    lastRequestTime = currentTime;
 
     if(keyword.length < 2) { listEl.style.display = "none"; return; }
 
     const geocoder = new kakao.maps.services.Geocoder();
     geocoder.addressSearch(keyword, function(result, status){
-        // 최신 요청 결과가 아니면 무시 (이전 검색어로 돌아가는 현상 방지)
-        if(currentTime !== lastRequestTime) return;
-
         if(status === kakao.maps.services.Status.OK){
-            // 엔터를 눌렀거나 결과가 정확히 1개이면 즉시 결과 도출
-            if(isEnter || result.length === 1) {
+            currentAddressData = result;
+
+            // 결과가 딱 1개면 리스트 안 보여줌 (엔터 치면 바로 처리되도록 함)
+            if(result.length === 1) {
                 listEl.style.display = "none";
-                selectItem(result[0]);
-            } else {
+                if(isFinal) selectItem(result[0]);
+            } 
+            // 결과가 여러 개일 때만 리스트 표시
+            else {
                 listEl.innerHTML = "";
                 listEl.style.display = "block";
                 result.forEach((item, index) => {
@@ -122,6 +135,7 @@ function fastSearch(isEnter = false) {
                     div.onclick = () => selectItem(item);
                     listEl.appendChild(div);
                 });
+                focusedIndex = -1; 
             }
         } else {
             listEl.style.display = "none";
@@ -131,7 +145,7 @@ function fastSearch(isEnter = false) {
 
 function selectItem(item) {
     document.getElementById("addressList").style.display = "none";
-    document.getElementById("keyword").value = item.address_name;
+    // 사용자가 입력한 텍스트는 그대로 두고, 내부 로직만 좌표를 가져가도록 함 (이전 검색어 돌아가는 문제 방지)
     findNearest(parseFloat(item.y), parseFloat(item.x), item.address_name);
 }
 
@@ -145,7 +159,7 @@ function findNearest(lat, lng, fullAddress){
         dist: getDistance(lat, lng, o.lat, o.lng)
     })).sort((a,b) => a.dist - b.dist);
 
-    let html = `<span class="jurisdiction-info">관할지역: ${regionKeyword}</span>`;
+    let html = `<span class="jurisdiction-info">관할구역: ${regionKeyword}</span>`;
     sortedResult.slice(0, 2).forEach(o => {
         html += `
             <div class="office-card">
@@ -162,23 +176,33 @@ document.addEventListener("DOMContentLoaded", function(){
     const input = document.getElementById("keyword");
     const listEl = document.getElementById("addressList");
 
-    // 글자 입력 즉시 실행 (대기 시간 대폭 단축)
-    input.addEventListener("input", () => fastSearch(false));
+    input.addEventListener("input", () => {
+        clearTimeout(debounceTimer);
+        // 0.2초 멈추면 검색 실행 (타이핑 방해 방지)
+        debounceTimer = setTimeout(() => searchAddress(false), 200);
+    });
 
     input.addEventListener("keydown", function(e){
         const items = listEl.getElementsByClassName("search-item");
+        
         if (e.key === "Enter") {
             e.preventDefault();
+            // 1. 리스트에서 방향키로 선택 중일 때
             if (focusedIndex > -1 && items.length > 0) {
                 items[focusedIndex].click();
-            } else {
-                fastSearch(true); // 엔터 즉시 실행
+            } 
+            // 2. 그냥 엔터 쳤을 때 (결과가 1개인 경우 처리 포함)
+            else {
+                searchAddress(true);
             }
-        } else if (listEl.style.display === "block") {
+        } 
+        else if (listEl.style.display === "block") {
             if (e.key === "ArrowDown") {
+                e.preventDefault();
                 focusedIndex = (focusedIndex + 1) % items.length;
                 updateFocus(items);
             } else if (e.key === "ArrowUp") {
+                e.preventDefault();
                 focusedIndex = (focusedIndex - 1 + items.length) % items.length;
                 updateFocus(items);
             }
@@ -193,6 +217,7 @@ document.addEventListener("DOMContentLoaded", function(){
         }
     }
 
+    // 창 외부 클릭 시 리스트 닫기
     document.addEventListener("click", e => {
         if(e.target.id !== 'keyword') listEl.style.display = "none";
     });

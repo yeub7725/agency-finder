@@ -8,17 +8,18 @@
     body, html { margin: 0; padding: 0; height: 100%; font-family: 'Malgun Gothic', sans-serif; overflow: hidden; }
     .main-wrapper { display: flex; height: 100vh; }
 
-    /* 사이드바 영역 */
+    /* 사이드바 (기능 영역) - 33.3% 유지 */
     #sidebar-search {
         width: 33.3%; min-width: 360px; border-right: 1px solid #ddd;
-        padding: 30px 20px; box-sizing: border-box; display: flex; flex-direction: column; background-color: #f9f9f9;
+        padding: 30px 15px; box-sizing: border-box; 
+        display: flex; flex-direction: column; background-color: #f9f9f9;
     }
-    
-    /* 검색 결과 및 안내문구 스크롤 영역 */
-    .scroll-content { flex: 1; overflow-y: auto; margin-top: 20px; padding-right: 5px; }
 
-    #content-area { width: 66.7%; background-color: #fff; position: relative; }
-    #map { width: 100%; height: 100%; }
+    /* 우측 여백 영역 - 나중에 다른 것 넣으실 공간 */
+    #content-area { flex: 1; background-color: #fff; }
+
+    /* 스크롤 영역 */
+    .scroll-content { flex: 1; overflow-y: auto; margin-top: 20px; padding-right: 10px; }
 
     h1 { font-size: 1.8rem; margin-bottom: 20px; color: #222; }
     .search-container { position: relative; width: 100%; }
@@ -38,9 +39,9 @@
     .search-item { padding: 15px; border-bottom: 1px solid #eee; cursor: pointer; font-size: 15px; color: #444; }
     .search-item.active { background-color: #eef6ff; color: #007bff; font-weight: bold; border-left: 5px solid #007bff; }
 
-    /* 결과 카드 디자인 */
+    /* 결과 카드 (폰트 크기 복구) */
     .jurisdiction-info { font-weight: bold; color: #e63946; margin-bottom: 15px; display: block; font-size: 1.1rem; }
-    .office-card { border: 1px solid #e1e1e1; padding: 18px; margin-bottom: 12px; border-radius: 10px; background-color: #fff; cursor: pointer; }
+    .office-card { border: 1px solid #e1e1e1; padding: 18px; margin-bottom: 12px; border-radius: 10px; background-color: #fff; }
     .office-card h3 { margin: 0 0 10px 0; font-size: 18px; color: #333; }
     .addr-text { font-size: 15px; color: #666; margin: 6px 0; line-height: 1.4; }
     .phone-text { font-size: 20px; font-weight: bold; color: #0056b3; margin: 8px 0; display: block; }
@@ -86,12 +87,12 @@
             </div>
         </div>
     </div>
-    <div id="content-area">
-        <div id="map"></div>
-    </div>
+    
+    <div id="content-area"></div>
 </div>
 
 <script>
+// 관할기관 데이터
 const offices = [
     {name:"한국부동산원 서울동부지사", region:"서울", lat:37.5576984952347, lng:127.079226104632, phone:"02-3394-9870~3", address:"서울시 광진구 천호대로 549, 지타워 10층"},
     {name:"한국부동산원 고양지사", region:"경기", lat:37.6526192547913, lng:126.776883538123, phone:"031-902-3573~5", address:"경기도 고양시 일산동구 중앙로 1187, 흥국생명빌딩 8층"},
@@ -115,13 +116,7 @@ const offices = [
     {name:"경기도 지자체", region:"경기", lat:37.2746661643172, lng:127.009619860326, phone:"031-8008-2868", address:"경기도 수원시 팔달구 효원로 1"}
 ];
 
-let map, marker, focusedIndex = -1, debounceTimer;
-
-function initMap() {
-    const container = document.getElementById('map');
-    const options = { center: new kakao.maps.LatLng(37.5668, 126.9786), level: 8 };
-    map = new kakao.maps.Map(container, options);
-}
+let focusedIndex = -1, debounceTimer;
 
 function getDistance(lat1, lon1, lat2, lon2){
     const R = 6371;
@@ -177,10 +172,6 @@ function findNearest(lat, lng, fullAddress){
     })).sort((a,b) => a.dist - b.dist);
 
     displayResults(sortedResult.slice(0, 2), regionKeyword, district);
-    
-    if(sortedResult.length > 0) {
-        moveMap(sortedResult[0].lat, sortedResult[0].lng, sortedResult[0].name);
-    }
 }
 
 function displayResults(data, region, district) {
@@ -188,7 +179,7 @@ function displayResults(data, region, district) {
     
     data.forEach(o => {
         html += `
-            <div class="office-card" onclick="moveMap(${o.lat}, ${o.lng}, '${o.name}')">
+            <div class="office-card">
                 <h3>${o.name}</h3>
                 <p class="addr-text">${o.address}</p>
                 <span class="phone-text">${o.phone}</span>
@@ -201,8 +192,8 @@ function displayResults(data, region, district) {
             <div class="recommend-section">
                 <span class="recommend-title">💡 해당 지역 추가 안내</span>
                 <div class="recommend-card">
-                    <span>${district}청 토지정보과 (부동산관리)</span>
-                    <small>분쟁 외 토지이용, 공시지가 관련 문의</small>
+                    <span>${district}청 토지정보과</span>
+                    <small>부동산 관리 및 공시지가 관련 문의</small>
                 </div>
                 <div class="recommend-card">
                     <span>${district} 관할 세무서</span>
@@ -213,16 +204,7 @@ function displayResults(data, region, district) {
     document.getElementById("result").innerHTML = html;
 }
 
-function moveMap(lat, lng, title) {
-    const moveLatLon = new kakao.maps.LatLng(lat, lng);
-    map.setCenter(moveLatLon);
-    map.setLevel(4);
-    if(marker) marker.setMap(null);
-    marker = new kakao.maps.Marker({ position: moveLatLon, map: map });
-}
-
 document.addEventListener("DOMContentLoaded", function(){
-    initMap();
     const input = document.getElementById("keyword");
     input.addEventListener("input", () => {
         focusedIndex = -1;

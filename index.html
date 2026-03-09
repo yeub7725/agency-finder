@@ -8,13 +8,13 @@
 <body>
 
 <h1>주소지 입력</h1>
-<input id="keyword" placeholder="지역 또는 주소 입력" onkeypress="if(event.key==='Enter'){ searchAddress(); }">
-<button onclick="searchAddress()">검색</button>
+<input id="keyword" placeholder="지역 또는 주소 입력">
+<button id="searchBtn">검색</button>
 
 <div id="result"></div>
 
 <script>
-// 기관 리스트 (마지막 항목 뒤 쉼표 제거!)
+// 기관 리스트 (마지막 항목 뒤 쉼표 제거)
 const offices = [
   {name:"한국부동산원 서울동부지사", lat:37.5576984952347, lng:127.079226104632, phone:"02-3394-9870~3", address:"서울시 광진구 천호대로 549, 지타워 10층"},
   {name:"한국부동산원 고양지사", lat:37.6526192547913, lng:126.776883538123, phone:"031-902-3573~5", address:"경기도 고양시 일산동구 중앙로 1187, 흥국생명빌딩 8층"},
@@ -38,48 +38,60 @@ const offices = [
   {name:"경기도 지자체", lat:37.2746661643172, lng:127.009619860326, phone:"031-8008-2868", address:"경기도 수원시 팔달구 효원로 1"}
 ];
 
-// 주소 검색 함수
-function searchAddress(){
+// 주소 검색 함수 (전역)
+function searchAddress() {
   const keyword = document.getElementById("keyword").value.trim();
   if(!keyword){ alert("검색어를 입력하세요"); return; }
 
   const geocoder = new kakao.maps.services.Geocoder();
-  geocoder.addressSearch(keyword, function(result,status){
+  geocoder.addressSearch(keyword, function(result, status){
     if(status === kakao.maps.services.Status.OK){
       const lat = parseFloat(result[0].y);
       const lng = parseFloat(result[0].x);
       findNearest(lat,lng);
-    }else{
-      document.getElementById("result").innerHTML="검색 결과가 없습니다";
+    } else {
+      document.getElementById("result").innerHTML = "검색 결과가 없습니다";
     }
   });
 }
 
-// 거리 계산 함수
-function distance(lat1, lon1, lat2, lon2){
+// 거리 계산
+function distance(lat1, lon1, lat2, lon2) {
   const R = 6371;
   const dLat = (lat2-lat1)*Math.PI/180;
   const dLon = (lon2-lon1)*Math.PI/180;
-  const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180) * Math.sin(dLon/2)**2;
-  const c = 2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
+  const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180) * Math.cos(lat2*Math.PI/180) * Math.sin(dLon/2)**2;
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
   return R*c;
 }
 
-// 가장 가까운 기관 찾기
-function findNearest(lat,lng){
-  const result = offices.map(o=>{
-    return {name:o.name,address:o.address,phone:o.phone,dist:distance(lat,lng,o.lat,o.lng)};
-  });
-  result.sort((a,b)=>a.dist-b.dist);
+// 가장 가까운 기관 2개 찾기
+function findNearest(lat, lng) {
+  const result = offices.map(o => ({
+    name: o.name,
+    address: o.address,
+    phone: o.phone,
+    dist: distance(lat, lng, o.lat, o.lng)
+  }));
+
+  result.sort((a,b) => a.dist - b.dist);
   const top2 = result.slice(0,2);
 
-  let html="";
-  top2.forEach(o=>{
+  let html = "";
+  top2.forEach(o => {
     html += `<h3>${o.name}</h3>주소: ${o.address}<br>전화: ${o.phone}<br>거리: ${o.dist.toFixed(1)} km<br><br>`;
   });
 
   document.getElementById("result").innerHTML = html;
 }
+
+// 버튼 이벤트 연결
+document.getElementById("searchBtn").addEventListener("click", searchAddress);
+
+// 엔터키 검색
+document.getElementById("keyword").addEventListener("keypress", function(e){
+  if(e.key === 'Enter') searchAddress();
+});
 </script>
 
 </body>

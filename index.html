@@ -2,126 +2,140 @@
 <html lang="ko">
 <head>
 <meta charset="utf-8">
-<title>관할기관 찾기</title>
+<title>관할기관 찾기 (사이드바형)</title>
 <script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=d791798c38589fc7cdc6bce91d9369be&libraries=services"></script>
 <style>
-    body { 
-        font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif; 
-        line-height: 1.6; 
-        max-width: 850px; 
-        margin: 60px auto; 
-        padding: 0 20px;
-        font-size: 18px; 
+    /* 기본 레이아웃 설정 */
+    body, html {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif;
+    }
+
+    /* 전체 화면을 분할하는 컨테이너 */
+    .main-wrapper {
+        display: flex;
+        height: 100vh;
+    }
+
+    /* 왼쪽 1/3 관할지역 검색 영역 */
+    #sidebar-search {
+        width: 33%; /* 전체의 약 1/3 */
+        min-width: 350px;
+        border-right: 1px solid #ddd;
+        padding: 40px 20px;
+        box-sizing: border-box;
+        overflow-y: auto; /* 결과가 길어지면 내부 스크롤 */
+        background-color: #f8f9fa;
+    }
+
+    /* 오른쪽 2/3 다른 기능 영역 (비워둠) */
+    #content-area {
+        width: 67%;
+        background-color: #ffffff;
+        padding: 40px;
+        box-sizing: border-box;
+    }
+
+    /* 텍스트 및 제목 스타일 (왼쪽 정렬) */
+    h1 { 
+        font-size: 2rem; 
+        margin-bottom: 30px; 
+        font-weight: bold;
         color: #333;
     }
 
-    h1 { 
-        font-size: 2.8rem; 
-        text-align: center; 
-        margin-bottom: 40px; 
-        font-weight: bold;
-    }
-
     .search-container {
-        text-align: center;
-        margin-bottom: 30px;
         position: relative;
+        width: 100%;
     }
 
     input#keyword { 
-        padding: 15px; 
-        width: 65%; 
-        font-size: 18px; 
+        padding: 12px; 
+        width: 100%; 
+        font-size: 16px; 
         border: 2px solid #ddd;
-        border-radius: 8px;
+        border-radius: 6px;
         outline: none;
+        box-sizing: border-box;
     }
 
-    button#searchBtn { 
-        padding: 15px 30px; 
-        font-size: 18px; 
-        cursor: pointer; 
-        background-color: #007bff;
-        color: white;
-        border: none;
-        border-radius: 8px;
-        margin-left: 10px;
-        font-weight: bold;
-    }
-
-    /* 주소 후보 목록 스타일 */
     #addressList { 
         position: absolute;
-        left: 50%;
-        transform: translateX(-57%); 
-        width: 65%;
+        top: 100%;
+        left: 0;
+        width: 100%;
         border: 1px solid #ccc; 
         margin-top: 5px; 
-        max-height: 250px; 
+        max-height: 200px; 
         overflow-y: auto; 
         display: none; 
         background: white;
         z-index: 100;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        border-radius: 8px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        border-radius: 6px;
     }
 
     .search-item { 
-        padding: 15px; 
+        padding: 12px; 
         border-bottom: 1px solid #eee; 
         cursor: pointer; 
-        text-align: left; 
-        font-size: 17px;
+        font-size: 15px;
     }
+    .search-item.active { background-color: #f0f7ff; color: #007bff; font-weight: bold; }
 
-    /* 방향키로 선택 시 강조 효과 */
-    .search-item.active {
-        background-color: #f0f7ff;
-        color: #007bff;
-        font-weight: bold;
-    }
-
-    #result { margin-top: 50px; }
+    /* 결과 내역 스타일 */
+    #result { margin-top: 40px; }
     
     .jurisdiction-info { 
-        font-size: 1.2rem;
+        font-size: 1.1rem;
         font-weight: bold; 
         color: #e63946; 
-        margin-bottom: 20px; 
-        padding-bottom: 10px;
-        border-bottom: 2px solid #eee;
+        margin-bottom: 15px; 
         display: block; 
     }
 
     .office-card { 
         border: 1px solid #e1e1e1; 
-        padding: 25px; 
-        margin-bottom: 20px; 
-        border-radius: 12px;
+        padding: 20px; 
+        margin-bottom: 15px; 
+        border-radius: 10px;
         background-color: #ffffff;
         box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        font-size: 16px;
     }
     .office-card h3 { 
-        margin-top: 0; 
+        margin: 0 0 10px 0; 
         color: #0056b3; 
-        font-size: 1.6rem; 
-        margin-bottom: 15px;
+        font-size: 1.3rem;
     }
+    .office-card p { margin: 5px 0; }
 </style>
 </head>
 <body>
 
-<h1>주소지 입력</h1>
+<div class="main-wrapper">
+    <div id="sidebar-search">
+        <h1>주소지 입력</h1>
+        
+        <div class="search-container">
+            <input id="keyword" placeholder="지역명 또는 주소 입력" autocomplete="off">
+            <div id="addressList"></div>
+        </div>
 
-<div class="search-container">
-    <input id="keyword" placeholder="" autocomplete="off">
-    <button id="searchBtn">검색</button>
-    <div id="addressList"></div>
+        <div id="result"></div>
+    </div>
+
+    <div id="content-area">
+        <p style="color: #999; text-align: center; margin-top: 200px;">
+            오른쪽 영역 (나머지 2/3 분량)
+        </p>
+    </div>
 </div>
 
-<div id="result"></div>
-
 <script>
+// --- 기존 기관 데이터 및 로직 유지 ---
 const offices = [
     {name:"한국부동산원 서울동부지사", region:"서울", lat:37.5576984952347, lng:127.079226104632, phone:"02-3394-9870~3", address:"서울시 광진구 천호대로 549, 지타워 10층"},
     {name:"한국부동산원 고양지사", region:"경기", lat:37.6526192547913, lng:126.776883538123, phone:"031-902-3573~5", address:"경기도 고양시 일산동구 중앙로 1187, 흥국생명빌딩 8층"},
@@ -145,7 +159,8 @@ const offices = [
     {name:"경기도 지자체", region:"경기", lat:37.2746661643172, lng:127.009619860326, phone:"031-8008-2868", address:"경기도 수원시 팔달구 효원로 1"}
 ];
 
-let focusedIndex = -1; // 방향키 선택 인덱스
+let focusedIndex = -1;
+let timer;
 
 function getDistance(lat1, lon1, lat2, lon2){
     const R = 6371;
@@ -155,29 +170,30 @@ function getDistance(lat1, lon1, lat2, lon2){
     return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
 }
 
-function searchAddress(){
+function liveSearch(){
     const keyword = document.getElementById("keyword").value.trim();
-    if(!keyword){ alert("검색어를 입력하세요."); return; }
+    const listEl = document.getElementById("addressList");
+    if(keyword.length < 2) { listEl.style.display = "none"; return; }
 
     const geocoder = new kakao.maps.services.Geocoder();
     geocoder.addressSearch(keyword, function(result, status){
-        const listEl = document.getElementById("addressList");
         listEl.innerHTML = "";
         focusedIndex = -1; 
-        
         if(status === kakao.maps.services.Status.OK){
+            if (result.length === 1 && result[0].address_name === keyword) {
+                selectItem(result[0]);
+                return;
+            }
             listEl.style.display = "block";
             result.forEach((item, index) => {
                 const div = document.createElement("div");
                 div.className = "search-item";
-                div.id = "item-" + index;
                 div.innerHTML = `<strong>${item.address_name}</strong>`;
                 div.onclick = () => selectItem(item);
                 listEl.appendChild(div);
             });
         } else {
             listEl.style.display = "none";
-            document.getElementById("result").innerHTML = "<div style='text-align:center;'>검색 결과가 없습니다.</div>";
         }
     });
 }
@@ -211,16 +227,17 @@ function findNearest(lat, lng, fullAddress){
     document.getElementById("result").innerHTML = html;
 }
 
-// --- 키보드 이벤트 로직 ---
 document.addEventListener("DOMContentLoaded", function(){
     const input = document.getElementById("keyword");
     const listEl = document.getElementById("addressList");
 
-    document.getElementById("searchBtn").addEventListener("click", searchAddress);
+    input.addEventListener("input", function() {
+        clearTimeout(timer);
+        timer = setTimeout(liveSearch, 300);
+    });
 
     input.addEventListener("keydown", function(e){
         const items = listEl.getElementsByClassName("search-item");
-        
         if (listEl.style.display === "block" && items.length > 0) {
             if (e.key === "ArrowDown") {
                 e.preventDefault();
@@ -230,26 +247,18 @@ document.addEventListener("DOMContentLoaded", function(){
                 e.preventDefault();
                 focusedIndex = (focusedIndex - 1 + items.length) % items.length;
                 updateFocus(items);
-            } else if (e.key === "Enter") {
-                if (focusedIndex > -1) {
-                    e.preventDefault();
-                    items[focusedIndex].click();
-                } else {
-                    searchAddress();
-                }
+            } else if (e.key === "Enter" && focusedIndex > -1) {
+                e.preventDefault();
+                items[focusedIndex].click();
             }
-        } else if (e.key === "Enter") {
-            searchAddress();
         }
     });
 
     function updateFocus(items) {
         for (let item of items) item.classList.remove("active");
         if (focusedIndex > -1) {
-            const activeItem = items[focusedIndex];
-            activeItem.classList.add("active");
-            // 자동 스크롤
-            activeItem.scrollIntoView({ block: "nearest" });
+            items[focusedIndex].classList.add("active");
+            items[focusedIndex].scrollIntoView({ block: "nearest" });
         }
     }
 

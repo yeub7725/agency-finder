@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
 <meta charset="utf-8">
-<title>관할기관 찾기 (안정화 버전)</title>
+<title>관할기관 찾기 (연속 검색 완벽 지원)</title>
 <script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=d791798c38589fc7cdc6bce91d9369be&libraries=services"></script>
 <style>
     body, html { margin: 0; padding: 0; height: 100%; font-family: 'Malgun Gothic', sans-serif; overflow: hidden; }
@@ -20,38 +20,27 @@
     input#keyword { 
         padding: 14px; width: 100%; font-size: 16px; 
         border: 2px solid #ccc; border-radius: 8px; box-sizing: border-box; outline: none;
-        transition: border-color 0.2s;
     }
-    input#keyword:focus { border-color: #007bff; }
+    input#keyword:focus { border-color: #007bff; border-width: 2px; }
 
-    /* 후보군 리스트 디자인 강화 */
     #addressList { 
         position: absolute; top: 100%; left: 0; width: 100%;
         border: 1px solid #bbb; background: white; z-index: 100;
         display: none; border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.1);
         margin-top: 5px; overflow: hidden;
     }
-    .search-item { 
-        padding: 15px; border-bottom: 1px solid #eee; cursor: pointer; 
-        font-size: 15px; color: #444; transition: all 0.1s; 
-    }
-    /* 선택 시 시각적 효과 강화 */
+    .search-item { padding: 15px; border-bottom: 1px solid #eee; cursor: pointer; font-size: 15px; color: #444; }
     .search-item.active { 
         background-color: #eef6ff !important; 
         color: #007bff !important; 
         font-weight: bold;
         border-left: 5px solid #007bff;
-        box-shadow: inset 0 0 10px rgba(0,123,255,0.1);
     }
 
     #result { margin-top: 35px; }
     .jurisdiction-info { font-weight: bold; color: #e63946; margin-bottom: 15px; display: block; font-size: 1.1rem; }
-
-    .office-card { 
-        border: 1px solid #e1e1e1; padding: 18px; margin-bottom: 12px; 
-        border-radius: 10px; background-color: #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-    }
-    .office-card h3 { margin: 0 0 10px 0; font-size: 18px; color: #333; font-weight: bold; }
+    .office-card { border: 1px solid #e1e1e1; padding: 18px; margin-bottom: 12px; border-radius: 10px; background-color: #fff; }
+    .office-card h3 { margin: 0 0 10px 0; font-size: 18px; color: #333; }
     .addr-text { font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin: 6px 0; color: #666; }
     .phone-text { font-size: 20px; font-weight: bold; color: #0056b3; margin: 8px 0; display: block; }
     .dist-text { font-size: 13px; color: #999; }
@@ -63,7 +52,7 @@
     <div id="sidebar-search">
         <h1>주소지 입력</h1>
         <div class="search-container">
-            <input id="keyword" placeholder="주소를 입력하세요" autocomplete="off">
+            <input id="keyword" placeholder="주소를 입력하고 엔터를 치세요" autocomplete="off">
             <div id="addressList"></div>
         </div>
         <div id="result"></div>
@@ -72,7 +61,7 @@
 </div>
 
 <script>
-// 기관 데이터
+// 기관 데이터는 그대로 유지
 const offices = [
     {name:"한국부동산원 서울동부지사", region:"서울", lat:37.5576984952347, lng:127.079226104632, phone:"02-3394-9870~3", address:"서울시 광진구 천호대로 549, 지타워 10층"},
     {name:"한국부동산원 고양지사", region:"경기", lat:37.6526192547913, lng:126.776883538123, phone:"031-902-3573~5", address:"경기도 고양시 일산동구 중앙로 1187, 흥국생명빌딩 8층"},
@@ -98,7 +87,6 @@ const offices = [
 
 let focusedIndex = -1;
 let debounceTimer;
-let currentAddressData = [];
 
 function getDistance(lat1, lon1, lat2, lon2){
     const R = 6371;
@@ -108,6 +96,7 @@ function getDistance(lat1, lon1, lat2, lon2){
     return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
 }
 
+// 주소 검색 함수
 function searchAddress(isFinal = false) {
     const keyword = document.getElementById("keyword").value.trim();
     const listEl = document.getElementById("addressList");
@@ -117,14 +106,14 @@ function searchAddress(isFinal = false) {
     const geocoder = new kakao.maps.services.Geocoder();
     geocoder.addressSearch(keyword, function(result, status){
         if(status === kakao.maps.services.Status.OK){
-            currentAddressData = result;
-
-            // 결과가 딱 1개면 리스트 안 보여줌 (엔터 치면 바로 처리되도록 함)
+            // 결과가 1개라면 후보 리스트를 아예 띄우지 않음
             if(result.length === 1) {
                 listEl.style.display = "none";
+                focusedIndex = -1;
+                // 엔터를 쳤을 때만 최종 결과 출력
                 if(isFinal) selectItem(result[0]);
             } 
-            // 결과가 여러 개일 때만 리스트 표시
+            // 여러 개일 때만 리스트 오픈
             else {
                 listEl.innerHTML = "";
                 listEl.style.display = "block";
@@ -135,6 +124,7 @@ function searchAddress(isFinal = false) {
                     div.onclick = () => selectItem(item);
                     listEl.appendChild(div);
                 });
+                // 새로운 검색 결과가 나오면 포커스 초기화
                 focusedIndex = -1; 
             }
         } else {
@@ -145,7 +135,6 @@ function searchAddress(isFinal = false) {
 
 function selectItem(item) {
     document.getElementById("addressList").style.display = "none";
-    // 사용자가 입력한 텍스트는 그대로 두고, 내부 로직만 좌표를 가져가도록 함 (이전 검색어 돌아가는 문제 방지)
     findNearest(parseFloat(item.y), parseFloat(item.x), item.address_name);
 }
 
@@ -159,7 +148,7 @@ function findNearest(lat, lng, fullAddress){
         dist: getDistance(lat, lng, o.lat, o.lng)
     })).sort((a,b) => a.dist - b.dist);
 
-    let html = `<span class="jurisdiction-info">관할구역: ${regionKeyword}</span>`;
+    let html = `<span class="jurisdiction-info">관할지역: ${regionKeyword}</span>`;
     sortedResult.slice(0, 2).forEach(o => {
         html += `
             <div class="office-card">
@@ -177,8 +166,9 @@ document.addEventListener("DOMContentLoaded", function(){
     const listEl = document.getElementById("addressList");
 
     input.addEventListener("input", () => {
+        // 새로 입력할 때마다 기존 포커스 강제 초기화 (연속 검색의 핵심)
+        focusedIndex = -1;
         clearTimeout(debounceTimer);
-        // 0.2초 멈추면 검색 실행 (타이핑 방해 방지)
         debounceTimer = setTimeout(() => searchAddress(false), 200);
     });
 
@@ -187,12 +177,10 @@ document.addEventListener("DOMContentLoaded", function(){
         
         if (e.key === "Enter") {
             e.preventDefault();
-            // 1. 리스트에서 방향키로 선택 중일 때
+            // 리스트에서 고른 게 있다면 그거 선택, 없으면 검색 실행
             if (focusedIndex > -1 && items.length > 0) {
                 items[focusedIndex].click();
-            } 
-            // 2. 그냥 엔터 쳤을 때 (결과가 1개인 경우 처리 포함)
-            else {
+            } else {
                 searchAddress(true);
             }
         } 
@@ -217,7 +205,6 @@ document.addEventListener("DOMContentLoaded", function(){
         }
     }
 
-    // 창 외부 클릭 시 리스트 닫기
     document.addEventListener("click", e => {
         if(e.target.id !== 'keyword') listEl.style.display = "none";
     });

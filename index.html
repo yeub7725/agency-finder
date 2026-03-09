@@ -14,7 +14,7 @@
 <div id="result"></div>
 
 <script>
-// 기관 리스트 (마지막 항목 뒤 쉼표 제거)
+// --- 기관 리스트 ---
 const offices = [
   {name:"한국부동산원 서울동부지사", lat:37.5576984952347, lng:127.079226104632, phone:"02-3394-9870~3", address:"서울시 광진구 천호대로 549, 지타워 10층"},
   {name:"한국부동산원 고양지사", lat:37.6526192547913, lng:126.776883538123, phone:"031-902-3573~5", address:"경기도 고양시 일산동구 중앙로 1187, 흥국생명빌딩 8층"},
@@ -38,7 +38,7 @@ const offices = [
   {name:"경기도 지자체", lat:37.2746661643172, lng:127.009619860326, phone:"031-8008-2868", address:"경기도 수원시 팔달구 효원로 1"}
 ];
 
-// 주소 검색 함수 (전역)
+// --- 주소 검색 함수 (전역) ---
 function searchAddress() {
   const keyword = document.getElementById("keyword").value.trim();
   if(!keyword){ alert("검색어를 입력하세요"); return; }
@@ -55,7 +55,7 @@ function searchAddress() {
   });
 }
 
-// 거리 계산
+// --- 거리 계산 ---
 function distance(lat1, lon1, lat2, lon2) {
   const R = 6371;
   const dLat = (lat2-lat1)*Math.PI/180;
@@ -65,7 +65,7 @@ function distance(lat1, lon1, lat2, lon2) {
   return R*c;
 }
 
-// 가장 가까운 기관 2개 찾기
+// --- 가장 가까운 기관 2개 찾기 ---
 function findNearest(lat, lng) {
   const result = offices.map(o => ({
     name: o.name,
@@ -85,10 +85,8 @@ function findNearest(lat, lng) {
   document.getElementById("result").innerHTML = html;
 }
 
-// 버튼 이벤트 연결
+// --- 이벤트 연결 (버튼 + 엔터) ---
 document.getElementById("searchBtn").addEventListener("click", searchAddress);
-
-// 엔터키 검색
 document.getElementById("keyword").addEventListener("keypress", function(e){
   if(e.key === 'Enter') searchAddress();
 });

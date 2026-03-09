@@ -2,115 +2,60 @@
 <html lang="ko">
 <head>
 <meta charset="utf-8">
-<title>관할기관 찾기 (사이드바형)</title>
+<title>관할기관 찾기 (최적화 버전)</title>
 <script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=d791798c38589fc7cdc6bce91d9369be&libraries=services"></script>
 <style>
-    /* 기본 레이아웃 설정 */
-    body, html {
-        margin: 0;
-        padding: 0;
-        height: 100%;
-        font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif;
-    }
+    body, html { margin: 0; padding: 0; height: 100%; font-family: 'Malgun Gothic', sans-serif; }
+    .main-wrapper { display: flex; height: 100vh; }
 
-    /* 전체 화면을 분할하는 컨테이너 */
-    .main-wrapper {
-        display: flex;
-        height: 100vh;
-    }
-
-    /* 왼쪽 1/3 관할지역 검색 영역 */
+    /* 왼쪽 1/3 영역 */
     #sidebar-search {
-        width: 33%; /* 전체의 약 1/3 */
-        min-width: 350px;
+        width: 33.3%;
+        min-width: 320px;
         border-right: 1px solid #ddd;
-        padding: 40px 20px;
+        padding: 30px 15px;
         box-sizing: border-box;
-        overflow-y: auto; /* 결과가 길어지면 내부 스크롤 */
-        background-color: #f8f9fa;
+        overflow-y: auto;
+        background-color: #f9f9f9;
     }
 
-    /* 오른쪽 2/3 다른 기능 영역 (비워둠) */
-    #content-area {
-        width: 67%;
-        background-color: #ffffff;
-        padding: 40px;
-        box-sizing: border-box;
-    }
+    #content-area { width: 66.7%; background-color: #fff; }
 
-    /* 텍스트 및 제목 스타일 (왼쪽 정렬) */
-    h1 { 
-        font-size: 2rem; 
-        margin-bottom: 30px; 
-        font-weight: bold;
-        color: #333;
-    }
+    h1 { font-size: 1.8rem; margin-bottom: 20px; }
 
-    .search-container {
-        position: relative;
-        width: 100%;
-    }
-
+    .search-container { position: relative; width: 100%; }
     input#keyword { 
-        padding: 12px; 
-        width: 100%; 
-        font-size: 16px; 
-        border: 2px solid #ddd;
-        border-radius: 6px;
-        outline: none;
-        box-sizing: border-box;
+        padding: 12px; width: 100%; font-size: 16px; 
+        border: 2px solid #ddd; border-radius: 6px; box-sizing: border-box;
     }
 
+    /* 주소 후보 리스트 */
     #addressList { 
-        position: absolute;
-        top: 100%;
-        left: 0;
-        width: 100%;
-        border: 1px solid #ccc; 
-        margin-top: 5px; 
-        max-height: 200px; 
-        overflow-y: auto; 
-        display: none; 
-        background: white;
-        z-index: 100;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        border-radius: 6px;
+        position: absolute; top: 100%; left: 0; width: 100%;
+        border: 1px solid #ccc; background: white; z-index: 100;
+        display: none; border-radius: 6px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     }
+    .search-item { padding: 12px; border-bottom: 1px solid #eee; cursor: pointer; font-size: 14px; }
+    .search-item.active { background-color: #f0f7ff; color: #007bff; }
 
-    .search-item { 
-        padding: 12px; 
-        border-bottom: 1px solid #eee; 
-        cursor: pointer; 
-        font-size: 15px;
-    }
-    .search-item.active { background-color: #f0f7ff; color: #007bff; font-weight: bold; }
-
-    /* 결과 내역 스타일 */
-    #result { margin-top: 40px; }
-    
-    .jurisdiction-info { 
-        font-size: 1.1rem;
-        font-weight: bold; 
-        color: #e63946; 
-        margin-bottom: 15px; 
-        display: block; 
-    }
+    /* 결과 내역 카드 */
+    #result { margin-top: 30px; }
+    .jurisdiction-info { font-weight: bold; color: #d9534f; margin-bottom: 15px; display: block; }
 
     .office-card { 
-        border: 1px solid #e1e1e1; 
-        padding: 20px; 
-        margin-bottom: 15px; 
-        border-radius: 10px;
-        background-color: #ffffff;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-        font-size: 16px;
+        border: 1px solid #e1e1e1; padding: 15px; margin-bottom: 12px; 
+        border-radius: 8px; background-color: #fff;
     }
-    .office-card h3 { 
-        margin: 0 0 10px 0; 
-        color: #0056b3; 
-        font-size: 1.3rem;
-    }
-    .office-card p { margin: 5px 0; }
+    /* 기관명: 본문 사이즈와 동일하게 */
+    .office-card h3 { margin: 0 0 10px 0; font-size: 18px; color: #333; font-weight: bold; }
+    
+    /* 주소: 한 줄로 표시 */
+    .addr-text { font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin: 5px 0; }
+    
+    /* 전화번호: 폰트 키우고 강조 */
+    .phone-text { font-size: 19px; font-weight: bold; color: #0056b3; margin: 5px 0; }
+    
+    .dist-text { font-size: 14px; color: #888; }
 </style>
 </head>
 <body>
@@ -118,24 +63,16 @@
 <div class="main-wrapper">
     <div id="sidebar-search">
         <h1>주소지 입력</h1>
-        
         <div class="search-container">
-            <input id="keyword" placeholder="지역명 또는 주소 입력" autocomplete="off">
+            <input id="keyword" placeholder="주소 입력 후 엔터를 치세요" autocomplete="off">
             <div id="addressList"></div>
         </div>
-
         <div id="result"></div>
     </div>
-
-    <div id="content-area">
-        <p style="color: #999; text-align: center; margin-top: 200px;">
-            오른쪽 영역 (나머지 2/3 분량)
-        </p>
-    </div>
+    <div id="content-area"></div>
 </div>
 
 <script>
-// --- 기존 기관 데이터 및 로직 유지 ---
 const offices = [
     {name:"한국부동산원 서울동부지사", region:"서울", lat:37.5576984952347, lng:127.079226104632, phone:"02-3394-9870~3", address:"서울시 광진구 천호대로 549, 지타워 10층"},
     {name:"한국부동산원 고양지사", region:"경기", lat:37.6526192547913, lng:126.776883538123, phone:"031-902-3573~5", address:"경기도 고양시 일산동구 중앙로 1187, 흥국생명빌딩 8층"},
@@ -160,7 +97,7 @@ const offices = [
 ];
 
 let focusedIndex = -1;
-let timer;
+let currentResults = [];
 
 function getDistance(lat1, lon1, lat2, lon2){
     const R = 6371;
@@ -170,30 +107,33 @@ function getDistance(lat1, lon1, lat2, lon2){
     return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
 }
 
-function liveSearch(){
+// 주소 검색 (엔터 시 또는 선택 시 실행)
+function handleSearch(isEnterPressed) {
     const keyword = document.getElementById("keyword").value.trim();
     const listEl = document.getElementById("addressList");
-    if(keyword.length < 2) { listEl.style.display = "none"; return; }
+    if(keyword.length < 2) return;
 
     const geocoder = new kakao.maps.services.Geocoder();
     geocoder.addressSearch(keyword, function(result, status){
-        listEl.innerHTML = "";
-        focusedIndex = -1; 
         if(status === kakao.maps.services.Status.OK){
-            if (result.length === 1 && result[0].address_name === keyword) {
+            currentResults = result;
+            // 1. 결과가 1개뿐인데 엔터를 쳤거나, 이미 정확한 주소인 경우 즉시 출력
+            if(result.length === 1) {
+                listEl.style.display = "none";
                 selectItem(result[0]);
-                return;
+            } 
+            // 2. 결과가 여러 개라면 리스트 보여주기
+            else {
+                listEl.innerHTML = "";
+                listEl.style.display = "block";
+                result.forEach((item, index) => {
+                    const div = document.createElement("div");
+                    div.className = "search-item";
+                    div.innerHTML = item.address_name;
+                    div.onclick = () => selectItem(item);
+                    listEl.appendChild(div);
+                });
             }
-            listEl.style.display = "block";
-            result.forEach((item, index) => {
-                const div = document.createElement("div");
-                div.className = "search-item";
-                div.innerHTML = `<strong>${item.address_name}</strong>`;
-                div.onclick = () => selectItem(item);
-                listEl.appendChild(div);
-            });
-        } else {
-            listEl.style.display = "none";
         }
     });
 }
@@ -219,9 +159,9 @@ function findNearest(lat, lng, fullAddress){
         html += `
             <div class="office-card">
                 <h3>${o.name}</h3>
-                <p><b>주소:</b> ${o.address}</p>
-                <p><b>전화:</b> ${o.phone}</p>
-                <p><b>거리:</b> ${o.dist.toFixed(1)} km</p>
+                <p class="addr-text" title="${o.address}">${o.address}</p>
+                <p class="phone-text">${o.phone}</p>
+                <p class="dist-text">${o.dist.toFixed(1)} km</p>
             </div>`;
     });
     document.getElementById("result").innerHTML = html;
@@ -231,25 +171,22 @@ document.addEventListener("DOMContentLoaded", function(){
     const input = document.getElementById("keyword");
     const listEl = document.getElementById("addressList");
 
-    input.addEventListener("input", function() {
-        clearTimeout(timer);
-        timer = setTimeout(liveSearch, 300);
-    });
-
     input.addEventListener("keydown", function(e){
         const items = listEl.getElementsByClassName("search-item");
-        if (listEl.style.display === "block" && items.length > 0) {
+        if (e.key === "Enter") {
+            e.preventDefault();
+            if (focusedIndex > -1 && items.length > 0) {
+                items[focusedIndex].click();
+            } else {
+                handleSearch(true);
+            }
+        } else if (listEl.style.display === "block") {
             if (e.key === "ArrowDown") {
-                e.preventDefault();
                 focusedIndex = (focusedIndex + 1) % items.length;
                 updateFocus(items);
             } else if (e.key === "ArrowUp") {
-                e.preventDefault();
                 focusedIndex = (focusedIndex - 1 + items.length) % items.length;
                 updateFocus(items);
-            } else if (e.key === "Enter" && focusedIndex > -1) {
-                e.preventDefault();
-                items[focusedIndex].click();
             }
         }
     });
@@ -263,10 +200,9 @@ document.addEventListener("DOMContentLoaded", function(){
     }
 
     document.addEventListener("click", e => {
-        if(e.target.id !== 'keyword' && e.target.id !== 'addressList') listEl.style.display = "none";
+        if(e.target.id !== 'keyword') listEl.style.display = "none";
     });
 });
 </script>
-
 </body>
 </html>

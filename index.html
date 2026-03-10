@@ -46,28 +46,25 @@
     </style>
 </head>
 <body>
-
-<div class="main-wrapper">
-    <div id="sidebar-search">
-        <h1>주소지 입력</h1>
-        <div class="search-container">
-            <input id="keyword" placeholder=" " autocomplete="off">
-            <div id="addressList"></div>
-        </div>
-        
-       <div class="contact-footer">
-    <div>
-        <h4>📞 주요 상담 센터</h4>
-        <table class="guide-table">
-            <tr><td>한국부동산원</td><td><strong>1600-2828</strong></td></tr>
-            <tr><td>렌트홈 / LH공사</td><td><strong>1670-8004 / 1600-1004</strong></td></tr>
-            <tr><td>국세청 / 전자계약</td><td><strong>126 / 1833-4662</strong></td></tr>
-        </table>
+<div style="position: fixed; bottom: 20px; left: 20px; z-index: 9999; background: white; padding: 15px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); border: 1px solid #ddd;">
+    
+    <h4 style="margin-top: 0; margin-bottom: 10px;">📞 주요 상담 센터</h4>
+    
+    <table class="guide-table" style="border-collapse: collapse; width: 100%;">
+        <tr>
+            <td style="padding: 3px 10px 3px 0;">한국부동산원</td>
+            <td><strong>1600-2828</strong></td>
+        </tr>
+        <tr>
+            <td style="padding: 3px 10px 3px 0;">렌트홈 / LH공사</td>
+            <td><strong>1670-8004 / 1600-1004</strong></td>
+        </tr>
+        <tr>
+            <td style="padding: 3px 10px 3px 0;">국세청 / 전자계약</td>
+            <td><strong>126 / 1833-4662</strong></td>
+        </tr>
+    </table>
     </div>
-</div>
-
-<div id="content-area" style="padding-bottom: 150px;"> <div id="map" style="width:100%;height:100%;"></div>
-</div>
 <script>
 // 1. 관할 구역 데이터 (기존 offices 데이터들)
 const offices = [
@@ -513,6 +510,7 @@ document.addEventListener("DOMContentLoaded", function(){
 </script>
 </body>
 </html>
+
 
 
 

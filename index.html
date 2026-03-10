@@ -1,65 +1,39 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-<meta charset="utf-8">
-<title>관할기관 찾기 (임대차분쟁조정지원팀)</title>
-<script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=d791798c38589fc7cdc6bce91d9369be&libraries=services"></script>
-<style>
-    body, html { margin: 0; padding: 0; height: 100%; font-family: 'Malgun Gothic', sans-serif; overflow: hidden; }
-    .main-wrapper { display: flex; height: 100vh; }
-
-    /* 사이드바 (기능 영역) - 33.3% 유지 */
-    #sidebar-search {
-        width: 33.3%; min-width: 360px; border-right: 1px solid #ddd;
-        padding: 30px 15px; box-sizing: border-box; 
-        display: flex; flex-direction: column; background-color: #f9f9f9;
-    }
-
-    /* 우측 여백 영역 - 나중에 다른 것 넣으실 공간 */
-    #content-area { flex: 1; background-color: #fff; }
-
-    /* 스크롤 영역 */
-    .scroll-content { flex: 1; overflow-y: auto; margin-top: 20px; padding-right: 10px; }
-
-    h1 { font-size: 1.8rem; margin-bottom: 20px; color: #222; }
-    .search-container { position: relative; width: 100%; }
-    
-    input#keyword { 
-        padding: 14px; width: 100%; font-size: 16px; 
-        border: 2px solid #ccc; border-radius: 8px; box-sizing: border-box; outline: none;
-    }
-    input#keyword:focus { border-color: #007bff; }
-
-    #addressList { 
-        position: absolute; top: 100%; left: 0; width: 100%;
-        border: 1px solid #bbb; background: white; z-index: 100;
-        display: none; border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-        margin-top: 5px;
-    }
-    .search-item { padding: 15px; border-bottom: 1px solid #eee; cursor: pointer; font-size: 15px; color: #444; }
-    .search-item.active { background-color: #eef6ff; color: #007bff; font-weight: bold; border-left: 5px solid #007bff; }
-
-    /* 결과 카드 (폰트 크기 복구) */
-    .jurisdiction-info { font-weight: bold; color: #e63946; margin-bottom: 15px; display: block; font-size: 1.1rem; }
-    .office-card { border: 1px solid #e1e1e1; padding: 18px; margin-bottom: 12px; border-radius: 10px; background-color: #fff; }
-    .office-card h3 { margin: 0 0 10px 0; font-size: 18px; color: #333; }
-    .addr-text { font-size: 15px; color: #666; margin: 6px 0; line-height: 1.4; }
-    .phone-text { font-size: 20px; font-weight: bold; color: #0056b3; margin: 8px 0; display: block; }
-
-    /* 지자체 추천 섹션 */
-    .recommend-section { margin-top: 25px; padding-top: 20px; border-top: 2px solid #ddd; }
-    .recommend-title { font-size: 16px; font-weight: bold; color: #2d6a4f; margin-bottom: 12px; display: block; }
-    .recommend-card { background: #f0f9f4; border: 1px solid #cce3d8; padding: 15px; border-radius: 10px; margin-bottom: 10px; }
-    .recommend-card span { font-size: 15px; color: #333; font-weight: bold; display: block; }
-    .recommend-card small { font-size: 13px; color: #666; margin-top: 4px; display: block; }
-
-    /* 하단 상시 노출 안내문구 */
-    .constant-guide { margin-top: 30px; padding: 15px; background: #fff; border-radius: 10px; border: 1px solid #ddd; }
-    .constant-guide h4 { margin: 0 0 12px 0; font-size: 16px; color: #333; border-bottom: 1px solid #eee; padding-bottom: 5px; }
-    .guide-table { width: 100%; border-collapse: collapse; }
-    .guide-table td { padding: 8px 5px; font-size: 14px; color: #444; border-bottom: 1px solid #f9f9f9; }
-    .guide-table strong { color: #d63031; font-size: 15px; }
-</style>
+    <meta charset="utf-8">
+    <title>관할기관 찾기 (임대차분쟁조정지원팀)</title>
+    <script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=d791798c38589fc7cdc6bce91d9369be&libraries=services"></script>
+    <style>
+        body, html { margin: 0; padding: 0; height: 100%; font-family: 'Malgun Gothic', sans-serif; overflow: hidden; }
+        .main-wrapper { display: flex; height: 100vh; }
+        #sidebar-search { width: 33.3%; min-width: 360px; border-right: 1px solid #ddd; padding: 30px 15px; box-sizing: border-box; display: flex; flex-direction: column; background-color: #f9f9f9; }
+        #content-area { flex: 1; background-color: #fff; }
+        .scroll-content { flex: 1; overflow-y: auto; margin-top: 20px; padding-right: 10px; }
+        h1 { font-size: 1.8rem; margin-bottom: 20px; color: #222; }
+        .search-container { position: relative; width: 100%; }
+        input#keyword { padding: 14px; width: 100%; font-size: 16px; border: 2px solid #ccc; border-radius: 8px; box-sizing: border-box; outline: none; }
+        input#keyword:focus { border-color: #007bff; }
+        #addressList { position: absolute; top: 100%; left: 0; width: 100%; border: 1px solid #bbb; background: white; z-index: 100; display: none; border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); margin-top: 5px; }
+        .search-item { padding: 15px; border-bottom: 1px solid #eee; cursor: pointer; font-size: 15px; color: #444; }
+        .search-item.active { background-color: #eef6ff; color: #007bff; font-weight: bold; border-left: 5px solid #007bff; }
+        .jurisdiction-info { font-weight: bold; color: #e63946; margin-bottom: 15px; display: block; font-size: 1.1rem; }
+        .office-card { border: 1px solid #e1e1e1; padding: 18px; margin-bottom: 12px; border-radius: 10px; background-color: #fff; position: relative; }
+        .office-card h3 { margin: 0 0 10px 0; font-size: 18px; color: #333; }
+        .type-badge { position: absolute; top: 15px; right: 15px; font-size: 12px; padding: 3px 8px; border-radius: 5px; background: #eee; color: #666; }
+        .addr-text { font-size: 14px; color: #666; margin: 6px 0; line-height: 1.4; }
+        .phone-text { font-size: 18px; font-weight: bold; color: #0056b3; margin: 8px 0; display: block; }
+        .recommend-section { margin-top: 25px; padding-top: 20px; border-top: 2px solid #ddd; }
+        .recommend-title { font-size: 16px; font-weight: bold; color: #2d6a4f; margin-bottom: 12px; display: block; }
+        .recommend-card { background: #f0f9f4; border: 1px solid #cce3d8; padding: 15px; border-radius: 10px; margin-bottom: 10px; }
+        .recommend-card span { font-size: 15px; color: #333; font-weight: bold; display: block; }
+        .recommend-card small { font-size: 13px; color: #666; margin-top: 4px; display: block; }
+        .constant-guide { margin-top: 30px; padding: 15px; background: #fff; border-radius: 10px; border: 1px solid #ddd; }
+        .constant-guide h4 { margin: 0 0 12px 0; font-size: 16px; color: #333; border-bottom: 1px solid #eee; padding-bottom: 5px; }
+        .guide-table { width: 100%; border-collapse: collapse; }
+        .guide-table td { padding: 8px 5px; font-size: 14px; color: #444; border-bottom: 1px solid #f9f9f9; }
+        .guide-table strong { color: #d63031; font-size: 15px; }
+    </style>
 </head>
 <body>
 
@@ -73,7 +47,6 @@
         
         <div class="scroll-content">
             <div id="result"></div>
-
             <div class="constant-guide">
                 <h4>📞 주요 상담 센터</h4>
                 <table class="guide-table">
@@ -87,33 +60,33 @@
             </div>
         </div>
     </div>
-    
     <div id="content-area"></div>
 </div>
 
 <script>
-// 관할기관 데이터
+// 관할 구역 데이터 최적화
+// type: REB(부동산원), LH(토지주택공사), LAKAS(법률구조공단), GOV(지자체)
 const offices = [
-    {name:"한국부동산원 서울동부지사", region:"서울", lat:37.5576984952347, lng:127.079226104632, phone:"02-3394-9870~3", address:"서울시 광진구 천호대로 549, 지타워 10층"},
-    {name:"한국부동산원 고양지사", region:"경기", lat:37.6526192547913, lng:126.776883538123, phone:"031-902-3573~5", address:"경기도 고양시 일산동구 중앙로 1187, 흥국생명빌딩 8층"},
-    {name:"한국부동산원 성남지사", region:"경기", lat:37.4111581198118, lng:127.128242905298, phone:"031-8017-8488~90", address:"경기도 성남시 분당구 야탑로 81번길 16"},
-    {name:"한국부동산원 인천지사", region:"인천", lat:37.4010359457774, lng:126.712020985301, phone:"032-429-7041~6", address:"인천시 남동구 논현로 46번길 23, 7층"},
-    {name:"한국부동산원 춘천지사", region:"강원", lat:37.8834255926876, lng:127.7299086954, phone:"033-244-9793~4", address:"강원도 춘천시 중앙로 16, 무림빌딩 7층"},
-    {name:"한국부동산원 대전지사", region:"세종", lat:36.5080698154972, lng:127.261123189578, phone:"044-868-8341", address:"세종시 한누리대로 499, 세종포스트빌딩 제302호"},
-    {name:"한국부동산원 전주지사", region:"전북", lat:35.8376881541845, lng:127.131437613355, phone:"063-276-8022~3", address:"전북 전주시 덕진구 기린대로 405, 한화생명빌딩 3층"},
-    {name:"한국부동산원 포항지사", region:"경북", lat:36.0309184846303, lng:129.366140488372, phone:"054-275-9771~2", address:"경북 포항시 북구 중앙로 201, 한화생명빌딩 8층"},
-    {name:"한국부동산원 울산지사", region:"울산", lat:35.53823, lng:129.31132, phone:"052-224-8872~4", address:"울산시 남구 북부순환대로 17, 남운프라자 906호"},
-    {name:"한국부동산원 창원지사", region:"경남", lat:35.2180660235699, lng:128.675982740931, phone:"055-289-0136~8", address:"창원시 성산구 중앙대로 32, 2층"},
-    {name:"한국토지주택공사 충북지역본부", region:"충북", lat:36.6142493811955, lng:127.450780045437, phone:"043-905-1784", address:"충북 청주시 서원구 구룡산로 52번길 2, 303호"},
-    {name:"한국토지주택공사 제주지역본부", region:"제주", lat:33.5050626151854, lng:126.525532056896, phone:"064-901-3802", address:"제주시 중앙로 150, 대한항공제주사옥 3층"},
-    {name:"대한법률구조공단 서울중앙지부", region:"서울", lat:37.4943835382558, lng:127.013104296206, phone:"02-6941-3430", address:"서울시 서초구 법원로 2길 21, 칠보빌딩 1층"},
-    {name:"대한법률구조공단 수원지부", region:"경기", lat:37.2775333113317, lng:127.049515760488, phone:"031-8007-3430", address:"경기도 수원시 영통구 월드컵로 150번길 10, YM빌딩 3층"},
-    {name:"대한법률구조공단 대전지부", region:"대전", lat:36.3563094826699, lng:127.387871708301, phone:"042-721-3430", address:"대전시 서구 둔산북로 121, 1층 117~121호"},
-    {name:"대한법률구조공단 대구지부", region:"대구", lat:35.8591951058211, lng:128.631891547438, phone:"053-710-3430", address:"대구시 수성구 달구벌대로 2461, 디에스라이프빌딩 3층"},
-    {name:"대한법률구조공단 부산지부", region:"부산", lat:35.1907873626204, lng:129.074010929908, phone:"051-711-3430", address:"부산시 연제구 법원남로 15번길 4, 성신프라이어빌딩 5층"},
-    {name:"대한법률구조공단 광주지부", region:"광주", lat:35.1491401510105, lng:126.848917597491, phone:"062-710-3430", address:"광주시 서구 상무중앙로 28번길 4, 세진빌딩 4층 401호"},
-    {name:"서울시 지자체", region:"서울", lat:37.5645541852439, lng:126.975613605737, phone:"02-2133-1200~8", address:"서울시 중구 덕수궁길 15, 서울시청 서소문별관"},
-    {name:"경기도 지자체", region:"경기", lat:37.2746661643172, lng:127.009619860326, phone:"031-8008-2868", address:"경기도 수원시 팔달구 효원로 1"}
+    {name:"한국부동산원 서울동부지사", type:"REB", covers:["서울"], lat:37.557698, lng:127.079226, phone:"02-3394-9870~3", address:"서울시 광진구 천호대로 549, 지타워 10층"},
+    {name:"한국부동산원 고양지사", type:"REB", covers:["경기"], lat:37.652619, lng:126.776883, phone:"031-902-3573~5", address:"경기도 고양시 일산동구 중앙로 1187, 흥국생명빌딩 8층"},
+    {name:"한국부동산원 성남지사", type:"REB", covers:["경기"], lat:37.411158, lng:127.128242, phone:"031-8017-8488~90", address:"경기도 성남시 분당구 야탑로 81번길 16"},
+    {name:"한국부동산원 인천지사", type:"REB", covers:["인천"], lat:37.401035, lng:126.712020, phone:"032-429-7041~6", address:"인천시 남동구 논현로 46번길 23, 7층"},
+    {name:"한국부동산원 춘천지사", type:"REB", covers:["강원"], lat:37.883425, lng:127.729908, phone:"033-244-9793~4", address:"강원도 춘천시 중앙로 16, 무림빌딩 7층"},
+    {name:"한국부동산원 대전지사", type:"REB", covers:["세종"], lat:36.508069, lng:127.261123, phone:"044-868-8341", address:"세종시 한누리대로 499, 세종포스트빌딩 제302호"},
+    {name:"한국부동산원 전주지사", type:"REB", covers:["전북"], lat:35.837688, lng:127.131437, phone:"063-276-8022~3", address:"전북 전주시 덕진구 기린대로 405, 한화생명빌딩 3층"},
+    {name:"한국부동산원 포항지사", type:"REB", covers:["경북"], lat:36.030918, lng:129.366140, phone:"054-275-9771~2", address:"경북 포항시 북구 중앙로 201, 한화생명빌딩 8층"},
+    {name:"한국부동산원 울산지사", type:"REB", covers:["울산"], lat:35.53823, lng:129.31132, phone:"052-224-8872~4", address:"울산시 남구 북부순환대로 17, 남운프라자 906호"},
+    {name:"한국부동산원 창원지사", type:"REB", covers:["경남"], lat:35.218066, lng:128.675982, phone:"055-289-0136~8", address:"창원시 성산구 중앙대로 32, 2층"},
+    {name:"한국토지주택공사 충북본부", type:"LH", covers:["충북"], lat:36.614249, lng:127.450780, phone:"043-905-1784", address:"충북 청주시 서원구 구룡산로 52번길 2, 303호"},
+    {name:"한국토지주택공사 제주본부", type:"LH", covers:["제주"], lat:33.505062, lng:126.525532, phone:"064-901-3802", address:"제주시 중앙로 150, 대한항공제주사옥 3층"},
+    {name:"대한법률구조공단 서울중앙", type:"LAKAS", covers:["서울", "강원"], lat:37.494383, lng:127.013104, phone:"02-6941-3430", address:"서울시 서초구 법원로 2길 21, 칠보빌딩 1층"},
+    {name:"대한법률구조공단 수원", type:"LAKAS", covers:["경기", "인천"], lat:37.277533, lng:127.049515, phone:"031-8007-3430", address:"경기도 수원시 영통구 월드컵로 150번길 10, YM빌딩 3층"},
+    {name:"대한법률구조공단 대전", type:"LAKAS", covers:["대전", "세종", "충남", "충북"], lat:36.356309, lng:127.387871, phone:"042-721-3430", address:"대전시 서구 둔산북로 121, 1층 117~121호"},
+    {name:"대한법률구조공단 대구", type:"LAKAS", covers:["대구", "경북"], lat:35.859195, lng:128.631891, phone:"053-710-3430", address:"대구시 수성구 달구벌대로 2461, 디에스라이프빌딩 3층"},
+    {name:"대한법률구조공단 부산", type:"LAKAS", covers:["부산", "울산", "경남"], lat:35.190787, lng:129.074010, phone:"051-711-3430", address:"부산시 연제구 법원남로 15번길 4, 성신프라이어빌딩 5층"},
+    {name:"대한법률구조공단 광주", type:"LAKAS", covers:["광주", "전남", "전북", "제주"], lat:35.149140, lng:126.848917, phone:"062-710-3430", address:"광주시 서구 상무중앙로 28번길 4, 세진빌딩 4층 401호"},
+    {name:"서울시청 (지자체)", type:"GOV", covers:["서울"], lat:37.564554, lng:126.975613, phone:"02-2133-1200~8", address:"서울시 중구 덕수궁길 15, 서울시청 서소문별관"},
+    {name:"경기도청 (지자체)", type:"GOV", covers:["경기"], lat:37.274666, lng:127.009619, phone:"031-8008-2868", address:"경기도 수원시 팔달구 효원로 1"}
 ];
 
 let focusedIndex = -1, debounceTimer;
@@ -160,12 +133,17 @@ function selectItem(item) {
 
 function findNearest(lat, lng, fullAddress){
     const addrParts = fullAddress.split(' ');
-    const regionKeyword = addrParts[0].substring(0, 2);
+    const regionKeyword = addrParts[0].substring(0, 2); 
     const district = addrParts[1]; 
     
-    const filtered = offices.filter(o => o.region === regionKeyword);
-    const targets = filtered.length > 0 ? filtered : offices;
+    // 로직: 1.해당 지역 부동산원(REB)이 있는가? 2.없다면 해당 지역을 커버하는 대법공(LAKAS)/LH가 있는가?
+    let targets = offices.filter(o => o.type === "REB" && o.covers.includes(regionKeyword));
+    
+    if (targets.length === 0) {
+        targets = offices.filter(o => o.covers.includes(regionKeyword));
+    }
 
+    // 결과 정렬 및 표시
     const sortedResult = targets.map(o => ({
         ...o,
         dist: getDistance(lat, lng, o.lat, o.lng)
@@ -178,12 +156,14 @@ function displayResults(data, region, district) {
     let html = `<span class="jurisdiction-info">📍 관할지역: ${region} ${district || ''}</span>`;
     
     data.forEach(o => {
+        let typeName = o.type === "REB" ? "부동산원" : (o.type === "LAKAS" ? "법률구조공단" : (o.type === "LH" ? "LH공사" : "지자체"));
         html += `
             <div class="office-card">
+                <span class="type-badge">${typeName}</span>
                 <h3>${o.name}</h3>
                 <p class="addr-text">${o.address}</p>
                 <span class="phone-text">${o.phone}</span>
-                <p style="font-size:13px; color:#999;">약 ${o.dist.toFixed(1)} km</p>
+                <p style="font-size:13px; color:#999;">직선거리 약 ${o.dist.toFixed(1)} km</p>
             </div>`;
     });
 
@@ -193,11 +173,11 @@ function displayResults(data, region, district) {
                 <span class="recommend-title">💡 해당 지역 추가 안내</span>
                 <div class="recommend-card">
                     <span>${district}청 토지정보과</span>
-                    <small>부동산 관리 및 공시지가 관련 문의</small>
+                    <small>임대차 계약 신고 및 공시지가 관련 문의</small>
                 </div>
                 <div class="recommend-card">
                     <span>${district} 관할 세무서</span>
-                    <small>취득세, 양도소득세 등 세무 관련 문의</small>
+                    <small>주택 임대소득세 및 세무 관련 문의</small>
                 </div>
             </div>`;
     }

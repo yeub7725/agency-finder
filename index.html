@@ -166,21 +166,329 @@ function displayResults(data, region, district) {
                 <p style="font-size:13px; color:#999;">직선거리 약 ${o.dist.toFixed(1)} km</p>
             </div>`;
     });
+const districtOfficeMap = {
+    --- 서울특별시 토지정보과 ---
+    {name:"종로구청 부동산정보과", type:"LAND", covers:["종로구"], phone:"02-2148-2902", address:"서울 종로구 삼일대로 401-11"},
+    {name:"중구청 토지관리과", type:"LAND", covers:["중구"], phone:"02-3396-5912", address:"서울 중구 창경궁로 17"},
+    {name:"용산구청 부동산정보과", type:"LAND", covers:["용산구"], phone:"02-2199-6913", address:"서울 용산구 이태원로 139"},
+    {name:"성동구청 토지관리과", type:"LAND", covers:["성동구"], phone:"02-2286-5372", address:"서울 성동구 고산자로 270"},
+    {name:"광진구청 부동산정보과", type:"LAND", covers:["광진구"], phone:"02-450-7742", address:"서울 광진구 자양로 117"},
+    {name:"동대문구청 부동산정보과", type:"LAND", covers:["동대문구"], phone:"02-2127-4190", address:"서울 동대문구 천호대로 145"},
+    {name:"중랑구청 부동산정보과", type:"LAND", covers:["중랑구"], phone:"02-2094-1472", address:"서울 중랑구 봉화산로 179"},
+    {name:"성북구청 지적과", type:"LAND", covers:["성북구"], phone:"02-2241-4623", address:"서울 성북구 보문로 168"},
+    {name:"강북구청 부동산정보과", type:"LAND", covers:["강북구"], phone:"02-901-6582", address:"서울 강북구 도봉로89길 13"},
+    {name:"도봉구청 부동산정보과", type:"LAND", covers:["도봉구"], phone:"02-2091-3703", address:"서울 도봉구 마들로 656"},
+    {name:"노원구청 부동산정보과", type:"LAND", covers:["노원구"], phone:"02-2116-3615", address:"서울 노원구 노해로 437"},
+    {name:"은평구청 부동산정보과", type:"LAND", covers:["은평구"], phone:"02-351-6762", address:"서울 은평구 은평로 195"},
+    {name:"서대문구청 부동산정보과", type:"LAND", covers:["서대문구"], phone:"02-330-1238", address:"서울 서대문구 연희로 248"},
+    {name:"마포구청 부동산정보과", type:"LAND", covers:["마포구"], phone:"02-3153-9502", address:"서울 마포구 월드컵로 212"},
+    {name:"양천구청 부동산정보과", type:"LAND", covers:["양천구"], phone:"02-2620-3472", address:"서울 양천구 목동동로 105"},
+    {name:"강서구청 부동산정보과", type:"LAND", covers:["강서구"], phone:"02-2600-6485", address:"서울 강서구 화곡로 302"},
+    {name:"구로구청 부동산정보과", type:"LAND", covers:["구로구"], phone:"02-860-2795", address:"서울 구로구 가마산로 245"},
+    {name:"금천구청 부동산정보과", type:"LAND", covers:["금천구"], phone:"02-2627-1312", address:"서울 금천구 시흥대로 73길 70"},
+    {name:"영등포구청 부동산정보과", type:"LAND", covers:["영등포구"], phone:"02-2670-3715", address:"서울 영등포구 당산로 123"},
+    {name:"동작구청 부동산정보과", type:"LAND", covers:["동작구"], phone:"02-820-9065", address:"서울 동작구 장승배기로 161"},
+    {name:"관악구청 지적과", type:"LAND", covers:["관악구"], phone:"02-879-6612", address:"서울 관악구 관악로 145"},
+    {name:"서초구청 부동산정보과", type:"LAND", covers:["서초구"], phone:"02-2155-6905", address:"서울 서초구 남부순환로 2584"},
+    {name:"강남구청 부동산정보과", type:"LAND", covers:["강남구"], phone:"02-3423-6306", address:"서울 강남구 학동로 426"},
+    {name:"송파구청 부동산정보과", type:"LAND", covers:["송파구"], phone:"02-2147-3058", address:"서울 송파구 올림픽로 326"},
+    {name:"강동구청 부동산정보과", type:"LAND", covers:["강동구"], phone:"02-3425-6182", address:"서울 강동구 성내로 25"},
+        // --- 경기도 및 인천 토지정보과 ---
+    {name:"수원시청 토지정보과", type:"LAND", covers:["수원시"], phone:"031-228-2152", address:"경기 수원시 팔달구 효원로 241"},
+    {name:"용인시청 토지정보과", type:"LAND", covers:["용인시"], phone:"031-324-2151", address:"경기 용인시 처인구 중부대로 1199"},
+    {name:"성남시청 토지정보과", type:"LAND", covers:["성남시"], phone:"031-729-3321", address:"경기 성남시 중원구 성남대로 997"},
+    {name:"고양시청 토지정보과", type:"LAND", covers:["고양시"], phone:"031-8075-2362", address:"경기 고양시 덕양구 고양시청로 10"},
+    {name:"화성시청 토지정보과", type:"LAND", covers:["화성시"], phone:"031-5189-2151", address:"경기 화성시 남양읍 시청로 159"},
+    {name:"부천시청 토지정보과", type:"LAND", covers:["부천시"], phone:"032-625-2442", address:"경기 부천시 원미구 길주로 210"},
+    {name:"남양주시청 부동산관리과", type:"LAND", covers:["남양주시"], phone:"031-590-2152", address:"경기 남양주시 경춘로 1037"},
+    {name:"안산시청 토지정보과", type:"LAND", covers:["안산시"], phone:"031-481-2152", address:"경기 안산시 단원구 화랑로 387"},
+    {name:"평택시청 토지정보과", type:"LAND", covers:["평택시"], phone:"031-8024-2821", address:"경기 평택시 경기대로 245"},
+    {name:"안양시청 토지정보과", type:"LAND", covers:["안양시"], phone:"031-8045-2152", address:"경기 안양시 동안구 시민대로 235"},
+    {name:"시흥시청 토지정보과", type:"LAND", covers:["시흥시"], phone:"031-310-2352", address:"경기 시흥시 시청로 20"},
+    {name:"파주시청 토지정보과", type:"LAND", covers:["파주시"], phone:"031-940-4871", address:"경기 파주시 시청로 50"},
+    {name:"김포시청 토지정보과", type:"LAND", covers:["김포시"], phone:"031-980-2151", address:"경기 김포시 사우중로 1"},
+    {name:"의정부시청 토지정보과", type:"LAND", covers:["의정부시"], phone:"031-828-2152", address:"경기 의정부시 시민로 1"},
+    {name:"광주시청 토지정보과", type:"LAND", covers:["광주시"], phone:"031-760-2152", address:"경기 광주시 행정타운로 50"},
+    {name:"인천 중구청 영종토지민원과", type:"LAND", covers:["중구"], phone:"032-760-7270", address:"인천 중구 운남서로 100"},
+    {name:"인천 남동구청 토지정보과", type:"LAND", covers:"남동구", phone:"032-453-2460", address:"인천 남동구 소래로 633"},
+    {name:"인천 부평구청 토지정보과", type:"LAND", covers:"부평구", phone:"032-509-6230", address:"인천 부평구 부평대로 168"},
+    {name:"광명시청 토지정보과", type:"LAND", covers:["광명시"], phone:"02-2680-2152", address:"경기 광명시 시청로 20"},
+    {name:"군포시청 토지정보과", type:"LAND", covers:["군포시"], phone:"031-390-0232", address:"경기 군포시 청백리길 6"},
+    {name:"하남시청 토지정보과", type:"LAND", covers:["하남시"], phone:"031-790-6152", address:"경기 하남시 아리수로 500"},
+    {name:"오산시청 토지정보과", type:"LAND", covers:["오산시"], phone:"031-8036-7281", address:"경기 오산시 성호대로 141"},
+    {name:"이천시청 토지정보과", type:"LAND", covers:["이천시"], phone:"031-644-2141", address:"경기 이천시 부악로 40"},
+    {name:"안성시청 토지민원과", type:"LAND", covers:["안성시"], phone:"031-678-2891", address:"경기 안성시 시청길 25"},
+    {name:"의왕시청 민원지적과", type:"LAND", covers:["의왕시"], phone:"031-345-2152", address:"경기 의왕시 시청로 11"},
+    {name:"양주시청 토지관리과", type:"LAND", covers:["양주시"], phone:"031-8082-6201", address:"경기 양주시 부흥로 1533"},
+    {name:"구리시청 토지정보과", type:"LAND", covers:["구리시"], phone:"031-550-2152", address:"경기 구리시 아차산로 439"},
+    {name:"포천시청 토지정보과", type:"LAND", covers:["포천시"], phone:"031-538-2141", address:"경기 포천시 중앙로 87"},
+    {name:"동두천시청 민원봉사과", type:"LAND", covers:["동두천시"], phone:"031-860-2131", address:"경기 동두천시 방죽로 23"},
+    {name:"과천시청 민원봉사과", type:"LAND", covers:["과천시"], phone:"02-3677-2141", address:"경기 과천시 관문로 69"},
+    {name:"가평군청 민원지적과", type:"LAND", covers:["가평군"], phone:"031-580-2141", address:"경기 가평군 가평읍 석봉로 181"},
+    {name:"양평군청 토지정보과", type:"LAND", covers:["양평군"], phone:"031-770-2141", address:"경기 양평군 양평읍 군청앞길 2"},
+    {name:"연천군청 종합민원과", type:"LAND", covers:["연천군"], phone:"031-839-2141", address:"경기 연천군 연천읍 연천로 220"},
+    {name:"여주시청 행복민원과", type:"LAND", covers:["여주시"], phone:"031-887-2141", address:"경기 여주시 세종로 1"},
+        // --- 강원권 ---
+    {name:"춘천시청 토지정보과", type:"LAND", covers:["춘천시"], phone:"033-250-3236", address:"강원 춘천시 시청길 11"},
+    {name:"원주시청 토지정보과", type:"LAND", covers:["원주시"], phone:"033-737-3551", address:"강원 원주시 시청로 1"},
+    {name:"강릉시청 민원지적과", type:"LAND", covers:["강릉시"], phone:"033-640-5121", address:"강원 강릉시 강릉대로 33"},
+    {name:"홍천군청 종합민원과", type:"LAND", covers:["홍천군"], phone:"033-430-2213", address:"강원 홍천군 홍천읍 석화로 93"},
+    {name:"횡성군청 토지재산과", type:"LAND", covers:["횡성군"], phone:"033-340-2212", address:"강원 횡성군 횡성읍 태기로 15"},
+    {name:"평창군청 종합민원과", type:"LAND", covers:["평창군"], phone:"033-330-2443", address:"강원 평창군 평창읍 군청길 77"},
+    {name:"철원군청 민원봉사과", type:"LAND", covers:["철원군"], phone:"033-450-5161", address:"강원 철원군 갈말읍 삼봉로 83"},
+    {name:"동해시청 민원지적과", type:"LAND", covers:["동해시"], phone:"033-530-2141", address:"강원 동해시 천곡로 77"},
+    {name:"태백시청 민원봉사과", type:"TAX", covers:["태백시"], phone:"033-550-2141", address:"강원 태백시 태백산로 4789"},
+    {name:"속초시청 민원지적과", type:"LAND", covers:["속초시"], phone:"033-639-2141", address:"강원 속초시 중앙로 183"},
+    {name:"삼척시청 민원지적과", type:"LAND", covers:["삼척시"], phone:"033-570-3241", address:"강원 삼척시 중앙로 292"},
+    {name:"영월군청 종합민원과", type:"LAND", covers:["영월군"], phone:"033-370-2241", address:"강원 영월군 영월읍 하송로 64"},
+    {name:"정선군청 종합민원과", type:"LAND", covers:["정선군"], phone:"033-560-2241", address:"강원 정선군 정선읍 봉양로 12"},
+    {name:"인제군청 종합민원과", type:"LAND", covers:["인제군"], phone:"033-460-2241", address:"강원 인제군 인제읍 비봉로 44번길 10"},
+    {name:"고성군청 종합민원과", type:"LAND", covers:["고성군"], phone:"033-680-3241", address:"강원 고성군 간성읍 간성로 67"},
+    {name:"양양군청 민원봉사과", type:"LAND", covers:["양양군"], phone:"033-670-2241", address:"강원 양양군 양양읍 군청길 1"},
+    {name:"화천군청 민원봉사과", type:"LAND", covers:["화천군"], phone:"033-440-2241", address:"강원 화천군 화천읍 가화로 101"},
+    {name:"양구군청 종합민원과", type:"LAND", covers:["양구군"], phone:"033-480-2241", address:"강원 양구군 양구읍 관공서로 38"},
 
-    if(district) {
-        html += `
-            <div class="recommend-section">
-                <span class="recommend-title">💡 해당 지역 추가 안내</span>
-                <div class="recommend-card">
-                    <span>${district}청 토지정보과</span>
-                    <small>임대차 계약 신고 및 공시지가 관련 문의</small>
-                </div>
-                <div class="recommend-card">
-                    <span>${district} 관할 세무서</span>
-                    <small>주택 임대소득세 및 세무 관련 문의</small>
-                </div>
-            </div>`;
-    }
+    // --- 충청권 ---
+    {name:"청주시청 토지정보과", type:"LAND", covers:["청주시"], phone:"043-201-2462", address:"충북 청주시 상당구 상당로 155"},
+    {name:"충주시청 토지정보과", type:"LAND", covers:["충주시"], phone:"043-850-5471", address:"충북 충주시 으뜸로 21"},
+    {name:"제천시청 민원지적과", type:"LAND", covers:["제천시"], phone:"043-641-5882", address:"충북 제천시 내토로 295"},
+    {name:"보은군청 민원과", type:"LAND", covers:["보은군"], phone:"043-540-3072", address:"충북 보은군 보은읍 군청길 38"},
+    {name:"옥천군청 종합민원과", type:"LAND", covers:["옥천군"], phone:"043-730-3132", address:"충북 옥천군 옥천읍 중앙로 99"},
+    {name:"천안시청 토지정보과", type:"LAND", covers:["천안시"], phone:"041-521-5271", address:"충남 천안시 서북구 번영로 156"},
+    {name:"공주시청 토지정보과", type:"LAND", covers:["공주시"], phone:"041-840-8451", address:"충남 공주시 봉황로 1"},
+    {name:"아산시청 토지관리과", type:"LAND", covers:["아산시"], phone:"041-540-2152", address:"충남 아산시 시민로 456"},
+    {name:"예산군청 민원봉사과", type:"LAND", covers:["예산군"], phone:"041-339-7171", address:"충남 예산군 예산읍 군청로 22"},
+    {name:"태안군청 민원봉사과", type:"LAND", covers:["태안군"], phone:"041-670-2151", address:"충남 태안군 태안읍 군청로 1"},
+    {name:"서산시청 토지정보과", type:"LAND", covers:["서산시"], phone:"041-660-2141", address:"충남 서산시 관아문길 1"},
+    {name:"논산시청 토지관리과", type:"LAND", covers:["논산시"], phone:"041-746-5141", address:"충남 논산시 시민로 190"},
+    {name:"당진시청 토지관리과", type:"LAND", covers:["당진시"], phone:"041-350-3141", address:"충남 당진시 시청로 1"},
+    {name:"보령시청 민원지적과", type:"LAND", covers:["보령시"], phone:"041-930-3141", address:"충남 보령시 성주산로 77"},
+    {name:"금산군청 민원지적과", type:"LAND", covers:["금산군"], phone:"041-750-2141", address:"충남 금산군 금산읍 군청길 13"},
+    {name:"부여군청 민원봉사과", type:"LAND", covers:["부여군"], phone:"041-830-2141", address:"충남 부여군 부여읍 성왕로 198"},
+    {name:"서천군청 민원봉사과", type:"LAND", covers:["서천군"], phone:"041-950-4141", address:"충남 서천군 서천읍 군청로 57"},
+    {name:"청양군청 민원봉사과", type:"LAND", covers:["청양군"], phone:"041-940-2141", address:"충남 청양군 청양읍 문화예술로 222"},
+    {name:"홍성군청 민원지적과", type:"LAND", covers:["홍성군"], phone:"041-630-1241", address:"충남 홍성군 홍성읍 아문길 27"},
+    {name:"계룡시청 민원봉사과", type:"LAND", covers:["계룡시"], phone:"042-840-2141", address:"충남 계룡시 장안로 210"},
+    {name:"영동군청 민원과", type:"LAND", covers:["영동군"], phone:"043-740-3141", address:"충북 영동군 영동읍 기상청길 20"},
+    {name:"진천군청 민원과", type:"LAND", covers:["진천군"], phone:"043-539-3141", address:"충북 진천군 진천읍 상산로 13"},
+    {name:"괴산군청 민원지적과", type:"LAND", covers:["괴산군"], phone:"043-830-3141", address:"충북 괴산군 괴산읍 임꺽정로 90"},
+    {name:"음성군청 민원과", type:"LAND", covers:["음성군"], phone:"043-871-3141", address:"충북 음성군 음성읍 중앙로 173"},
+    {name:"단양군청 민원과", type:"LAND", covers:["단양군"], phone:"043-420-2141", address:"충북 단양군 단양읍 중앙로 10"},
+    {name:"증평군청 민원과", type:"LAND", covers:["증평군"], phone:"043-835-3141", address:"충북 증평군 증평읍 광장로 13"},
+        // --- 경상권 ---
+    {name:"포항시청 북구 민원지적과", type:"LAND", covers:["포항시", "북구"], phone:"054-240-7251", address:"경북 포항시 북구 중앙로 325"},
+    {name:"경주시청 토지정보과", type:"LAND", covers:["경주시"], phone:"054-779-6251", address:"경북 경주시 양정로 260"},
+    {name:"김천시청 열린민원과", type:"LAND", covers:["김천시"], phone:"054-420-6611", address:"경북 김천시 시청로 1"},
+    {name:"안동시청 토지정보과", type:"LAND", covers:["안동시"], phone:"054-840-5081", address:"경북 안동시 퇴계로 115"},
+    {name:"구미시청 토지정보과", type:"LAND", covers:["구미시"], phone:"054-480-6311", address:"경북 구미시 송정대로 55"},
+    {name:"경산시청 토지정보과", type:"LAND", covers:["경산시"], phone:"053-810-5751", address:"경북 경산시 남매로 159"},
+    {name:"의성군청 민원과", type:"LAND", covers:["의성군"], phone:"054-830-6151", address:"경북 의성군 의성읍 군청길 31"},
+    {name:"칠곡군청 민원봉사과", type:"LAND", covers:["칠곡군"], phone:"054-979-6151", address:"경북 칠곡군 왜관읍 군청길 1"},
+    {name:"창원시청 성산구 민원지적과", type:"LAND", covers:["창원시", "성산구"], phone:"055-272-4251", address:"경남 창원시 성산구 창이대로 532번길 7"},
+    {name:"진주시청 토지정보과", type:"LAND", covers:["진주시"], phone:"055-749-8451", address:"경남 진주시 동진로 155"},
+    {name:"통영시청 정보통신과(지적)", type:"LAND", covers:["통영시"], phone:"055-650-3251", address:"경남 통영시 해미당1길 33"},
+    {name:"김해시청 토지정보과", type:"LAND", covers:["김해시"], phone:"055-330-3751", address:"경남 김해시 김해대로 2401"},
+    {name:"거제시청 민원지적과", type:"LAND", covers:["거제시"], phone:"055-639-3601", address:"경남 거제시 계룡로 125"},
+    {name:"양산시청 토지정보과", type:"LAND", covers:["양산시"], phone:"055-392-2351", address:"경남 양산시 시청로 2"},
+    {name:"함안군청 종합민원과", type:"LAND", covers:["함안군"], phone:"055-580-2151", address:"경남 함안군 가야읍 말산로 1"},
+    {name:"창녕군청 민원봉사과", type:"LAND", covers:["창녕군"], phone:"055-530-1301", address:"경남 창녕군 창녕읍 군청길 1"},
+    {name:"남해군청 민원지적과", type:"LAND", covers:["남해군"], phone:"055-860-3001", address:"경남 남해군 남해읍 망운로9번길 12"}
+    // --- 경상북도 ---
+    {name:"영주시청 토지정보과", type:"LAND", covers:["영주시"], phone:"054-639-6141", address:"경북 영주시 시청로 1"},
+    {name:"영천시청 지적과", type:"LAND", covers:["영천시"], phone:"054-330-6141", address:"경북 영천시 시청로 16"},
+    {name:"상주시청 민원지적과", type:"LAND", covers:["상주시"], phone:"054-537-7141", address:"경북 상주시 상산로 223"},
+    {name:"문경시청 종합민원과", type:"LAND", covers:["문경시"], phone:"054-550-6141", address:"경북 문경시 당교로 225"},
+    {name:"군위군청 민원봉사과", type:"LAND", covers:["군위군"], phone:"054-380-6141", address:"대구 군위군 군위읍 군청로 200"},
+    {name:"청송군청 종합민원과", type:"LAND", covers:["청송군"], phone:"054-870-6141", address:"경북 청송군 청송읍 군청로 51"},
+    {name:"영양군청 종합민원과", type:"LAND", covers:["영양군"], phone:"054-680-6141", address:"경북 영양군 영양읍 군청길 22"},
+    {name:"영덕군청 종합민원과", type:"LAND", covers:["영덕군"], phone:"054-730-6141", address:"경북 영덕군 영덕읍 군청길 116"},
+    {name:"청도군청 민원과", type:"LAND", covers:["청도군"], phone:"054-370-6141", address:"경북 청도군 청도읍 청화로 70"},
+    {name:"고령군청 민원과", type:"LAND", covers:["고령군"], phone:"054-950-6141", address:"경북 고령군 대가야읍 대가야로 601"},
+    {name:"성주군청 민원봉사과", type:"LAND", covers:["성주군"], phone:"054-930-6141", address:"경북 성주군 성주읍 성주로 3200"},
+    {name:"예천군청 종합민원과", type:"LAND", covers:["예천군"], phone:"054-650-6141", address:"경북 예천군 예천읍 군청길 1"},
+    {name:"봉화군청 종합민원과", type:"LAND", covers:["봉화군"], phone:"054-679-6141", address:"경북 봉화군 봉화읍 봉화로 1111"},
+    {name:"울진군청 민원지적과", type:"LAND", covers:["울진군"], phone:"054-789-6141", address:"경북 울진군 울진읍 울진중앙로 121"},
+    {name:"울릉군청 민원지적과", type:"LAND", covers:["울릉군"], phone:"054-790-6141", address:"경북 울릉군 울릉읍 도동길 143"},
+
+    // --- 경상남도 ---
+    {name:"사천시청 토지관리과", type:"LAND", covers:["사천시"], phone:"055-831-2141", address:"경남 사천시 용현면 시청로 77"},
+    {name:"밀양시청 민원지적과", type:"LAND", covers:["밀양시"], phone:"055-359-5141", address:"경남 밀양시 밀양대로 2044"},
+    {name:"의령군청 민원봉사과", type:"LAND", covers:["의령군"], phone:"055-570-2141", address:"경남 의령군 의령읍 의병로 8길 44"},
+    {name:"고성군청 열린민원과", type:"LAND", covers:["고성군"], phone:"055-670-2141", address:"경남 고성군 고성읍 성내로 130"},
+    {name:"하동군청 민원과", type:"LAND", covers:["하동군"], phone:"055-880-2141", address:"경남 하동군 하동읍 군청로 23"},
+    {name:"산청군청 민원과", type:"LAND", covers:["산청군"], phone:"055-970-6141", address:"경남 산청군 산청읍 산청대로 1391"},
+    {name:"함양군청 민원봉사과", type:"LAND", covers:["함양군"], phone:"055-960-4141", address:"경남 함양군 함양읍 고운로 35"},
+    {name:"거창군청 민원소통과", type:"LAND", covers:["거창군"], phone:"055-940-3141", address:"경남 거창군 거창읍 중앙로 103"},
+    {name:"합천군청 민원봉사과", type:"LAND", covers:["합천군"], phone:"055-930-3141", address:"경남 합천군 합천읍 중앙로 63"}
+    // --- 전북특별자치도 ---
+    {name:"정읍시청 종합민원과", type:"LAND", covers:["정읍시"], phone:"063-539-5341", address:"전북 정읍시 충정로 234"},
+    {name:"남원시청 민원과", type:"LAND", covers:["남원시"], phone:"063-620-6141", address:"전북 남원시 시청로 60"},
+    {name:"김제시청 민원지적과", type:"LAND", covers:["김제시"], phone:"063-540-3141", address:"전북 김제시 중앙로 40"},
+    {name:"진안군청 민원봉사과", type:"LAND", covers:["진안군"], phone:"063-430-2241", address:"전북 진안군 진안읍 중앙로 67"},
+    {name:"무주군청 민원봉사과", type:"LAND", covers:["무주군"], phone:"063-320-2241", address:"전북 무주군 무주읍 주계로 97"},
+    {name:"장수군청 민원과", type:"LAND", covers:["장수군"], phone:"063-350-2141", address:"전북 장수군 장수읍 호비로 10"},
+    {name:"임실군청 민원봉사과", type:"LAND", covers:["임실군"], phone:"063-640-2141", address:"전북 임실군 임실읍 수정로 30"},
+    {name:"순창군청 민원과", type:"LAND", covers:["순창군"], phone:"063-650-1241", address:"전북 순창군 순창읍 경천로 33"},
+    {name:"고창군청 종합민원과", type:"LAND", covers:["고창군"], phone:"063-560-2141", address:"전북 고창군 고창읍 중앙로 245"},
+
+    // --- 전라남도 ---
+    {name:"광양시청 민원지적과", type:"LAND", covers:["광양시"], phone:"061-797-2141", address:"전남 광양시 시청로 33"},
+    {name:"담양군청 민원봉사과", type:"LAND", covers:["담양군"], phone:"061-380-3141", address:"전남 담양군 담양읍 추성로 1371"},
+    {name:"곡성군청 민원봉사과", type:"LAND", covers:["곡성군"], phone:"061-360-3141", address:"전남 곡성군 곡성읍 군청로 1"},
+    {name:"구례군청 종합민원과", type:"LAND", covers:["구례군"], phone:"061-780-2141", address:"전남 구례군 구례읍 봉성로 1"},
+    {name:"보성군청 종합민원과", type:"LAND", covers:["보성군"], phone:"061-850-5141", address:"전남 보성군 보성읍 송재로 165"},
+    {name:"화순군청 행복민원과", type:"LAND", covers:["화순군"], phone:"061-379-3141", address:"전남 화순군 화순읍 동헌길 23"},
+    {name:"장흥군청 민원봉사과", type:"LAND", covers:["장흥군"], phone:"061-860-0141", address:"전남 장흥군 장흥읍 장흥로 21"},
+    {name:"강진군청 민원봉사과", type:"LAND", covers:["강진군"], phone:"061-430-3141", address:"전남 강진군 강진읍 군청길 1"},
+    {name:"해남군청 종합민원과", type:"LAND", covers:["해남군"], phone:"061-530-5241", address:"전남 해남군 해남읍 군청길 1"},
+    {name:"완도군청 민원봉사과", type:"LAND", covers:["완도군"], phone:"061-550-5141", address:"전남 완도군 완도읍 청해진남로 51"},
+    {name:"진도군청 민원봉사과", type:"LAND", covers:["진도군"], phone:"061-540-3141", address:"전남 진도군 진도읍 철마길 25"},
+    {name:"신안군청 민원봉사과", type:"LAND", covers:["신안군"], phone:"061-240-8141", address:"전남 신안군 압해읍 천사로 1004"},
+    /* 여기에 세무서/토지과 데이터를 아래 형식으로 넣으세요 */
+        // --- 서울특별시 세무서 ---
+    {name:"종로세무서", type:"TAX", covers:["종로구"], phone:"02-760-9200", address:"서울 종로구 삼일대로 401-11"},
+    {name:"남대문세무서", type:"TAX", covers:["중구"], phone:"02-2260-0200", address:"서울 중구 후암로 110"},
+    {name:"용산세무서", type:"TAX", covers:["용산구"], phone:"02-799-2200", address:"서울 용산구 한강대로 167"},
+    {name:"성동세무서", type:"TAX", covers:["성동구", "광진구"], phone:"02-2260-3200", address:"서울 성동구 광나루로 297"},
+    {name:"동대문세무서", type:"TAX", covers:["동대문구"], phone:"02-2260-5200", address:"서울 동대문구 약령시로 159"},
+    {name:"중랑세무서", type:"TAX", covers:["중랑구"], phone:"02-2260-7200", address:"서울 중랑구 망우로 176"},
+    {name:"성북세무서", type:"TAX", covers:["성북구"], phone:"02-920-0200", address:"서울 성북구 삼선교로16길 10"},
+    {name:"도봉세무서", type:"TAX", covers:["강북구", "도봉구"], phone:"02-901-1200", address:"서울 강북구 도봉로 257"},
+    {name:"노원세무서", type:"TAX", covers:["노원구"], phone:"02-3392-7200", address:"서울 노원구 노해로 458"},
+    {name:"은평세무서", type:"TAX", covers:["은평구"], phone:"02-380-0200", address:"서울 은평구 서오릉로 7"},
+    {name:"서대문세무서", type:"TAX", covers:["서대문구"], phone:"02-330-3200", address:"서울 서대문구 프랑스로 48"},
+    {name:"마포세무서", type:"TAX", covers:["마포구"], phone:"02-320-8200", address:"서울 마포구 독막로 234"},
+    {name:"양천세무서", type:"TAX", covers:["양천구"], phone:"02-2650-3200", address:"서울 양천구 목동동로 165"},
+    {name:"강서세무서", type:"TAX", covers:["강서구"], phone:"02-2630-8200", address:"서울 강서구 화곡로 302"},
+    {name:"구로세무서", type:"TAX", covers:["구로구"], phone:"02-2630-7200", address:"서울 영등포구 경인로 778"},
+    {name:"금천세무서", type:"TAX", covers:["금천구"], phone:"02-2106-2200", address:"서울 금천구 시흥대로 152길 11-16"},
+    {name:"영등포세무서", type:"TAX", covers:["영등포구"], phone:"02-2630-9200", address:"서울 영등포구 선유동1로 38"},
+    {name:"동작세무서", type:"TAX", covers:["동작구"], phone:"02-820-2200", address:"서울 동작구 대방동길 62"},
+    {name:"관악세무서", type:"TAX", covers:["관악구"], phone:"02-2105-0200", address:"서울 관악구 문성로 187"},
+    {name:"강남세무서", type:"TAX", covers:["강남구"], phone:"02-519-4200", address:"서울 강남구 학동로 425"},
+    {name:"삼성세무서", type:"TAX", covers:["강남구"], phone:"02-563-3200", address:"서울 강남구 테헤란로 114길 15"},
+    {name:"역삼세무서", type:"TAX", covers:["강남구"], phone:"02-2112-1200", address:"서울 강남구 테헤란로 114길 15"},
+    {name:"서초세무서", type:"TAX", covers:["서초구"], phone:"02-2260-4200", address:"서울 서초구 강남대로 501"},
+    {name:"반포세무서", type:"TAX", covers:["서초구"], phone:"02-590-4200", address:"서울 서초구 사평대로 156"},
+    {name:"송파세무서", type:"TAX", covers:["송파구"], phone:"02-2260-8200", address:"서울 송파구 강동대로 62"},
+    {name:"잠실세무서", type:"TAX", covers:["송파구"], phone:"02-2260-5200", address:"서울 송파구 올림픽로 35길 143"},
+    {name:"강동세무서", type:"TAX", covers:["강동구"], phone:"02-2260-6200", address:"서울 강동구 천호대로 1139"},
+        // --- 경기도 및 인천 세무서 ---
+    {name:"인천세무서", type:"TAX", covers:["중구", "동구", "미추홀구"], phone:"032-760-2200", address:"인천 미추홀구 독배로 430"},
+    {name:"북인천세무서", type:"TAX", covers:["계양구"], phone:"032-550-2200", address:"인천 계양구 계양문화로 59"},
+    {name:"서인천세무서", type:"TAX", covers:["서구"], phone:"032-560-2200", address:"인천 서구 서달로 167"},
+    {name:"남인천세무서", type:"TAX", covers:["연수구", "남동구"], phone:"032-453-2200", address:"인천 남동구 인하로 539"},
+    {name:"수원세무서", type:"TAX", covers:["팔달구", "장안구"], phone:"031-250-6200", address:"경기 수원시 팔달구 매산로 100"},
+    {name:"동수원세무서", type:"TAX", covers:["영통구"], phone:"031-218-0200", address:"경기 수원시 영통구 봉영로 1606"},
+    {name:"성남세무서", type:"TAX", covers:["수정구", "중원구"], phone:"031-730-6200", address:"경기 성남시 수정구 희망로 458"},
+    {name:"분당세무서", type:"TAX", covers:["분당구"], phone:"031-788-0200", address:"경기 성남시 분당구 분당로 55"},
+    {name:"의정부세무서", type:"TAX", covers:["의정부시", "양주시"], phone:"031-820-2200", address:"경기 의정부시 신곡로 54"},
+    {name:"안양세무서", type:"TAX", covers:["만안구"], phone:"031-463-0200", address:"경기 안양시 만안구 냉천로 53"},
+    {name:"동안양세무서", type:"TAX", covers:["동안구", "과천시"], phone:"031-389-1200", address:"경기 안양시 동안구 관평로 212번길 53"},
+    {name:"부천세무서", type:"TAX", covers:["부천시"], phone:"032-320-5200", address:"경기 부천시 원미구 계남로 168"},
+    {name:"광명세무서", type:"TAX", covers:["광명시"], phone:"02-2610-1200", address:"경기 광명시 시청로 11"},
+    {name:"평택세무서", type:"TAX", covers:["평택시", "안성시"], phone:"031-650-0200", address:"경기 평택시 죽백6로 6"},
+    {name:"안산세무서", type:"TAX", covers:["단원구"], phone:"031-412-2200", address:"경기 안산시 단원구 화랑로 350"},
+    {name:"동안산세무서", type:"TAX", covers:["상록구"], phone:"031-500-1200", address:"경기 안산시 상록구 광덕서로 102"},
+    {name:"고양세무서", type:"TAX", covers:["덕양구"], phone:"031-900-6200", address:"경기 고양시 덕양구 화신로272번길 58"},
+    {name:"동고양세무서", type:"TAX", covers:["일산동구", "일산서구"], phone:"031-910-6200", address:"경기 고양시 일산동구 중앙로 1238"},
+    {name:"시흥세무서", type:"TAX", covers:["시흥시"], phone:"031-488-0200", address:"경기 시흥시 비둘기공원5길 14"},
+    {name:"남양주세무서", type:"TAX", covers:["남양주시", "가평군"], phone:"031-590-6200", address:"경기 남양주시 다산중앙로82번안길 75"},
+    {name:"용인세무서", type:"TAX", covers:["처인구", "기흥구"], phone:"031-329-0200", address:"경기 용인시 처인구 중부대로 1161"},
+    {name:"기흥세무서", type:"TAX", covers:["기흥구"], phone:"031-547-2200", address:"경기 용인시 기흥구 흥덕2로 80"},
+    {name:"이천세무서", type:"TAX", covers:["이천시", "여주시"], phone:"031-630-0200", address:"경기 이천시 영창로 146"},
+    {name:"화성세무서", type:"TAX", covers:["화성시"], phone:"031-379-3200", address:"경기 화성시 떡전교로 86"},
+    {name:"동화성세무서", type:"TAX", covers:["화성시", "오산시"], phone:"031-5181-1200", address:"경기 화성시 동탄오산로 86-3"},
+    {name:"김포세무서", type:"TAX", covers:["김포시"], phone:"031-999-0200", address:"경기 김포시 태장로 796"},
+    {name:"파주세무서", type:"TAX", covers:["파주시"], phone:"031-956-0200", address:"경기 파주시 문화로 90"},
+        // --- 강원권 ---
+    {name:"춘천세무서", type:"TAX", covers:["춘천시", "화천군", "양구군", "철원군"], phone:"033-250-0200", address:"강원 춘천시 중앙로 16"},
+    {name:"원주세무서", type:"TAX", covers:["원주시", "횡성군"], phone:"033-741-0200", address:"강원 원주시 북원로 2322"},
+    {name:"강릉세무서", type:"TAX", covers:["강릉시", "양양군"], phone:"033-649-0200", address:"강원 강릉시 경강로 2021"},
+    {name:"속초세무서", type:"TAX", covers:["속초시", "고성군", "인제군"], phone:"033-639-0200", address:"강원 속초시 중앙로 183"},
+    {name:"삼척세무서", type:"TAX", covers:["삼척시", "동해시"], phone:"033-570-0200", address:"강원 삼척시 중앙로 292"},
+    {name:"영월세무서", type:"TAX", covers:["영월군", "정선군", "태백시", "평창군"], phone:"033-370-0200", address:"강원 영월군 영월읍 하송로 64"},
+
+    // --- 충청권 ---
+    {name:"대전세무서", type:"TAX", covers:["동구", "대덕구"], phone:"042-220-9200", address:"대전 중구 보문로 335"},
+    {name:"서대전세무서", type:"TAX", covers:["중구"], phone:"042-220-7200", address:"대전 중구 보문로 335"},
+    {name:"북대전세무서", type:"TAX", covers:["유성구", "대덕구"], phone:"042-611-7200", address:"대전 유성구 한남로 225"},
+    {name:"청주세무서", type:"TAX", covers:["상당구", "청원구", "보은군", "괴산군", "증평군"], phone:"043-230-1200", address:"충북 청주시 서원구 분평로 4"},
+    {name:"동청주세무서", type:"TAX", covers:["청원구"], phone:"043-251-2200", address:"충북 청주시 청원구 1순환로 162"},
+    {name:"충주세무서", type:"TAX", covers:["충주시", "음성군"], phone:"043-840-0200", address:"충북 충주시 금봉대로 611"},
+    {name:"제천세무서", type:"TAX", covers:["제천시", "단양군"], phone:"043-640-0200", address:"충북 제천시 내토로 295"},
+    {name:"영동세무서", type:"TAX", covers:["영동군", "옥천군"], phone:"043-740-0200", address:"충북 영동군 영동읍 기상청길 20"},
+    {name:"천안세무서", type:"TAX", covers:["동남구"], phone:"041-559-0200", address:"충남 천안시 동남구 청수14로 80"},
+    {name:"아산세무서", type:"TAX", covers:["아산시"], phone:"041-536-1200", address:"충남 아산시 배방읍 희망로 46번길 45-29"},
+    {name:"공주세무서", type:"TAX", covers:["공주시", "청양군"], phone:"041-850-0200", address:"충남 공주시 봉황로 1"},
+    {name:"논산세무서", type:"TAX", covers:["논산시", "계룡시", "부여군"], phone:"041-730-0200", address:"충남 논산시 시민로 190"},
+    {name:"서산세무서", type:"TAX", covers:["서산시", "태안군"], phone:"041-660-0200", address:"충남 서산시 호수공원1로 17"},
+    {name:"보령세무서", type:"TAX", covers:["보령시", "서천군"], phone:"041-930-0200", address:"충남 보령시 대항길 31"},
+    {name:"홍성세무서", type:"TAX", covers:["홍성군", "예산군"], phone:"041-630-0200", address:"충남 홍성군 홍성읍 문화로 112"},
+    {name:"예산세무서", type:"TAX", covers:["예산군"], phone:"041-330-0200", address:"충남 예산군 예산읍 군청로 22"},
+    {name:"당진세무서", type:"TAX", covers:["당진시"], phone:"041-350-0200", address:"충남 당진시 시청로 1"},
+        // --- 전라권 ---
+    {name:"광주세무서", type:"TAX", covers:["동구", "남구"], phone:"062-231-0200", address:"광주 동구 독립로 281"},
+    {name:"서광주세무서", type:"TAX", covers:["서구", "광산구"], phone:"062-600-3200", address:"광주 서구 상무민주로 77"},
+    {name:"북광주세무서", type:"TAX", covers:["북구", "담양군", "장성군"], phone:"062-610-2200", address:"광주 북구 첨단과기로 208번길 43"},
+    {name:"광산세무서", type:"TAX", covers:["광산구", "영광군"], phone:"062-607-2200", address:"광주 광산구 앰코로 11"},
+    {name:"전주세무서", type:"TAX", covers:["완산구", "완주군", "진안군", "장수군", "임실군"], phone:"063-250-0200", address:"전북 전주시 완산구 백제대로 715"},
+    {name:"북전주세무서", type:"TAX", covers:["덕진구", "완주군"], phone:"063-270-0200", address:"전북 전주시 덕진구 기린대로 488"},
+    {name:"익산세무서", type:"TAX", covers:["익산시"], phone:"063-840-0200", address:"전북 익산시 익산대로 444"},
+    {name:"군산세무서", type:"TAX", covers:["군산시"], phone:"063-450-0200", address:"전북 군산시 조촌로 114"},
+    {name:"정읍세무서", type:"TAX", covers:["정읍시", "고창군", "부안군"], phone:"063-530-0200", address:"전북 정읍시 중앙로 170"},
+    {name:"남원세무서", type:"TAX", covers:["남원시", "순창군", "무주군"], phone:"063-620-0200", address:"전북 남원시 시청로 60"},
+    {name:"목포세무서", type:"TAX", covers:["목포시", "무안군", "신안군", "영암군"], phone:"061-240-0200", address:"전남 목포시 양을로 203"},
+    {name:"여수세무서", type:"TAX", covers:["여수시"], phone:"061-650-0200", address:"전남 여수시 시청로 1"},
+    {name:"순천세무서", type:"TAX", covers:["순천시", "구례군", "보성군", "고흥군"], phone:"061-720-0200", address:"전남 순천시 장명로 30"},
+    {name:"나주세무서", type:"TAX", covers:["나주시", "화순군", "함평군"], phone:"061-330-0200", address:"전남 나주시 시청길 22"},
+    {name:"해남세무서", type:"TAX", covers:["해남군", "진도군", "완도군", "강진군", "장흥군"], phone:"061-530-0200", address:"전남 해남군 해남읍 군청길 1"},
+
+        // --- 경상권 ---
+    {name:"중부산세무서", type:"TAX", covers:["중구", "동구"], phone:"051-460-6200", address:"부산 중구 중앙대로 26"},
+    {name:"서부산세무서", type:"TAX", covers:["서구", "사하구"], phone:"051-240-8200", address:"부산 사하구 낙동대로 376"},
+    {name:"부산진세무서", type:"TAX", covers:["부산진구"], phone:"051-810-0200", address:"부산 부산진구 가야대로 713"},
+    {name:"수영세무서", type:"TAX", covers:["수영구", "연제구"], phone:"051-750-7200", address:"부산 연제구 토곡로 6"},
+    {name:"해운대세무서", type:"TAX", covers:["해운대구"], phone:"051-740-0200", address:"부산 해운대구 중동2로 11"},
+    {name:"대구세무서", type:"TAX", covers:["중구", "서구"], phone:"053-606-5200", address:"대구 중구 대창로 11"},
+    {name:"동대구세무서", type:"TAX", covers:["동구"], phone:"053-950-7200", address:"대구 동구 동촌로 140"},
+    {name:"서대구세무서", type:"TAX", covers:["서구", "달서구"], phone:"053-659-3200", address:"대구 달서구 두류공원로 242"},
+    {name:"남대구세무서", type:"TAX", covers:["남구", "달서구"], phone:"053-659-2200", address:"대구 달서구 월배로 439"},
+    {name:"북대구세무서", type:"TAX", covers:["북구", "군위군"], phone:"053-350-7200", address:"대구 북구 원대로 118"},
+    {name:"수성세무서", type:"TAX", covers:["수성구"], phone:"053-740-0200", address:"대구 수성구 들안로 235"},
+    {name:"울산세무서", type:"TAX", covers:["남구", "울주군"], phone:"052-226-5200", address:"울산 남구 돋질로 233"},
+    {name:"동울산세무서", type:"TAX", covers:["중구", "동구", "북구"], phone:"052-210-0200", address:"울산 북구 산업로 1025"},
+    {name:"창원세무서", type:"TAX", covers:["의창구", "성산구", "함안군", "의령군"], phone:"055-239-0200", address:"경남 창원시 성산구 상남로 155"},
+    {name:"마산세무서", type:"TAX", covers:["마산합포구", "마산회원구"], phone:"055-240-0200", address:"경남 창원시 마산합포구 해안대로 155"},
+    {name:"진주세무서", type:"TAX", covers:["진주시", "사천시", "남해군", "하동군", "산청군"], phone:"055-749-8200", address:"경남 진주시 동진로 155"},
+    {name:"포항세무서", type:"TAX", covers:["북구", "울릉군"], phone:"054-240-7200", address:"경북 포항시 북구 중앙로 325"},
+    {name:"경주세무서", type:"TAX", covers:["경주시"], phone:"054-779-6200", address:"경북 경주시 양정로 260"},
+    {name:"안동세무서", type:"TAX", covers:["안동시", "의성군", "청송군", "영양군", "봉화군"], phone:"054-840-5200", address:"경북 안동시 퇴계로 115"},
+    {name:"구미세무서", type:"TAX", covers:["구미시"], phone:"054-480-6200", address:"경북 구미시 송정대로 55"},
+    
+    // --- 제주 ---
+    {name:"제주세무서", type:"TAX", covers:["제주시", "서귀포시"], phone:"064-720-2200", address:"제주 제주시 청사로 59"}
+    };
+ if(district) {
+    // 매핑 데이터에서 찾기, 없으면 입력된 지역명 그대로 사용
+    const info = districtOfficeMap[district] || { 
+        office: `${district}청`, 
+        tax: `${district} 관할 세무서` 
+    };
+
+    html += `
+        <div class="recommend-section">
+            <span class="recommend-title">💡 해당 지역 추가 안내</span>
+            <div class="recommend-card">
+                <span>${info.office} 토지정보과</span>
+                <small>임대차 계약 신고 및 공시지가 관련 문의</small>
+            </div>
+            <div class="recommend-card">
+                <span>${info.tax}</span>
+                <small>주택 임대소득세 및 세무 관련 문의</small>
+            </div>
+        </div>`;
+}
     document.getElementById("result").innerHTML = html;
 }
 
@@ -218,3 +526,4 @@ document.addEventListener("DOMContentLoaded", function(){
 </script>
 </body>
 </html>
+

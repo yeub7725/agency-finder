@@ -153,8 +153,10 @@ function findNearest(lat, lng, fullAddress){
 }
 
 function displayResults(data, region, district) {
+    // 1. 제목 부분을 먼저 만듭니다.
     let html = `<span class="jurisdiction-info">📍 관할지역: ${region} ${district || ''}</span>`;
     
+    // 2. 상단: 한국부동산원, 법률구조공단 등 거리순으로 찾은 기관들을 먼저 보여줍니다.
     data.forEach(o => {
         let typeName = o.type === "REB" ? "부동산원" : (o.type === "LAKAS" ? "법률구조공단" : (o.type === "LH" ? "LH공사" : "지자체"));
         html += `
@@ -166,7 +168,35 @@ function displayResults(data, region, district) {
                 <p style="font-size:13px; color:#999;">직선거리 약 ${o.dist.toFixed(1)} km</p>
             </div>`;
     });
-const districtOfficeMap = {
+
+    // 3. 하단: [중요] 사용자가 검색한 '구(district)'에 맞는 구청과 세무서를 찾아서 추가합니다.
+    if(district) {
+        // Step 1에서 만든 localOffices 배열에서 데이터를 검색합니다.
+        const landInfo = localOffices.find(o => o.type === "LAND" && o.covers.includes(district));
+        const taxInfo = localOffices.find(o => o.type === "TAX" && o.covers.includes(district));
+
+        // 찾은 데이터가 있으면 이름을 쓰고, 없으면 기본 형식을 만듭니다.
+        const officeName = landInfo ? landInfo.name : `${district}청 토지정보과`;
+        const taxName = taxInfo ? taxInfo.name : `${district} 관할 세무서`;
+
+        html += `
+            <div class="recommend-section">
+                <span class="recommend-title">💡 해당 지역 추가 안내</span>
+                <div class="recommend-card">
+                    <span>${officeName}</span>
+                    <small>임대차 계약 신고 및 공시지가 관련 문의</small>
+                </div>
+                <div class="recommend-card">
+                    <span>${taxName}</span>
+                    <small>주택 임대소득세 및 세무 관련 문의</small>
+                </div>
+            </div>`;
+    }
+
+    // 4. 마지막으로 만들어진 모든 내용을 화면의 'result' 칸에 집어넣습니다.
+    document.getElementById("result").innerHTML = html;
+}
+const localOffices = [
     --- 서울특별시 토지정보과 ---
     {name:"종로구청 부동산정보과", type:"LAND", covers:["종로구"], phone:"02-2148-2902", address:"서울 종로구 삼일대로 401-11"},
     {name:"중구청 토지관리과", type:"LAND", covers:["중구"], phone:"02-3396-5912", address:"서울 중구 창경궁로 17"},
@@ -474,7 +504,7 @@ const districtOfficeMap = {
     const info = districtOfficeMap[district] || { 
         office: `${district}청`, 
         tax: `${district} 관할 세무서` 
-    };
+    ];
 
     html += `
         <div class="recommend-section">
@@ -526,5 +556,6 @@ document.addEventListener("DOMContentLoaded", function(){
 </script>
 </body>
 </html>
+
 
 

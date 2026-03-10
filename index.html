@@ -2,80 +2,72 @@
 <html lang="ko">
 <head>
     <meta charset="utf-8">
-    <title>관할기관 찾기 (임대차분쟁조정지원팀)</title>
+    <title>관할기관 통합 검색 시스템</title>
     <script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=d791798c38589fc7cdc6bce91d9369be&libraries=services"></script>
     <style>
-        /* 1. 전체 페이지 레이아웃 고정 (스크롤 방지) */
-        body, html { 
-            margin: 0; padding: 0; height: 100%; 
-            font-family: 'Malgun Gothic', sans-serif; 
-            overflow: hidden; /* 페이지 전체 스크롤 금지 */
-        }
+        /* 기본 레이아웃 */
+        body, html { margin: 0; padding: 0; height: 100%; font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif; overflow: hidden; }
         .main-wrapper { display: flex; height: 100vh; width: 100vw; }
 
-        /* 2. 사이드바 설정 (Flexbox 사용) */
+        /* 왼쪽 사이드바 영역 */
         #sidebar-search { 
-            width: 360px; min-width: 360px; 
-            border-right: 1px solid #ddd; 
-            display: flex; flex-direction: column; /* 요소를 세로로 배치 */
-            background-color: #f9f9f9; 
-            box-sizing: border-box;
+            width: 440px; min-width: 440px; 
+            border-right: 1px solid #e2e8f0; 
+            display: flex; flex-direction: column; 
+            background-color: #f8fafc; 
         }
 
-        /* 검색창 상단 영역 */
-        .search-header { padding: 15px 15px 10px 15px; background: #fff; }
-        h1 { font-size: 1.2rem; margin: 0 0 10px 0; color: #222; }
-        
+        /* 검색창 상단 */
+        .search-header { padding: 25px 20px; background: #fff; border-bottom: 1px solid #eee; }
+        h1 { font-size: 1.4rem; margin: 0 0 15px 0; color: #0f172a; letter-spacing: -1px; }
         .search-container { position: relative; width: 100%; }
         input#keyword { 
-            padding: 10px; width: 100%; font-size: 15px; 
-            border: 2px solid #ccc; border-radius: 8px; 
-            box-sizing: border-box; outline: none; 
+            padding: 15px; width: 100%; font-size: 17px; 
+            border: 2px solid #0056b3; border-radius: 10px; 
+            box-sizing: border-box; outline: none;
+            box-shadow: 0 2px 8px rgba(0,86,179,0.1);
         }
         
         /* 자동완성 목록 */
         #addressList { 
             position: absolute; top: 100%; left: 0; width: 100%; 
             border: 1px solid #bbb; background: white; z-index: 100; 
-            display: none; border-radius: 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); 
-            margin-top: 2px; max-height: 200px; overflow-y: auto;
+            display: none; border-radius: 8px; max-height: 250px; 
+            overflow-y: auto; box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            margin-top: 5px;
         }
-        .search-item { padding: 10px; border-bottom: 1px solid #eee; cursor: pointer; font-size: 14px; }
-        .search-item.active { background-color: #eef6ff; color: #007bff; font-weight: bold; }
+        .search-item { padding: 12px 15px; border-bottom: 1px solid #eee; cursor: pointer; font-size: 15px; }
+        .search-item:hover { background-color: #f0f7ff; }
 
-        /* 3. 검색 결과 영역 (내부 스크롤) */
-        #result { 
-            flex: 1; /* 남은 가운데 공간을 모두 차지 */
-            overflow-y: auto; /* 내용이 많아지면 여기만 스크롤 */
-            padding: 15px;
-            box-sizing: border-box;
-        }
-
-        /* 결과 카드 디자인 최적화 (줄간격 및 폰트) */
-        .jurisdiction-info { font-weight: bold; color: #e63946; margin-bottom: 10px; display: block; font-size: 0.9rem; }
-        .office-card { border: 1px solid #e1e1e1; padding: 10px; margin-bottom: 8px; border-radius: 8px; background-color: #fff; position: relative; }
-        .office-card h3 { margin: 0 0 4px 0; font-size: 14px; color: #333; }
-        .type-badge { position: absolute; top: 8px; right: 10px; font-size: 10px; padding: 2px 5px; border-radius: 4px; background: #eee; color: #666; }
-        .addr-text { font-size: 12px; color: #666; margin: 2px 0; line-height: 1.2; }
-        .phone-text { font-size: 14px; font-weight: bold; color: #0056b3; margin: 2px 0; display: block; }
+        /* 검색 결과 스크롤 영역 */
+        #result { flex: 1; overflow-y: auto; padding: 20px; box-sizing: border-box; }
+        .jurisdiction-label { font-weight: bold; color: #e11d48; margin-bottom: 15px; display: block; font-size: 1rem; }
         
-        .recommend-section { margin-top: 10px; padding-top: 10px; border-top: 1px solid #eee; }
-        .recommend-title { font-size: 12px; font-weight: bold; color: #2d6a4f; margin-bottom: 5px; display: block; }
-        .recommend-card { background: #f0f9f4; border: 1px solid #cce3d8; padding: 8px; border-radius: 6px; margin-bottom: 5px; }
-        .recommend-card span { font-size: 13px; color: #333; font-weight: bold; display: block; }
-        .recommend-card small { font-size: 11px; color: #666; display: block; }
-
-        /* 4. 최하단 고정 상담 센터 */
-        .constant-guide { 
-            background: #fff; border-top: 2px solid #ddd; 
-            padding: 12px 15px; box-sizing: border-box;
+        /* 기관 카드 디자인 */
+        .office-card { 
+            border: 1px solid #e2e8f0; padding: 22px; margin-bottom: 16px; 
+            border-radius: 14px; background-color: #fff; position: relative;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
         }
-        .constant-guide h4 { margin: 0 0 8px 0; font-size: 13px; color: #333; }
-        .guide-table { width: 100%; border-collapse: collapse; }
-        .guide-table td { padding: 2px 0; font-size: 12px; color: #444; }
+        /* 관할구역 매칭 시 강조 스타일 */
+        .office-card.matched { border: 2px solid #0056b3; background-color: #f0f7ff; }
+        
+        /* [이름 - 거리] 한 줄 배열 */
+        .title-group { display: flex; align-items: baseline; justify-content: space-between; }
+        .office-name { font-size: 20px; color: #1e293b; font-weight: 800; letter-spacing: -0.5px; }
+        .distance-text { font-size: 18px; color: #16a34a; font-weight: bold; } /* 2pt 작게, 그린 컬러 */
 
-        /* 5. 지도 영역 */
-        #content-area { flex: 1; background-color: #fff; position: relative; }
+        /* [전화번호] 강조 */
+        .phone-text { font-size: 19px; font-weight: bold; color: #2563eb; margin: 10px 0; display: block; }
+        /* [주소] */
+        .addr-text { font-size: 15px; color: #64748b; line-height: 1.5; margin: 0; word-break: keep-all; }
+        
+        /* 뱃지 스타일 */
+        .type-badge { font-size: 11px; padding: 2px 7px; border-radius: 4px; background: #cbd5e1; color: #334155; margin-left: 8px; vertical-align: middle; }
+        .match-badge { font-size: 11px; padding: 2px 7px; border-radius: 4px; background: #0056b3; color: #fff; margin-left: 5px; vertical-align: middle; }
+
+        /* 오른쪽 빈 공간 (추후 기능용) */
+        #content-area { flex: 1; background-color: #ffffff; }
     </style>
 </head>
 <body>
@@ -83,34 +75,28 @@
 <div class="main-wrapper">
     <div id="sidebar-search">
         <div class="search-header">
-            <h1>🏠 관할기관 찾기</h1>
+            <h1>🏠 관할기관 통합 검색</h1>
             <div class="search-container">
-                <input type="text" id="keyword" placeholder="지역명(읍면동)을 입력하세요" autocomplete="off">
+                <input type="text" id="keyword" placeholder="동/읍/면 이름을 입력하세요" autocomplete="off">
                 <div id="addressList"></div>
             </div>
         </div>
 
         <div id="result">
-            <p style="text-align:center; color:#999; font-size:13px; margin-top:50px;">지역을 검색하시면<br>관할 기관 정보가 표시됩니다.</p>
-        </div>
-
-        <div class="constant-guide">
-            <h4>📞 주요 상담 센터</h4>
-            <table class="guide-table">
-                <tr><td>한국부동산원</td><td><strong>1600-2828</strong></td></tr>
-                <tr><td>렌트홈 / LH공사</td><td><strong>1670-8004 / 1600-1004</strong></td></tr>
-                <tr><td>국세청 / 전자계약</td><td><strong>126 / 1833-4662</strong></td></tr>
-            </table>
+            <p style="text-align:center; color:#94a3b8; margin-top:100px; line-height:1.6;">
+                검색하신 지역의 <b>관할 구역 여부</b>를 우선 확인하고,<br>
+                추천 순위(부동산원>대법공>지자체>LH)에 따라<br>
+                가장 적합한 기관을 안내합니다.
+            </p>
         </div>
     </div>
 
-    <div id="content-area">
-        <div id="map" style="width:100%;height:100%;"></div>
-    </div>
+    <div id="content-area"></div>
 </div>
+
 <script>
-// 1. 데이터 및 초기 설정
-const offices = [
+const priorityOrder = { "부동산원": 1, "대법공": 2, "지자체": 3, "주택공사": 4 };
+const officeData = [
     {name:"한국부동산원 서울동부지사", type:"REB", covers:["서울"], lat:37.557698, lng:127.079226, phone:"02-3394-9870~3", address:"서울시 광진구 천호대로 549, 지타워 10층"},
     {name:"한국부동산원 고양지사", type:"REB", covers:["경기"], lat:37.652619, lng:126.776883, phone:"031-902-3573~5", address:"경기도 고양시 일산동구 중앙로 1187, 흥국생명빌딩 8층"},
     {name:"한국부동산원 성남지사", type:"REB", covers:["경기"], lat:37.411158, lng:127.128242, phone:"031-8017-8488~90", address:"경기도 성남시 분당구 야탑로 81번길 16"},
@@ -121,14 +107,17 @@ const offices = [
     {name:"한국부동산원 포항지사", type:"REB", covers:["경북"], lat:36.030918, lng:129.366140, phone:"054-275-9771~2", address:"경북 포항시 북구 중앙로 201, 한화생명빌딩 8층"},
     {name:"한국부동산원 울산지사", type:"REB", covers:["울산"], lat:35.53823, lng:129.31132, phone:"052-224-8872~4", address:"울산시 남구 북부순환대로 17, 남운프라자 906호"},
     {name:"한국부동산원 창원지사", type:"REB", covers:["경남"], lat:35.218066, lng:128.675982, phone:"055-289-0136~8", address:"창원시 성산구 중앙대로 32, 2층"},
+      // --- 한토공 ---
     {name:"한국토지주택공사 충북본부", type:"LH", covers:["충북"], lat:36.614249, lng:127.450780, phone:"043-905-1784", address:"충북 청주시 서원구 구룡산로 52번길 2, 303호"},
     {name:"한국토지주택공사 제주본부", type:"LH", covers:["제주"], lat:33.505062, lng:126.525532, phone:"064-901-3802", address:"제주시 중앙로 150, 대한항공제주사옥 3층"},
+      // --- 대법공 ---
     {name:"대한법률구조공단 서울중앙", type:"LAKAS", covers:["서울", "강원"], lat:37.494383, lng:127.013104, phone:"02-6941-3430", address:"서울시 서초구 법원로 2길 21, 칠보빌딩 1층"},
     {name:"대한법률구조공단 수원", type:"LAKAS", covers:["경기", "인천"], lat:37.277533, lng:127.049515, phone:"031-8007-3430", address:"경기도 수원시 영통구 월드컵로 150번길 10, YM빌딩 3층"},
     {name:"대한법률구조공단 대전", type:"LAKAS", covers:["대전", "세종", "충남", "충북"], lat:36.356309, lng:127.387871, phone:"042-721-3430", address:"대전시 서구 둔산북로 121, 1층 117~121호"},
     {name:"대한법률구조공단 대구", type:"LAKAS", covers:["대구", "경북"], lat:35.859195, lng:128.631891, phone:"053-710-3430", address:"대구시 수성구 달구벌대로 2461, 디에스라이프빌딩 3층"},
     {name:"대한법률구조공단 부산", type:"LAKAS", covers:["부산", "울산", "경남"], lat:35.190787, lng:129.074010, phone:"051-711-3430", address:"부산시 연제구 법원남로 15번길 4, 성신프라이어빌딩 5층"},
     {name:"대한법률구조공단 광주", type:"LAKAS", covers:["광주", "전남", "전북", "제주"], lat:35.149140, lng:126.848917, phone:"062-710-3430", address:"광주시 서구 상무중앙로 28번길 4, 세진빌딩 4층 401호"},
+     // --- 지자체 ---
     {name:"서울시청 (지자체)", type:"GOV", covers:["서울"], lat:37.564554, lng:126.975613, phone:"02-2133-1200~8", address:"서울시 중구 덕수궁길 15, 서울시청 서소문별관"},
     {name:"경기도청 (지자체)", type:"GOV", covers:["경기"], lat:37.274666, lng:127.009619, phone:"031-8008-2868", address:"경기도 수원시 팔달구 효원로 1"}
 ];
@@ -280,148 +269,94 @@ const localOfficesData = [
     {name:"통영세무서", type:"TAX", covers:["통영시", "거제시", "고성군"], phone:"055-640-7200", address:"경남 통영시 무전5길 20-9"},
     {name:"해운대세무서", type:"TAX", covers:["부산 해운대구"], phone:"051-660-9200", address:"부산광역시 해운대구 좌동순환로 17"}
 ];
-let map, geocoder;
-let debounceTimer;
-let focusedIndex = -1;
+let geocoder;
 
-// 지도 초기화
 window.onload = function() {
-    const mapContainer = document.getElementById('map');
-    const mapOption = { center: new kakao.maps.LatLng(37.5665, 126.9780), level: 8 };
-    map = new kakao.maps.Map(mapContainer, mapOption);
     geocoder = new kakao.maps.services.Geocoder();
-};
+    const input = document.getElementById("keyword");
 
-function getDistance(lat1, lon1, lat2, lon2){
-    const R = 6371;
-    const dLat = (lat2-lat1)*Math.PI/180;
-    const dLon = (lon2-lon1)*Math.PI/180;
-    const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180) * Math.cos(lat2*Math.PI/180) * Math.sin(dLon/2)**2;
-    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-}
-
-function searchAddress(isFinal = false) {
-    const keyword = document.getElementById("keyword").value.trim();
-    const listEl = document.getElementById("addressList");
-    if(keyword.length < 2) { listEl.style.display = "none"; return; }
-
-    geocoder.addressSearch(keyword, function(result, status){
-        if(status === kakao.maps.services.Status.OK){
-            if(result.length === 1 && isFinal) {
-                listEl.style.display = "none";
-                selectItem(result[0]);
-            } else {
+    input.addEventListener("input", function() {
+        if(this.value.length < 2) return;
+        geocoder.addressSearch(this.value, function(result, status) {
+            if(status === kakao.maps.services.Status.OK) {
+                const listEl = document.getElementById("addressList");
                 listEl.innerHTML = "";
                 listEl.style.display = "block";
-                result.forEach((item) => {
+                result.forEach(addr => {
                     const div = document.createElement("div");
                     div.className = "search-item";
-                    div.innerHTML = item.address_name;
-                    div.onclick = () => selectItem(item);
+                    div.innerText = addr.address_name;
+                    div.onclick = () => selectLocation(addr);
                     listEl.appendChild(div);
                 });
             }
-        }
+        });
     });
+};
+
+// 거리 계산 함수 (Haversine)
+function getDistance(lat1, lon1, lat2, lon2) {
+    const R = 6371;
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLon = (lon2 - lon1) * Math.PI / 180;
+    const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    return (R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))).toFixed(1);
 }
 
-function selectItem(item) {
+// 위치 선택 시 실행
+function selectLocation(addr) {
     document.getElementById("addressList").style.display = "none";
-    document.getElementById("keyword").value = item.address_name;
-    findNearest(parseFloat(item.y), parseFloat(item.x), item.address_name);
-}
-
-function findNearest(lat, lng, fullAddress){
-    const addrParts = fullAddress.split(' ');
-    const regionKeyword = addrParts[0].substring(0, 2); 
-    const district = addrParts[1]; 
+    document.getElementById("keyword").value = addr.address_name;
     
-    let targets = offices.filter(o => o.covers.includes(regionKeyword));
+    // 검색어에서 구/군 정보 추출
+    const addrParts = addr.address_name.split(" ");
+    const userDistrict = addrParts.find(p => p.endsWith('구') || p.endsWith('군') || p.endsWith('시'));
 
-    const sortedResult = targets.map(o => ({
-        ...o,
-        dist: getDistance(lat, lng, o.lat, o.lng)
-    })).sort((a,b) => a.dist - b.dist);
+    const uLat = parseFloat(addr.y);
+    const uLng = parseFloat(addr.x);
 
-    displayResults(sortedResult.slice(0, 2), regionKeyword, district);
+    // 정렬 로직 적용
+    const sortedData = officeData.map(o => {
+        const dist = getDistance(uLat, uLng, o.lat, o.lng);
+        // 관할구역 매칭 여부 (covers 배열에 포함되는지 확인)
+        const isMatched = userDistrict && o.covers.some(c => userDistrict.includes(c) || c.includes(userDistrict));
+        return { ...o, dist, isMatched };
+    }).sort((a, b) => {
+        // 1순위: 관할구역 매칭 우선
+        if (a.isMatched !== b.isMatched) return b.isMatched - a.isMatched;
+        // 2순위: 기관 유형 우선순위
+        if (priorityOrder[a.type] !== priorityOrder[b.type]) return priorityOrder[a.type] - priorityOrder[b.type];
+        // 3순위: 가까운 거리순
+        return a.dist - b.dist;
+    });
 
-    // 지도 이동
-    const moveLatLon = new kakao.maps.LatLng(lat, lng);
-    map.panTo(moveLatLon);
+    renderResults(sortedData, addr.address_name);
 }
 
-function displayResults(data, region, district) {
-    let html = `<span class="jurisdiction-info">📍 관할지역: ${region} ${district || ''}</span>`;
+// 결과 렌더링
+function renderResults(data, searchName) {
+    let html = `<span class="jurisdiction-label">📍 관할 검색 결과: ${searchName}</span>`;
     
     data.forEach(o => {
-        let typeName = o.type === "REB" ? "부동산원" : (o.type === "LAKAS" ? "법률구조공단" : (o.type === "LH" ? "LH공사" : "지자체"));
+        const cardClass = o.isMatched ? "office-card matched" : "office-card";
+        const badgeMatch = o.isMatched ? `<span class="match-badge">관할구역</span>` : "";
+        
         html += `
-            <div class="office-card">
-                <span class="type-badge">${typeName}</span>
-                <h3>${o.name}</h3>
-                <p class="addr-text">${o.address}</p>
-                <span class="phone-text">${o.phone}</span>
+            <div class="${cardClass}">
+                <div class="title-group">
+                    <div>
+                        <span class="office-name">${o.name}</span>
+                        <span class="type-badge">${o.type}</span>
+                        ${badgeMatch}
+                    </div>
+                    <span class="distance-text">(${o.dist}km)</span>
+                </div>
+                <span class="phone-text">📞 ${o.phone}</span>
+                <p class="addr-text">🏠 ${o.address}</p>
             </div>`;
     });
-
-    if(district) {
-        const landInfo = localOfficesData.find(o => o.type === "LAND" && o.covers.includes(district));
-        const taxInfo = localOfficesData.find(o => o.type === "TAX" && o.covers.includes(district));
-
-        html += `
-            <div class="recommend-section">
-                <span class="recommend-title">💡 지역 상세 안내</span>
-                <div class="recommend-card">
-                    <span>${landInfo ? landInfo.name : district + '청 토지정보과'}</span>
-                    <small>임대차 계약 신고/공시지가 문의</small>
-                    <div style="margin-top:4px; font-weight:bold; color:#0056b3; font-size:13px;">${landInfo ? landInfo.phone : "구청 문의"}</div>
-                </div>
-                <div class="recommend-card">
-                    <span>${taxInfo ? taxInfo.name : district + ' 관할 세무서'}</span>
-                    <small>주택 임대소득세/세무 문의</small>
-                    <div style="margin-top:4px; font-weight:bold; color:#0056b3; font-size:13px;">${taxInfo ? taxInfo.phone : "126"}</div>
-                </div>
-            </div>`;
-    }
-
-    // [핵심] 에러가 났던 지점: 이제 'result' 아이디를 가진 div가 존재합니다.
     document.getElementById("result").innerHTML = html;
 }
-
-// 이벤트 리스너 설정
-document.addEventListener("DOMContentLoaded", function(){
-    const input = document.getElementById("keyword");
-    input.addEventListener("input", () => {
-        focusedIndex = -1;
-        clearTimeout(debounceTimer);
-        debounceTimer = setTimeout(() => searchAddress(false), 200);
-    });
-
-    input.addEventListener("keydown", function(e){
-        const listEl = document.getElementById("addressList");
-        const items = listEl.getElementsByClassName("search-item");
-        if (e.key === "Enter") {
-            e.preventDefault();
-            if (focusedIndex > -1 && items.length > 0) items[focusedIndex].click();
-            else searchAddress(true);
-        } else if (listEl.style.display === "block") {
-            if (e.key === "ArrowDown") {
-                focusedIndex = (focusedIndex + 1) % items.length;
-                updateFocus(items);
-            } else if (e.key === "ArrowUp") {
-                focusedIndex = (focusedIndex - 1 + items.length) % items.length;
-                updateFocus(items);
-            }
-        }
-    });
-
-    function updateFocus(items) {
-        for (let item of items) item.classList.remove("active");
-        if (focusedIndex > -1) items[focusedIndex].classList.add("active");
-    }
-});
 </script>
-
 </body>
 </html>
-

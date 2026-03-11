@@ -465,20 +465,32 @@ function findNearest(lat, lng, fullAddress){
     const district = addrParts.find(p => p.endsWith('구') || p.endsWith('군') || p.endsWith('시')) || "";
     const city = addrParts[0].substring(0, 2); 
 
-    // 매칭 여부를 확인하는 안전한 별도 함수
     const checkMatch = (office) => {
-        // covers가 없거나 배열이 아니면 false 반환
         if (!office.covers || !Array.isArray(office.covers)) return false;
-        
-        // 반복문으로 하나씩 확인 (some 대신 사용)
-        for (let i = 0; i < office.covers.length; i++) {
-            const c = office.covers[i];
-            if (fullAddress.includes(c) || district.includes(c) || city.includes(c)) {
-                return true;
-            }
-        }
-        return false;
+        return office.covers.some(c => fullAddress.includes(c) || district.includes(c) || city.includes(c));
     };
+
+    // 1. 관할기관 (최대 2개)
+    const recTargets = offices.filter(o => ["부동산원", "대법공", "주택공사", "지자체"].includes(o.type))
+        .map(o => ({ ...o, dist: getDistance(lat, lng, o.lat, o.lng), isMatched: checkMatch(o) }))
+        .sort((a,b) => b.isMatched - a.isMatched || a.dist - b.dist)
+        .slice(0, 2);
+
+    // 2. 중개사, 세금 관련 (토지정보과 1개 + 세무서 1개)
+    const allAdmin = offices.filter(o => ["세무서", "토지정보과"].includes(o.type))
+        .map(o => ({ ...o, dist: getDistance(lat, lng, o.lat, o.lng), isMatched: checkMatch(o) }))
+        .sort((a,b) => b.isMatched - a.isMatched || a.dist - b.dist);
+
+    // 토지정보과에서 가장 적합한 것 1개 추출
+    const oneLand = allAdmin.filter(o => o.type === "토지정보과").slice(0, 1);
+    // 세무서에서 가장 적합한 것 1개 추출
+    const oneTax = allAdmin.filter(o => o.type === "세무서").slice(0, 1);
+
+    // 토지정보과를 먼저 보여주기 위해 합침
+    const adminTargets = [...oneLand, ...oneTax];
+
+    displayResults(recTargets, adminTargets, fullAddress);
+}
 
     const recTargets = offices.filter(o => ["부동산원", "대법공", "주택공사", "지자체"].includes(o.type))
         .map(o => ({ 
@@ -533,12 +545,22 @@ function displayResults(recData, adminData, fullAddress) {
 }
 
 function createCard(o) {
+    // 킬로미터 표시 여부 결정 (세무서, 토지정보과는 거리 표시 안 함)
+    const isSpecialType = ["세무서", "토지정보과"].includes(o.type);
+    const distanceHtml = isSpecialType ? "" : `<span class="distance-text">(${o.dist.toFixed(1)}km)</span>`;
+    
+    // 타입(부동산원 등) 표시 HTML (이름보다 2pt 작게, 그린 색상)
+    // 부동산원 이름이 20px이므로 타입은 18px로 설정
+    const typeHtml = isSpecialType ? "" : `<span style="font-size: 18px; color: #16a34a; font-weight: bold; margin-left: 5px;">${o.type}</span>`;
+
     return `
         <div class="office-card" style="${o.isMatched ? 'border: 2px solid #0056b3; background: #f0f7ff;' : ''}">
-            <span class="type-badge">${o.type}</span>
             <div class="title-group">
-                <span class="office-name">${o.name}</span>
-                <span class="distance-text">(${o.dist.toFixed(1)}km)</span>
+                <div>
+                    <span class="office-name">${o.name}</span>
+                    ${typeHtml}
+                    ${distanceHtml}
+                </div>
             </div>
             <span class="phone-text">📞 ${o.phone}</span>
             <p class="addr-text">🏠 ${o.address}</p>
@@ -581,6 +603,7 @@ document.addEventListener("DOMContentLoaded", function(){
 </script>
 </body>
 </html>
+
 
 
 

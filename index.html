@@ -625,7 +625,6 @@ function displayResults(recData, adminData) {
 }
 
 function createCard(o, isRec) {
-    // [수정] 중개사 세금문의 섹션(isRec=false)일 때는 거리 표시 생략
     const distText = (isRec && o.dist !== null) ? `<span style="color:#16a34a; font-size:11px; font-weight:bold;">${o.dist.toFixed(1)}km</span>` : '';
     
     return `
@@ -664,9 +663,4 @@ document.addEventListener("DOMContentLoaded", function(){
 </script>
 </body>
 </html>
-
-
-
-
-
 

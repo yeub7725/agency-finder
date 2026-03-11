@@ -511,25 +511,40 @@ function selectItem(item) {
 
 function findNearest(lat, lng, fullAddress){
     const addrParts = fullAddress.split(' ');
+    const city = addrParts[0].substring(0, 2); // '서울', '경기' 등
     const district = addrParts.find(p => p.endsWith('구') || p.endsWith('군') || p.endsWith('시')) || "";
-    const city = addrParts[0].substring(0, 2); 
     
     const checkMatch = (office) => {
         if (!office.covers || !Array.isArray(office.covers)) return false;
         return office.covers.some(c => fullAddress.includes(c) || district.includes(c) || city.includes(c));
     };
 
+    // 1. 관할기관 (기존 로직 유지)
     const recTargets = offices.filter(o => ["부동산원", "대법공", "주택공사", "지자체"].includes(o.type))
         .map(o => ({ ...o, dist: getDistance(lat, lng, o.lat, o.lng), isMatched: checkMatch(o) }))
         .sort((a,b) => b.isMatched - a.isMatched || a.dist - b.dist)
         .slice(0, 2);
 
-    const allAdmin = offices.filter(o => ["세무서", "토지정보과"].includes(o.type))
-        .map(o => ({ ...o, dist: getDistance(lat, lng, o.lat, o.lng), isMatched: checkMatch(o) }))
-        .sort((a,b) => b.isMatched - a.isMatched || a.dist - b.dist);
+    // 2. 중개사, 세금 관련 (세무서, 토지정보과)
+    let adminResults = offices.filter(o => ["세무서", "토지정보과"].includes(o.type))
+        .map(o => ({ ...o, dist: getDistance(lat, lng, o.lat, o.lng), isMatched: checkMatch(o) }));
 
-    const oneLand = allAdmin.filter(o => o.type === "토지정보과").slice(0, 1);
-    const oneTax = allAdmin.filter(o => o.type === "세무서").slice(0, 1);
+    let oneLand = adminResults.filter(o => o.type === "토지정보과" && o.isMatched).slice(0, 1);
+    let oneTax = adminResults.filter(o => o.type === "세무서" && o.isMatched).slice(0, 1);
+
+    // [추가] 만약 해당 지역 관할 세무서/토지과가 없다면? 본청(지자체) 중 매칭되는 것을 가져옴
+    if (oneLand.length === 0) {
+        oneLand = offices.filter(o => o.type === "지자체")
+            .map(o => ({ ...o, dist: getDistance(lat, lng, o.lat, o.lng), isMatched: checkMatch(o) }))
+            .filter(o => o.isMatched).slice(0, 1);
+    }
+    if (oneTax.length === 0) {
+        // 세무서 대안도 지자체나 근거리 본청으로 안내 가능 (필요시 로직 확장)
+        const cityHall = offices.filter(o => o.type === "지자체")
+            .map(o => ({ ...o, dist: getDistance(lat, lng, o.lat, o.lng), isMatched: checkMatch(o) }))
+            .filter(o => o.isMatched).slice(0, 1);
+        if (cityHall.length > 0) oneTax = cityHall;
+    }
     
     displayResults(recTargets, [...oneLand, ...oneTax]);
 }
@@ -538,11 +553,29 @@ function displayResults(recData, adminData) {
     const recEl = document.getElementById("rec-section");
     const adminEl = document.getElementById("admin-section");
     
-    recEl.innerHTML = `<span class="section-title">관할기관</span>`;
-    recData.forEach(o => recEl.innerHTML += createCard(o, 'recommend'));
+    // [수정] 새로운 검색 시 이전 결과를 확실히 초기화
+    recEl.innerHTML = "";
+    adminEl.innerHTML = "";
 
+    // 관할기관 출력
+    recEl.innerHTML = `<span class="section-title">관할기관</span>`;
+    if(recData.length > 0) {
+        recData.forEach(o => recEl.innerHTML += createCard(o, 'recommend'));
+    } else {
+        recEl.innerHTML += `<p style="padding:15px; color:#999; font-size:13px;">해당 지역의 관할 정보가 없습니다.</p>`;
+    }
+
+    // 중개사, 세금 관련 출력
     adminEl.innerHTML = `<span class="section-title">중개사, 세금관련 문의</span>`;
-    adminData.forEach(o => adminEl.innerHTML += createCard(o, 'admin'));
+    if(adminData.length > 0) {
+        // 중복 제거 (지자체가 양쪽 섹션에 뜰 경우를 대비)
+        const uniqueAdmin = Array.from(new Set(adminData.map(a => a.name)))
+            .map(name => adminData.find(a => a.name === name));
+            
+        uniqueAdmin.forEach(o => adminEl.innerHTML += createCard(o, 'admin'));
+    } else {
+        adminEl.innerHTML += `<p style="padding:15px; color:#999; font-size:13px;">해당 지역의 본청/세무 정보를 찾을 수 없습니다.</p>`;
+    }
 }
 
 function createCard(o, cardType) {
@@ -613,3 +646,4 @@ document.addEventListener("DOMContentLoaded", function(){
 </script>
 </body>
 </html>
+

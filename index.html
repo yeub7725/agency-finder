@@ -1,7 +1,3 @@
-알겠습니다. 다른 부분은 절대 건드리지 않고, 날짜 입력창의 Placeholder 설정과 입력 완료 시 YY.MM.DD. 형식으로 자동 변환되는 로직만 정확히 추가하여 드립니다.
-
-🛠️ 수정된 통합 코드
-HTML
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -19,9 +15,11 @@ HTML
         input#keyword { padding: 10px; width: 100%; font-size: 13px; border: 2px solid #0056b3; border-radius: 6px; box-sizing: border-box; outline: none; }
         
         /* 분할 날짜 입력창 스타일 */
-        .date-group { display: flex; align-items: center; background: #fff; border: 2px solid #94a3b8; border-radius: 6px; padding: 0 5px; height: 39px; box-sizing: border-box; flex: 1.2; }
-        .date-group input { width: 32px; border: none !important; padding: 0; text-align: center; font-size: 13px; font-weight: bold; color: #0056b3; outline: none; background: transparent; }
-        .date-group span { color: #cbd5e1; font-weight: bold; margin: 0 1px; font-size: 11px; }
+        .date-group { display: flex; align-items: center; background: #fff; border: 2px solid #94a3b8; border-radius: 6px; padding: 0 5px; height: 39px; box-sizing: border-box; flex: 1.4; justify-content: center; }
+        .date-group input { width: 35px; border: none !important; padding: 0; text-align: center; font-size: 13px; font-weight: bold; color: #0056b3; outline: none; background: transparent; }
+        /* Placeholder 색상 조정 */
+        .date-group input::placeholder { color: #94a3b8; font-weight: normal; }
+        .date-group span { color: #0056b3; font-weight: bold; margin: 0; font-size: 13px; width: 8px; text-align: center; }
 
         #result-area { flex: 1; overflow-y: auto; padding: 10px 15px; display: flex; flex-direction: column; gap: 8px; }
         #result-area::-webkit-scrollbar { width: 4px; }
@@ -62,9 +60,9 @@ HTML
                 </div>
                 <div class="date-group">
                     <input type="text" id="yy" placeholder="최초" maxlength="2">
-                    <span id="sep1">/</span>
+                    <span id="sep1"></span>
                     <input type="text" id="mm" placeholder="계약" maxlength="2">
-                    <span id="sep2">/</span>
+                    <span id="sep2"></span>
                     <input type="text" id="dd" placeholder="일" maxlength="2">
                 </div>
             </div>
@@ -536,7 +534,6 @@ let focusedIndex = -1;
 let debounceTimer;
 let currentAddressResults = [];
 
-// 날짜 분할 입력 로직 및 자동 변환
 const dateFields = [document.getElementById('yy'), document.getElementById('mm'), document.getElementById('dd')];
 const separators = [document.getElementById('sep1'), document.getElementById('sep2')];
 
@@ -544,7 +541,6 @@ dateFields.forEach((el, idx) => {
     el.addEventListener('input', (e) => {
         let val = e.target.value.replace(/[^0-9]/g, '');
         
-        // 월/일 유효성 체크
         if(idx === 1 && val.length === 2) { 
             if(parseInt(val) > 12) val = '12'; 
             if(val === '00') val = '01'; 
@@ -556,12 +552,10 @@ dateFields.forEach((el, idx) => {
         
         e.target.value = val;
 
-        // 2자리가 채워지면 다음 칸으로 이동
         if(val.length === 2 && idx < 2) {
             dateFields[idx + 1].focus();
         }
 
-        // 모든 칸이 2자리씩 채워지면 구분자를 마침표(.)로 변경
         checkDateFormat();
     });
 
@@ -573,17 +567,18 @@ dateFields.forEach((el, idx) => {
 });
 
 function checkDateFormat() {
-    const isFull = dateFields.every(field => field.value.length === 2);
-    if(isFull) {
+    // 하나라도 입력값이 있으면 점(.)을 표시
+    const hasValue = dateFields.some(field => field.value.length > 0);
+    if(hasValue) {
         separators[0].innerText = ".";
         separators[1].innerText = ".";
     } else {
-        separators[0].innerText = "/";
-        separators[1].innerText = "/";
+        separators[0].innerText = "";
+        separators[1].innerText = "";
     }
 }
 
-// 검색 및 매칭 로직 (기존 원본 그대로 유지)
+// 기존 로직 유지
 function searchAddress(isEnterPressed = false) {
     const keyword = document.getElementById("keyword").value.trim();
     const listEl = document.getElementById("addressList");
@@ -686,6 +681,3 @@ document.addEventListener("DOMContentLoaded", function(){
 </script>
 </body>
 </html>
-
-
-

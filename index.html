@@ -3,47 +3,38 @@
 <head>
     <link rel="icon" href="data:;base64,iVBORw0KGgo=">
     <meta charset="utf-8">
-    <title>관할기관 통합 검색</title>
+    <title>관할기관 통합 검색 - 스마트 날짜로직</title>
     <style>
         body, html { margin: 0; padding: 0; height: 100%; font-family: 'Malgun Gothic', sans-serif; overflow: hidden; background: #f1f5f9; }
         .main-wrapper { display: flex; height: 100vh; width: 100vw; }
         #sidebar-search { width: 400px; min-width: 400px; border-right: 1px solid #e2e8f0; display: flex; flex-direction: column; background: #fff; height: 100%; }
-        
         .search-header { padding: 12px 15px; flex-shrink: 0; border-bottom: 1px solid #f1f5f9; }
         h1 { font-size: 1rem; margin: 0 0 8px 0; color: #1e293b; font-weight: bold; }
         .search-row { display: flex; gap: 6px; }
         input { padding: 10px; width: 100%; font-size: 13px; border: 2px solid #0056b3; border-radius: 6px; box-sizing: border-box; outline: none; }
         #contract-date { border-color: #94a3b8; text-align: center; font-weight: bold; }
-
         #result-area { flex: 1; overflow-y: auto; padding: 10px 15px; display: flex; flex-direction: column; gap: 8px; }
         #result-area::-webkit-scrollbar { width: 4px; }
         #result-area::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
-
         .section-title { font-size: 12px; font-weight: bold; color: #475569; margin: 4px 0 4px 0; display: flex; align-items: center; gap: 5px; }
         .section-title::before { content: ''; display: inline-block; width: 3px; height: 11px; background: #0056b3; border-radius: 2px; }
-
         .office-card { border: 1px solid #e2e8f0; padding: 10px 12px; border-radius: 10px; background: #fff; margin-bottom: 2px; }
         .office-card.recommend { border: 2px solid #0056b3; background: #f8fbff; padding: 15px 15px; margin-bottom: 6px; }
         .recommend .office-name { font-size: 15px; font-weight: 800; color: #1e293b; }
         .recommend .phone-text { font-size: 22px; font-weight: 900; color: #0056b3; display: block; margin: 5px 0; letter-spacing: -0.5px; }
-        
         .office-name { font-size: 13px; font-weight: bold; color: #1e293b; }
         .phone-text { font-size: 16px; font-weight: 800; color: #0056b3; display: block; margin: 2px 0; }
         .addr-text { font-size: 11.5px; color: #64748b; margin: 0; line-height: 1.3; }
-        
         .info-box { background: #f8fafc; border: 1px solid #e2e8f0; padding: 8px 10px; border-radius: 8px; font-size: 11.5px; }
         .contact-item { display: flex; justify-content: space-between; padding: 3px 0; border-bottom: 1px dotted #e2e8f0; font-size: 11.5px; }
         .contact-item b { color: #e11d48; }
-
         #addressList { position: absolute; top: calc(100% + 5px); left: 0; width: 100%; border: 1px solid #0056b3; background: white; z-index: 100; display: none; border-radius: 6px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); max-height: 200px; overflow-y: auto; }
         .search-item { padding: 10px; border-bottom: 1px solid #f1f5f9; cursor: pointer; font-size: 13px; }
         .search-item.active { background-color: #0056b3; color: white; }
-
         #content-area { flex: 1; background: #f8fafc; }
     </style>
 </head>
 <body>
-
 <div class="main-wrapper">
     <div id="sidebar-search">
         <div class="search-header">
@@ -54,23 +45,18 @@
                     <div id="addressList"></div>
                 </div>
                 <div style="flex:1.2;">
-                    <input id="contract-date" placeholder="연월일 6자리" maxlength="10">
+                    <input id="contract-date" placeholder="YYMMDD" maxlength="8">
                 </div>
             </div>
         </div>
-
         <div id="result-area">
-            <div id="rec-section">
-                <p style="text-align:center; color:#94a3b8; margin-top:30px; font-size: 12px;">주소를 입력하시면 관할 정보가 표시됩니다.</p>
-            </div>
-
+            <div id="rec-section"><p style="text-align:center; color:#94a3b8; margin-top:30px; font-size: 12px;">주소를 입력하시면 관할 정보가 표시됩니다.</p></div>
             <div id="sub-info-area" style="display:none;">
                 <div class="section-title">신청 시 필요 서류</div>
                 <div class="info-box">
-                    <p style="margin:0 0 2px 0;">• <b>공통:</b> 신분증, 임대차계약서, 건축물대장, 주민등록초본</p>
+                    <p style="margin:0 0 2px 0;">• <b>공통:</b> 신분증, 임대차계약서, 주민등록초본</p>
                     <p style="margin:0;">• <b>대리:</b> 위임장, 인감증명서, 대리인 신분증</p>
                 </div>
-
                 <div class="section-title">주요 업무 문의처</div>
                 <div class="info-box">
                     <div class="contact-item">한국부동산원<b>1600-2828</b></div>
@@ -78,7 +64,7 @@
                     <div class="contact-item">임대차신고<b>1533-2949</b></div>
                     <div class="contact-item">LH공사<b>1600-1004</b></div>
                     <div class="contact-item">렌트홈<b>1670-8004</b></div>
-                    <div class="contact-item">공동주택 조정위(관리비)<b>031-738-3300</b></div>
+                    <div class="contact-item">분쟁조정(관리비)<b>031-738-3300</b></div>
                     <div class="contact-item">국토부<b>1599-0001</b></div>
                     <div class="contact-item">대법공<b>132</b></div>
                     <div class="contact-item">국세청<b>126</b></div>
@@ -520,26 +506,37 @@ const offices = [
     {name:"서귀포시청 종합민원실", type:"토지정보과", covers:["서귀포시"], phone:"064-760-2117", address:"제주특별자치도 서귀포시 중앙로 105"}
 
 ];
-let focusedIndex = -1;
-let debounceTimer;
-let currentAddressResults = [];
-
-// [날짜 로직] 백스페이스 대응형 자동 하이픈
 document.getElementById('contract-date').addEventListener('input', function(e) {
     let value = e.target.value.replace(/[^0-9]/g, '');
     let result = '';
+
     if (value.length <= 2) {
         result = value;
-    } else if (value.length <= 4) {
-        result = value.substring(0, 2) + '-' + value.substring(2);
-    } else if (value.length <= 6) {
-        result = value.substring(0, 2) + '-' + value.substring(2, 4) + '-' + value.substring(4);
     } else {
-        result = value.substring(0, 4) + '-' + value.substring(4, 6) + '-' + value.substring(6, 8);
+        result += value.substring(0, 2) + '-';
+        let mm = value.substring(2, 4);
+        if (mm.length === 1 && mm > 1) { mm = '0' + mm; value = value.substring(0,2) + mm + value.substring(3); }
+        else if (mm.length === 2) {
+            if (mm === '00') mm = '01';
+            else if (parseInt(mm) > 12) mm = '12';
+        }
+        result += mm;
+
+        if (value.length > 4) {
+            result += '-';
+            let dd = value.substring(4, 6);
+            if (dd.length === 1 && dd > 3) { dd = '0' + dd; }
+            else if (dd.length === 2) {
+                if (dd === '00') dd = '01';
+                else if (parseInt(dd) > 31) dd = '31';
+            }
+            result += dd;
+        }
     }
     e.target.value = result;
 });
 
+// 나머지 검색/매칭 로직 동일
 function searchAddress(isEnterPressed = false) {
     const keyword = document.getElementById("keyword").value.trim();
     const listEl = document.getElementById("addressList");
@@ -560,7 +557,6 @@ function searchAddress(isEnterPressed = false) {
         }
     });
 }
-
 function selectItem(item) {
     if(!item) return;
     document.getElementById("addressList").style.display = "none";
@@ -569,7 +565,6 @@ function selectItem(item) {
     findNearest(parseFloat(item.y), parseFloat(item.x), item.address_name);
     focusedIndex = -1;
 }
-
 function getDistance(lat1, lon1, lat2, lon2){
     if(!lat1 || !lon1 || !lat2 || !lon2) return null;
     const R = 6371;
@@ -578,7 +573,6 @@ function getDistance(lat1, lon1, lat2, lon2){
     const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180) * Math.cos(lat2*Math.PI/180) * Math.sin(dLon/2)**2;
     return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }
-
 function findNearest(lat, lng, fullAddress){
     const addrParts = fullAddress.split(' ');
     const city = addrParts[0].substring(0, 2); 
@@ -604,16 +598,13 @@ function findNearest(lat, lng, fullAddress){
         }))
         .sort((a, b) => (b.isMatched - a.isMatched) || (b.priority - a.priority) || (a.dist - b.dist))
         .slice(0, 2);
-
     let adminResults = offices.filter(o => ["세무서", "토지정보과"].includes(o.type))
         .map(o => ({ ...o, isMatched: checkMatch(o) }))
         .sort((a, b) => (b.isMatched - a.isMatched));
-
     let oneLand = adminResults.filter(o => o.type === "토지정보과" && o.isMatched).slice(0, 1);
     let oneTax = adminResults.filter(o => o.type === "세무서" && o.isMatched).slice(0, 1);
     displayResults(recTargets, [...oneLand, ...oneTax]);
 }
-
 function displayResults(recData, adminData) {
     const recEl = document.getElementById("rec-section");
     const adminEl = document.getElementById("admin-section");
@@ -622,20 +613,10 @@ function displayResults(recData, adminData) {
     adminEl.innerHTML = `<span class="section-title">중개사, 세금관련 문의</span>`;
     adminData.forEach(o => adminEl.innerHTML += createCard(o, false));
 }
-
 function createCard(o, isRec) {
     const distText = (isRec && o.dist !== null) ? `<span style="color:#16a34a; font-size:11px; font-weight:bold;">${o.dist.toFixed(1)}km</span>` : '';
-    return `
-        <div class="office-card ${isRec ? 'recommend' : ''}">
-            <div style="display:flex; justify-content:space-between; align-items:center;">
-                <span class="office-name">${o.name}</span>
-                ${distText}
-            </div>
-            <span class="phone-text">📞 ${o.phone}</span>
-            <p class="addr-text">🏠 ${o.address}</p>
-        </div>`;
+    return `<div class="office-card ${isRec ? 'recommend' : ''}"><div style="display:flex; justify-content:space-between; align-items:center;"><span class="office-name">${o.name}</span>${distText}</div><span class="phone-text">📞 ${o.phone}</span><p class="addr-text">🏠 ${o.address}</p></div>`;
 }
-
 function updateFocus(items) {
     if (!items) return;
     for (let i = 0; i < items.length; i++) items[i].classList.remove("active");
@@ -644,7 +625,6 @@ function updateFocus(items) {
         items[focusedIndex].scrollIntoView({ block: "nearest" });
     }
 }
-
 document.addEventListener("DOMContentLoaded", function(){
     const input = document.getElementById("keyword");
     input.addEventListener("input", () => { clearTimeout(debounceTimer); debounceTimer = setTimeout(() => searchAddress(false), 200); });
@@ -661,3 +641,4 @@ document.addEventListener("DOMContentLoaded", function(){
 </script>
 </body>
 </html>
+

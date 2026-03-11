@@ -2,19 +2,21 @@
 <html lang="ko">
 <head>
     <meta charset="utf-8">
-    <title>관할기관 통합 검색 시스템</title>
-    <script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=d791798c38589fc7cdc6bce91d9369be&libraries=services"></script>
+    <title>관할기관 통합 검색</title>
+    <script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=d791798c38589fc7cdc6bce91d9369be&libraries=services"></script>
     <style>
         body, html { margin: 0; padding: 0; height: 100%; font-family: 'Malgun Gothic', sans-serif; overflow: hidden; }
         .main-wrapper { display: flex; height: 100vh; width: 100vw; }
 
-        /* 사이드바 구성 */
         #sidebar-search { 
             width: 440px; min-width: 440px; border-right: 1px solid #ddd; 
             display: flex; flex-direction: column; background: #fff; 
         }
 
         .search-header { padding: 25px 20px 10px 20px; }
+        h1 { font-size: 1.4rem; margin: 0 0 15px 0; color: #111; }
+        
+        .search-container { position: relative; width: 100%; }
         input#keyword { 
             padding: 15px; width: 100%; font-size: 17px; 
             border: 2px solid #0056b3; border-radius: 10px; 
@@ -24,29 +26,30 @@
         #addressList { 
             position: absolute; top: 100%; left: 0; width: 100%; 
             border: 1px solid #bbb; background: white; z-index: 100; 
-            display: none; border-radius: 8px;
+            display: none; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            max-height: 250px; overflow-y: auto;
         }
-        .search-item { padding: 12px; border-bottom: 1px solid #eee; cursor: pointer; }
+        .search-item { padding: 12px; border-bottom: 1px solid #eee; cursor: pointer; font-size: 15px; }
+        .search-item.active { background-color: #f0f7ff; }
 
-        /* 결과 영역 */
-        #result-container { flex: 1; overflow-y: auto; padding: 10px 20px; }
-        .section-title { font-size: 14px; font-weight: bold; color: #64748b; margin: 15px 0 8px 5px; display: block; border-left: 3px solid #0056b3; padding-left: 8px; }
+        #result-scroll { flex: 1; overflow-y: auto; padding: 10px 20px; }
+        .section-title { font-size: 15px; font-weight: bold; color: #1e293b; margin: 20px 0 10px 5px; display: block; border-left: 4px solid #0056b3; padding-left: 10px; }
 
-        .office-card { border: 1px solid #e2e8f0; padding: 18px; margin-bottom: 10px; border-radius: 12px; background: #fff; }
-        .office-card.matched { border: 2px solid #0056b3; background: #f0f7ff; }
-        
+        .office-card { border: 1px solid #e2e8f0; padding: 18px; margin-bottom: 12px; border-radius: 12px; background: #fff; position: relative; }
         .title-group { display: flex; align-items: baseline; justify-content: space-between; }
+        
+        /* 폰트 규정 준수 */
         .office-name { font-size: 20px; font-weight: 800; color: #000; }
-        .distance-text { font-size: 18px; color: #16a34a; font-weight: bold; } /* -2pt 그린 */
+        .distance-text { font-size: 18px; color: #16a34a; font-weight: bold; }
 
         .phone-text { font-size: 19px; font-weight: bold; color: #0056b3; display: block; margin: 6px 0; }
         .addr-text { font-size: 15px; color: #555; line-height: 1.4; margin: 0; }
+        .type-badge { font-size: 11px; color: #999; margin-bottom: 4px; display: block; }
 
-        /* 하단 고정 안내 연락처 */
         .fixed-footer { background: #f8fafc; border-top: 1px solid #ddd; padding: 15px 20px; }
         .guide-table { width: 100%; border-collapse: collapse; font-size: 14px; }
         .guide-table td { padding: 4px 0; color: #334155; }
-        .guide-table b { color: #000; font-weight: 800; }
+        .guide-table b { color: #d63031; font-weight: 800; }
 
         #content-area { flex: 1; background: #ffffff; }
     </style>
@@ -56,23 +59,21 @@
 <div class="main-wrapper">
     <div id="sidebar-search">
         <div class="search-header">
-            <h1 style="font-size:1.4rem; margin-bottom:15px;">🏠 관할기관 찾기</h1>
-            <div style="position:relative;">
-                <input type="text" id="keyword" placeholder="지역명을 입력하세요 (예: 종로구)" autocomplete="off">
+            <h1>주소지 입력</h1>
+            <div class="search-container">
+                <input id="keyword" placeholder="주소를 입력하고 엔터를 치세요" autocomplete="off">
                 <div id="addressList"></div>
             </div>
         </div>
 
-        <div id="result-container">
-            <div id="recommend-section">
-                <p style="text-align:center; color:#94a3b8; margin-top:50px;">지역을 검색하면<br>관할 기관 정보가 표시됩니다.</p>
+        <div id="result-scroll">
+            <div id="result-content">
+                <p style="text-align:center; color:#94a3b8; margin-top:50px;">지역명을 입력하시면<br>관할 기관 정보가 표시됩니다.</p>
             </div>
-            
-            <div id="admin-section"></div>
         </div>
 
         <div class="fixed-footer">
-            <p style="margin:0 0 10px 0; font-weight:bold; font-size:15px; color:#1e293b;">📞 주요 안내 연락처</p>
+            <p style="margin:0 0 10px 0; font-weight:bold; font-size:15px;">📞 주요 안내 연락처</p>
             <table class="guide-table">
                 <tr><td>한국부동산원 / 대법공</td><td align="right"><b>1600-2828 / 132</b></td></tr>
                 <tr><td>LH공사 / 국세청</td><td align="right"><b>1600-1004 / 126</b></td></tr>
@@ -81,6 +82,7 @@
             </table>
         </div>
     </div>
+    
     <div id="content-area"></div>
 </div>
 
@@ -109,9 +111,7 @@ const officeData = [
     {name:"대한법률구조공단 광주", type:"LAKAS", covers:["광주", "전남", "전북", "제주"], lat:35.149140, lng:126.848917, phone:"062-710-3430", address:"광주시 서구 상무중앙로 28번길 4, 세진빌딩 4층 401호"},
      // --- 지자체 ---
     {name:"서울시청 (지자체)", type:"GOV", covers:["서울"], lat:37.564554, lng:126.975613, phone:"02-2133-1200~8", address:"서울시 중구 덕수궁길 15, 서울시청 서소문별관"},
-    {name:"경기도청 (지자체)", type:"GOV", covers:["경기"], lat:37.274666, lng:127.009619, phone:"031-8008-2868", address:"경기도 수원시 팔달구 효원로 1"}
-];
-const localOfficesData = [
+    {name:"경기도청 (지자체)", type:"GOV", covers:["경기"], lat:37.274666, lng:127.009619, phone:"031-8008-2868", address:"경기도 수원시 팔달구 효원로 1"},
     // --- 서울권 ---
     {name:"강남세무서", type:"TAX", covers:["강남구"], phone:"02-519-4200", address:"서울특별시 강남구 학동로 425(청담동)"},
     {name:"강동세무서", type:"TAX", covers:["강동구"], phone:"02-2224-0200", address:"서울특별시 강동구 천호대로 1139(길동)"},
@@ -438,79 +438,133 @@ const localOfficesData = [
     {name:"신안군청 민원봉사과", type:"LAND", covers:["신안군"], phone:"061-240-8141", address:"전남 신안군 압해읍 천사로 1004"},
 
 ];
-let geocoder;
-window.onload = function() {
-    geocoder = new kakao.maps.services.Geocoder();
-    const input = document.getElementById("keyword");
-    input.addEventListener("input", function() {
-        if(this.value.length < 2) return;
-        geocoder.addressSearch(this.value, function(result, status) {
-            if(status === kakao.maps.services.Status.OK) {
-                const listEl = document.getElementById("addressList");
-                listEl.innerHTML = ""; listEl.style.display = "block";
-                result.forEach(addr => {
+let focusedIndex = -1, debounceTimer;
+
+function getDistance(lat1, lon1, lat2, lon2){
+    const R = 6371;
+    const dLat = (lat2-lat1)*Math.PI/180;
+    const dLon = (lon2-lon1)*Math.PI/180;
+    const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180) * Math.cos(lat2*Math.PI/180) * Math.sin(dLon/2)**2;
+    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
+
+function searchAddress(isFinal = false) {
+    const keyword = document.getElementById("keyword").value.trim();
+    const listEl = document.getElementById("addressList");
+    if(keyword.length < 2) { listEl.style.display = "none"; return; }
+
+    const geocoder = new kakao.maps.services.Geocoder();
+    geocoder.addressSearch(keyword, function(result, status){
+        if(status === kakao.maps.services.Status.OK){
+            if(result.length === 1 && isFinal) {
+                listEl.style.display = "none";
+                selectItem(result[0]);
+            } else {
+                listEl.innerHTML = "";
+                listEl.style.display = "block";
+                result.forEach((item) => {
                     const div = document.createElement("div");
-                    div.className = "search-item"; div.innerText = addr.address_name;
-                    div.onclick = () => selectLocation(addr);
+                    div.className = "search-item";
+                    div.innerHTML = item.address_name;
+                    div.onclick = () => selectItem(item);
                     listEl.appendChild(div);
                 });
             }
-        });
+        }
     });
-};
-
-function getDistance(lat1, lon1, lat2, lon2) {
-    const R = 6371;
-    const dLat = (lat2 - lat1) * Math.PI / 180;
-    const dLon = (lon2 - lon1) * Math.PI / 180;
-    const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
-    return (R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))).toFixed(1);
 }
 
-function selectLocation(addr) {
+function selectItem(item) {
     document.getElementById("addressList").style.display = "none";
-    document.getElementById("keyword").value = addr.address_name;
-    const userDistrict = addr.address_name.split(" ").find(p => p.endsWith('구') || p.endsWith('군'));
-    const uLat = parseFloat(addr.y), uLng = parseFloat(addr.x);
+    document.getElementById("keyword").value = item.address_name;
+    findNearest(parseFloat(item.y), parseFloat(item.x), item.address_name);
+}
 
-    // 1. 추천 섹션 로직: [부동산원, 대법공, 주택공사, 지자체] 중 (관할매칭 > 거리순) 상위 2개
-    const recList = officeData.filter(o => ["부동산원", "대법공", "주택공사", "지자체"].includes(o.type))
-        .map(o => ({ ...o, dist: getDistance(uLat, uLng, o.lat, o.lng), isMatched: userDistrict && o.covers.some(c => userDistrict.includes(c)) }))
-        .sort((a, b) => (b.isMatched - a.isMatched) || (a.dist - b.dist))
+function findNearest(lat, lng, fullAddress){
+    const addrParts = fullAddress.split(' ');
+    const regionKeyword = addrParts[0].substring(0, 2); 
+    const district = addrParts.find(p => p.endsWith('구') || p.endsWith('군') || p.endsWith('시'));
+
+    // 1. 관할기관용 필터링
+    const recTargets = offices.filter(o => ["부동산원", "대법공", "주택공사", "지자체"].includes(o.type))
+        .map(o => ({ ...o, dist: getDistance(lat, lng, o.lat, o.lng), isMatched: o.covers.some(c => fullAddress.includes(c)) }))
+        .sort((a,b) => b.isMatched - a.isMatched || a.dist - b.dist)
         .slice(0, 2);
 
-    // 2. 행정 섹션 로직: [세무서, 토지정보과] 중 관할 매칭 우선
-    const adminList = officeData.filter(o => ["세무서", "토지정보과", "민원과", "종합민원과", "지적과"].includes(o.type))
-        .map(o => ({ ...o, dist: getDistance(uLat, uLng, o.lat, o.lng), isMatched: userDistrict && o.covers.some(c => userDistrict.includes(c)) }))
-        .sort((a, b) => (b.isMatched - a.isMatched) || (a.dist - b.dist));
+    // 2. 세무/토지용 필터링 (구 이름이 일치하는 경우 우선)
+    const adminTargets = offices.filter(o => ["세무서", "토지정보과"].includes(o.type))
+        .map(o => ({ ...o, dist: getDistance(lat, lng, o.lat, o.lng), isMatched: o.covers.some(c => fullAddress.includes(c)) }))
+        .sort((a,b) => b.isMatched - a.isMatched || a.dist - b.dist);
 
-    renderUI(recList, adminList);
+    displayResults(recTargets, adminTargets, fullAddress);
 }
 
-function renderUI(rec, admin) {
-    let recHtml = `<span class="section-title">관할 추천 기관</span>`;
-    rec.forEach(o => { recHtml += createCard(o); });
-    document.getElementById("recommend-section").innerHTML = recHtml;
+function displayResults(recData, adminData, fullAddress) {
+    let html = `<p style="font-size:14px; color:#666; margin-bottom:15px;">📍 검색 지역: <b>${fullAddress}</b></p>`;
+    
+    // 섹션 1: 관할기관
+    html += `<span class="section-title">관할기관</span>`;
+    if(recData.length > 0) {
+        recData.forEach(o => html += createCard(o));
+    } else {
+        html += `<p class="addr-text" style="padding:10px;">해당 지역의 관할기관 데이터가 없습니다.</p>`;
+    }
 
-    let adminHtml = `<span class="section-title">관할 행정 기관</span>`;
-    admin.forEach(o => { adminHtml += createCard(o); });
-    document.getElementById("admin-section").innerHTML = adminHtml;
+    // 섹션 2: 중개사, 세금관련 문의
+    html += `<span class="section-title">중개사, 세금관련 문의</span>`;
+    if(adminData.length > 0) {
+        adminData.forEach(o => html += createCard(o));
+    } else {
+        html += `<p class="addr-text" style="padding:10px;">해당 지역의 세무/토지과 데이터가 없습니다.</p>`;
+    }
+
+    document.getElementById("result-content").innerHTML = html;
 }
 
 function createCard(o) {
     return `
-        <div class="office-card ${o.isMatched ? 'matched' : ''}">
+        <div class="office-card" style="${o.isMatched ? 'border: 2px solid #0056b3; background: #f0f7ff;' : ''}">
+            <span class="type-badge">${o.type}</span>
             <div class="title-group">
                 <span class="office-name">${o.name}</span>
-                <span class="distance-text">(${o.dist}km)</span>
+                <span class="distance-text">(${o.dist.toFixed(1)}km)</span>
             </div>
             <span class="phone-text">📞 ${o.phone}</span>
             <p class="addr-text">🏠 ${o.address}</p>
         </div>`;
 }
+
+document.addEventListener("DOMContentLoaded", function(){
+    const input = document.getElementById("keyword");
+    input.addEventListener("input", () => {
+        focusedIndex = -1;
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(() => searchAddress(false), 200);
+    });
+
+    input.addEventListener("keydown", function(e){
+        const listEl = document.getElementById("addressList");
+        const items = listEl.getElementsByClassName("search-item");
+        if (e.key === "Enter") {
+            e.preventDefault();
+            if (focusedIndex > -1 && items.length > 0) items[focusedIndex].click();
+            else searchAddress(true);
+        } else if (listEl.style.display === "block") {
+            if (e.key === "ArrowDown") {
+                focusedIndex = (focusedIndex + 1) % items.length;
+                updateFocus(items);
+            } else if (e.key === "ArrowUp") {
+                focusedIndex = (focusedIndex - 1 + items.length) % items.length;
+                updateFocus(items);
+            }
+        }
+    });
+
+    function updateFocus(items) {
+        for (let item of items) item.classList.remove("active");
+        if (focusedIndex > -1) items[focusedIndex].classList.add("active");
+    }
+});
 </script>
 </body>
 </html>
-
-
-

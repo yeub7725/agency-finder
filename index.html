@@ -1,3 +1,9 @@
+오류의 원인이었던 **중복된 함수 실행 코드와 꼬여있던 중괄호(})**를 모두 바로잡았습니다. 또한 데이터가 없을 경우를 대비한 안전 장치까지 포함하여, 복사해서 바로 사용하실 수 있는 최종 통코드를 드립니다.
+
+const offices = [ ... ]; 부분에 실제 사용하시는 데이터만 채워 넣어주세요!
+
+🛠️ 관할기관 검색 - 원스크린 통합 최종 코드
+HTML
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -9,13 +15,13 @@
         body, html { margin: 0; padding: 0; height: 100%; font-family: 'Malgun Gothic', sans-serif; overflow: hidden; background: #f1f5f9; }
         .main-wrapper { display: flex; height: 100vh; width: 100vw; }
         
-        /* [2. 사이드바] 내부 요소들을 수직 배치 (Flex) */
+        /* [2. 사이드바] 내부 요소 수직 배치 */
         #sidebar-search { 
             width: 420px; min-width: 420px; border-right: 1px solid #e2e8f0; 
             display: flex; flex-direction: column; background: #fff; height: 100%;
         }
         
-        /* [3. 상단 검색 영역] 높이 고정 */
+        /* [3. 상단 검색 영역] */
         .search-header { padding: 20px; flex-shrink: 0; border-bottom: 1px solid #f1f5f9; }
         h1 { font-size: 1.1rem; margin: 0 0 12px 0; color: #1e293b; font-weight: bold; }
         .search-row { display: flex; gap: 8px; }
@@ -35,13 +41,11 @@
         .search-item:last-child { border-bottom: none; }
         .search-item.active { background-color: #0056b3 !important; color: white !important; font-weight: bold; }
 
-        /* [5. 결과 영역] 여기가 핵심입니다. 남은 높이를 다 차지하며 내부 스크롤 발생 */
+        /* [5. 결과 영역] 내부 스크롤 적용 */
         #result-area { 
             flex: 1; overflow-y: auto; padding: 15px 20px; 
             display: flex; flex-direction: column; gap: 15px;
-            scrollbar-width: thin; /* 파이어폭스용 */
         }
-        /* 크롬/사파리용 스크롤바 디자인 */
         #result-area::-webkit-scrollbar { width: 6px; }
         #result-area::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
         
@@ -60,13 +64,12 @@
         .phone-text { font-size: 18px; font-weight: 800; color: #0056b3; display: block; margin: 4px 0; letter-spacing: -0.5px; }
         .addr-text { font-size: 12.5px; color: #64748b; line-height: 1.4; margin: 0; }
 
-        /* [7. 하단 안내 정보 구역] */
+        /* [7. 하단 안내 정보] */
         .info-box { background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px; border-radius: 10px; font-size: 12px; line-height: 1.6; }
         .contact-item { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px dotted #e2e8f0; }
         .contact-item:last-child { border-bottom: none; }
         .contact-item b { color: #e11d48; font-size: 13px; }
 
-        /* [8. 우측 빈 영역] */
         #content-area { flex: 1; background: #f8fafc; position: relative; }
 
         @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
@@ -93,16 +96,13 @@
             <div id="rec-section">
                 <p id="initial-msg" style="text-align:center; color:#94a3b8; margin-top:50px; font-size: 13px;">주소를 입력하시면 관할 정보가 표시됩니다.</p>
             </div>
-            
             <div id="admin-section"></div>
-
             <div id="sub-info" style="display:none;">
                 <div class="section-title">신청 시 필요 서류</div>
                 <div class="info-box" style="margin-bottom:10px; color:#334155;">
                     <p style="margin:0 0 4px 0;">• <b>공통:</b> 신분증, 임대차계약서, 주민등록초본</p>
                     <p style="margin:0;">• <b>대리:</b> 위임장, 위임인 인감증명서, 대리인 신분증</p>
                 </div>
-
                 <div class="section-title">주요 업무 문의처</div>
                 <div class="info-box">
                     <div class="contact-item"><span>한국부동산원</span><b>1600-2828</b></div>
@@ -113,7 +113,6 @@
             </div>
         </div>
     </div>
-
     <div id="content-area"></div>
 </div>
 
@@ -599,33 +598,16 @@ function findNearest(lat, lng, fullAddress){
     const city = addrParts[0].substring(0, 2); 
     const district = addrParts.find(p => p.endsWith('구') || p.endsWith('군') || p.endsWith('시')) || "";
 
-    // [수정] 오류 방지를 위한 안전한 체크 로직
     const checkMatch = (office) => {
-        // 1. covers가 없거나 배열이 아니면 false 반환 (에러 방지)
-        if (!office || !office.covers || !Array.isArray(office.covers)) {
-            return false;
-        }
-        // 2. 안전하게 some 함수 실행
+        if (!office || !office.covers || !Array.isArray(office.covers)) return false;
         return office.covers.some(c => 
             (typeof c === 'string') && (fullAddress.includes(c) || district.includes(c) || city.includes(c))
         );
     };
 
-    // 데이터 처리 (filter로 유효하지 않은 데이터는 거르고 시작)
     const sorted = offices
-        .filter(o => o && typeof o.lat === 'number') // 좌표가 있는 정상 데이터만
+        .filter(o => o && typeof o.lat === 'number')
         .map(o => ({ 
-            ...o, 
-            dist: getDistance(lat, lng, o.lat, o.lng), 
-            isMatched: checkMatch(o) 
-        }))
-        .sort((a,b) => b.isMatched - a.isMatched || a.dist - b.dist)
-        .slice(0, 3);
-
-    displayResults(sorted);
-}
-
-    const sorted = offices.map(o => ({ 
             ...o, 
             dist: getDistance(lat, lng, o.lat, o.lng), 
             isMatched: checkMatch(o) 
@@ -639,6 +621,10 @@ function findNearest(lat, lng, fullAddress){
 function displayResults(data) {
     const recEl = document.getElementById("rec-section");
     recEl.innerHTML = `<span class="section-title">관할기관 안내</span>`;
+    if(data.length === 0) {
+        recEl.innerHTML += `<p style="text-align:center; padding:20px; color:#94a3b8; font-size:13px;">결과가 없습니다.</p>`;
+        return;
+    }
     data.forEach(o => recEl.innerHTML += createCard(o));
 }
 
@@ -695,7 +681,3 @@ document.addEventListener("DOMContentLoaded", function(){
 </script>
 </body>
 </html>
-
-
-
-

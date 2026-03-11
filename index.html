@@ -3,7 +3,7 @@
 <head>
     <link rel="icon" href="data:;base64,iVBORw0KGgo=">
     <meta charset="utf-8">
-    <title>관할기관 통합 검색 - 원스크린</title>
+    <title>주소지 입력/최초 계약일</title>
     <style>
         /* [1. 전체 레이아웃] 화면 고정 및 스크롤 억제 */
         body, html { margin: 0; padding: 0; height: 100%; font-family: 'Malgun Gothic', sans-serif; overflow: hidden; background: #f1f5f9; }
@@ -548,18 +548,14 @@ function searchAddress(isEnterPressed = false) {
     const keyword = document.getElementById("keyword").value.trim();
     const listEl = document.getElementById("addressList");
     if(keyword.length < 2) return;
-
     const geocoder = new kakao.maps.services.Geocoder();
     geocoder.addressSearch(keyword, function(result, status){
         if(status === kakao.maps.services.Status.OK){
             currentAddressResults = result;
             if(isEnterPressed) { selectItem((focusedIndex > -1) ? result[focusedIndex] : result[0]); return; }
-            
-            listEl.innerHTML = "";
-            listEl.style.display = "block";
+            listEl.innerHTML = ""; listEl.style.display = "block";
             result.forEach((item) => {
-                const div = document.createElement("div");
-                div.className = "search-item";
+                const div = document.createElement("div"); div.className = "search-item";
                 div.innerHTML = item.address_name;
                 div.onmousedown = (e) => { e.preventDefault(); selectItem(item); };
                 listEl.appendChild(div);
@@ -574,7 +570,6 @@ function selectItem(item) {
     document.getElementById("addressList").style.display = "none";
     document.getElementById("keyword").value = item.address_name;
     document.getElementById("sub-info").style.display = "block";
-    
     findNearest(parseFloat(item.y), parseFloat(item.x), item.address_name);
     focusedIndex = -1;
 }
@@ -587,6 +582,7 @@ function getDistance(lat1, lon1, lat2, lon2){
     return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }
 
+/* [복구] 기존 우선순위 로직 */
 function findNearest(lat, lng, fullAddress){
     const addrParts = fullAddress.split(' ');
     const city = addrParts[0].substring(0, 2); 
@@ -594,37 +590,61 @@ function findNearest(lat, lng, fullAddress){
 
     const checkMatch = (office) => {
         if (!office || !office.covers || !Array.isArray(office.covers)) return false;
-        return office.covers.some(c => 
-            (typeof c === 'string') && (fullAddress.includes(c) || district.includes(c) || city.includes(c))
-        );
+        return office.covers.some(c => fullAddress.includes(c) || district.includes(c) || city.includes(c));
     };
 
-    const sorted = offices
-        .filter(o => o && typeof o.lat === 'number')
+    // 우선순위 점수 부여 (부동산원: 40, 대법공: 30, 주택공사: 20, 지자체: 10)
+    const getPriority = (type) => {
+        if (type === "부동산원") return 40;
+        if (type === "대법공") return 30;
+        if (type === "주택공사") return 20;
+        if (type === "지자체") return 10;
+        return 0;
+    };
+
+    // 1. 관할지역 매칭 여부 우선 -> 2. 기관 타입 우선순위 -> 3. 거리순
+    const recTargets = offices
+        .filter(o => ["부동산원", "대법공", "주택공사", "지자체"].includes(o.type))
         .map(o => ({ 
             ...o, 
             dist: getDistance(lat, lng, o.lat, o.lng), 
-            isMatched: checkMatch(o) 
+            isMatched: checkMatch(o),
+            priority: getPriority(o.type)
         }))
-        .sort((a,b) => b.isMatched - a.isMatched || a.dist - b.dist)
-        .slice(0, 3);
+        .sort((a, b) => {
+            if (b.isMatched !== a.isMatched) return b.isMatched - a.isMatched; // 관할지역 매칭이 0순위
+            if (b.priority !== a.priority) return b.priority - a.priority;    // 기관 타입이 1순위
+            return a.dist - b.dist;                                         // 거리가 2순위
+        })
+        .slice(0, 2); // 관할기관은 상위 2개만 노출
 
-    displayResults(sorted);
+    // 세무서 및 토지정보과 (중개사/세금 관련)
+    let adminResults = offices.filter(o => ["세무서", "토지정보과"].includes(o.type))
+        .map(o => ({ ...o, dist: getDistance(lat, lng, o.lat, o.lng), isMatched: checkMatch(o) }))
+        .sort((a, b) => b.isMatched - a.isMatched || a.dist - b.dist);
+
+    let oneLand = adminResults.filter(o => o.type === "토지정보과" && o.isMatched).slice(0, 1);
+    let oneTax = adminResults.filter(o => o.type === "세무서" && o.isMatched).slice(0, 1);
+
+    displayResults(recTargets, [...oneLand, ...oneTax]);
 }
 
-function displayResults(data) {
+function displayResults(recData, adminData) {
     const recEl = document.getElementById("rec-section");
+    const adminEl = document.getElementById("admin-section");
+    
     recEl.innerHTML = `<span class="section-title">관할기관 안내</span>`;
-    if(data.length === 0) {
-        recEl.innerHTML += `<p style="text-align:center; padding:20px; color:#94a3b8; font-size:13px;">결과가 없습니다.</p>`;
-        return;
-    }
-    data.forEach(o => recEl.innerHTML += createCard(o));
+    recData.forEach(o => recEl.innerHTML += createCard(o, 'recommend'));
+
+    adminEl.innerHTML = `<span class="section-title">중개사, 세금관련 문의</span>`;
+    const uniqueAdmin = Array.from(new Set(adminData.map(a => a.name))).map(name => adminData.find(a => a.name === name));
+    uniqueAdmin.forEach(o => adminEl.innerHTML += createCard(o, 'admin'));
 }
 
-function createCard(o) {
+function createCard(o, cardType) {
+    const isRec = cardType === 'recommend';
     return `
-        <div class="office-card recommend">
+        <div class="office-card ${isRec ? 'recommend' : ''}">
             <div class="title-row">
                 <span class="office-name">${o.name}</span>
                 <span class="distance-text">${o.dist.toFixed(1)}km</span>
@@ -645,34 +665,20 @@ function updateFocus(items) {
 
 document.addEventListener("DOMContentLoaded", function(){
     const input = document.getElementById("keyword");
-    input.addEventListener("input", () => {
-        clearTimeout(debounceTimer);
-        debounceTimer = setTimeout(() => searchAddress(false), 200);
-    });
+    input.addEventListener("input", () => { clearTimeout(debounceTimer); debounceTimer = setTimeout(() => searchAddress(false), 200); });
     input.addEventListener("keydown", function(e){
         const listEl = document.getElementById("addressList");
         const items = listEl.getElementsByClassName("search-item");
         if (listEl.style.display === "block" && items.length > 0) {
-            if (e.key === "ArrowDown") {
-                e.preventDefault();
-                focusedIndex = (focusedIndex + 1) % items.length;
-                updateFocus(items);
-            } else if (e.key === "ArrowUp") {
-                e.preventDefault();
-                focusedIndex = (focusedIndex - 1 + items.length) % items.length;
-                updateFocus(items);
-            } else if (e.key === "Enter") {
-                e.preventDefault();
-                const targetIdx = (focusedIndex > -1) ? focusedIndex : 0;
-                if (currentAddressResults[targetIdx]) selectItem(currentAddressResults[targetIdx]);
-            }
+            if (e.key === "ArrowDown") { e.preventDefault(); focusedIndex = (focusedIndex + 1) % items.length; updateFocus(items); }
+            else if (e.key === "ArrowUp") { e.preventDefault(); focusedIndex = (focusedIndex - 1 + items.length) % items.length; updateFocus(items); }
+            else if (e.key === "Enter") { e.preventDefault(); const targetIdx = (focusedIndex > -1) ? focusedIndex : 0; if (currentAddressResults[targetIdx]) selectItem(currentAddressResults[targetIdx]); }
         }
     });
-    document.addEventListener("click", (e) => {
-        if(e.target.id !== "keyword") document.getElementById("addressList").style.display = "none";
-    });
+    document.addEventListener("click", (e) => { if(e.target.id !== "keyword") document.getElementById("addressList").style.display = "none"; });
 });
 </script>
 </body>
 </html>
+
 

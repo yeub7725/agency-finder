@@ -70,7 +70,6 @@
             <div id="rec-section">
                 <p id="initial-msg" style="text-align:center; color:#94a3b8; margin-top:50px; font-size: 14px;">주소를 입력하시면 관할 정보가 표시됩니다.</p>
             </div>
-
             <div id="document-section" style="display:none;">
                 <span class="section-title">신청 시 필요 서류 안내</span>
                 <div class="doc-guide">
@@ -78,7 +77,6 @@
                     <p><b>대리인:</b> 위임장, 위임인 인감증명서, 대리인 신분증</p>
                 </div>
             </div>
-
             <div id="contact-section" style="display:none;">
                 <span class="section-title">주요 안내 연락처</span>
                 <div class="contact-list">
@@ -93,7 +91,6 @@
                     <div class="contact-item">국세청<b>126</b></div>
                 </div>
             </div>
-
             <div id="admin-section"></div>
         </div>
     </div>
@@ -456,6 +453,17 @@ let focusedIndex = -1;
 let debounceTimer;
 let currentAddressResults = []; 
 
+// 화면 결과 리셋 함수
+function clearResults() {
+    currentAddressResults = [];
+    document.getElementById("addressList").style.display = "none";
+    document.getElementById("rec-section").innerHTML = '<p id="initial-msg" style="text-align:center; color:#94a3b8; margin-top:50px; font-size: 14px;">검색 결과가 없습니다.</p>';
+    document.getElementById("admin-section").innerHTML = "";
+    document.getElementById("document-section").style.display = "none";
+    document.getElementById("contact-section").style.display = "none";
+    document.getElementById("search-location-info").style.display = "none";
+}
+
 function formatContractDate() {
     const dateInput = document.getElementById('contract-date');
     let val = dateInput.value.replace(/[^0-9]/g, '');
@@ -476,34 +484,37 @@ function getDistance(lat1, lon1, lat2, lon2){
 function searchAddress(isEnterPressed = false) {
     const keyword = document.getElementById("keyword").value.trim();
     const listEl = document.getElementById("addressList");
-    if(keyword.length < 2) { listEl.style.display = "none"; return; }
+    
+    // 입력이 너무 짧으면 리셋
+    if(keyword.length < 2) { 
+        clearResults();
+        if(keyword.length === 0) document.getElementById("rec-section").innerHTML = '<p id="initial-msg" style="text-align:center; color:#94a3b8; margin-top:50px; font-size: 14px;">주소를 입력하시면 관할 정보가 표시됩니다.</p>';
+        return; 
+    }
 
     const geocoder = new kakao.maps.services.Geocoder();
     geocoder.addressSearch(keyword, function(result, status){
         if(status === kakao.maps.services.Status.OK){
             currentAddressResults = result;
-            
             if(isEnterPressed) {
-                const targetIdx = (focusedIndex > -1) ? focusedIndex : 0;
-                selectItem(result[targetIdx]);
+                selectItem((focusedIndex > -1) ? result[focusedIndex] : result[0]);
                 return;
             }
-
-            if(result.length === 1) {
-                listEl.style.display = "none";
-                return;
-            }
+            if(result.length === 1) { listEl.style.display = "none"; return; }
 
             listEl.innerHTML = "";
             listEl.style.display = "block";
             focusedIndex = -1; 
-            result.forEach((item, idx) => {
+            result.forEach((item) => {
                 const div = document.createElement("div");
                 div.className = "search-item";
                 div.innerHTML = item.address_name;
                 div.onmousedown = (e) => { e.preventDefault(); selectItem(item); };
                 listEl.appendChild(div);
             });
+        } else {
+            // 검색 결과가 없는 주소를 치고 있을 때 이전 결과를 지움
+            clearResults();
         }
     });
 }
@@ -516,7 +527,6 @@ function selectItem(item) {
     document.getElementById("selected-addr-text").innerText = item.address_name;
     document.getElementById("document-section").style.display = "block";
     document.getElementById("contact-section").style.display = "block";
-    if(document.getElementById("initial-msg")) document.getElementById("initial-msg").style.display = "none";
     findNearest(parseFloat(item.y), parseFloat(item.x), item.address_name);
 }
 
@@ -555,16 +565,11 @@ function displayResults(recData, adminData) {
 
 function createCard(o, cardType) {
     const isRecommend = cardType === 'recommend';
-    const labelHtml = isRecommend ? `
-        <div class="right-label">
-            <span class="office-type">${o.type}</span>
-            <span class="distance-text">(${o.dist.toFixed(1)}km)</span>
-        </div>` : "";
     return `
         <div class="office-card ${isRecommend ? 'recommend' : ''}">
             <div class="title-row">
                 <span class="office-name">${o.name}</span>
-                ${labelHtml}
+                ${isRecommend ? `<div class="right-label"><span class="office-type">${o.type}</span><span class="distance-text">(${o.dist.toFixed(1)}km)</span></div>` : ""}
             </div>
             <span class="phone-text">📞 ${o.phone}</span>
             <p class="addr-text">🏠 ${o.address}</p>
@@ -577,7 +582,8 @@ document.addEventListener("DOMContentLoaded", function(){
 
     input.addEventListener("input", () => {
         clearTimeout(debounceTimer);
-        debounceTimer = setTimeout(() => searchAddress(false), 200);
+        // 반응속도 향상을 위해 100ms로 단축
+        debounceTimer = setTimeout(() => searchAddress(false), 100);
     });
 
     input.addEventListener("keydown", function(e){
@@ -595,23 +601,17 @@ document.addEventListener("DOMContentLoaded", function(){
                 updateFocus(items);
             } else if (e.key === "Enter") {
                 e.preventDefault();
-                const targetIdx = (focusedIndex > -1) ? focusedIndex : 0;
-                selectItem(currentAddressResults[targetIdx]);
+                selectItem(currentAddressResults[(focusedIndex > -1) ? focusedIndex : 0]);
             }
         } else if (e.key === "Enter") {
             e.preventDefault();
-            if (currentAddressResults.length > 0) {
-                selectItem(currentAddressResults[0]);
-            } else {
-                searchAddress(true);
-            }
+            if (currentAddressResults.length > 0) selectItem(currentAddressResults[0]);
+            else searchAddress(true);
         }
     });
 
     dateInput.addEventListener('blur', formatContractDate);
-    dateInput.addEventListener('keydown', function(e) {
-        if (e.key === 'Enter') { formatContractDate(); this.blur(); }
-    });
+    dateInput.addEventListener('keydown', function(e) { if (e.key === 'Enter') { formatContractDate(); this.blur(); } });
 
     document.addEventListener("click", (e) => {
         if(e.target.id !== "keyword") document.getElementById("addressList").style.display = "none";
@@ -619,7 +619,7 @@ document.addEventListener("DOMContentLoaded", function(){
 });
 
 function updateFocus(items) {
-    if (!items || items.length === 0) return;
+    if (!items) return;
     for (let item of items) item.classList.remove("active");
     if (focusedIndex > -1 && items[focusedIndex]) {
         items[focusedIndex].classList.add("active");

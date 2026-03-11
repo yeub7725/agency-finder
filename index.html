@@ -501,20 +501,35 @@ function findNearest(lat, lng, fullAddress){
 }
 
 function displayResults(recData, adminData, fullAddress) {
+    const contentEl = document.getElementById("result-content");
+    
+    // 1. 결과창 요소가 있는지 확인
+    if (!contentEl) {
+        console.error("ID가 'result-content'인 요소를 찾을 수 없습니다.");
+        return;
+    }
+
     let html = `<p style="font-size:14px; color:#666; margin-bottom:15px;">📍 검색 지역: <b>${fullAddress}</b></p>`;
+    
+    // 2. 관할기관 섹션
     html += `<span class="section-title">관할기관</span>`;
-    if(recData.length > 0) {
+    if(recData && recData.length > 0) {
         recData.forEach(o => html += createCard(o));
     } else {
-        html += `<p class="addr-text" style="padding:10px;">해당 지역의 관할기관 데이터가 없습니다.</p>`;
+        html += `<p style="padding:15px; color:#999; font-size:14px;">❌ 일치하는 관할기관 데이터가 없습니다.</p>`;
     }
+
+    // 3. 세무/토지 섹션
     html += `<span class="section-title">중개사, 세금관련 문의</span>`;
-    if(adminData.length > 0) {
+    if(adminData && adminData.length > 0) {
         adminData.forEach(o => html += createCard(o));
     } else {
-        html += `<p class="addr-text" style="padding:10px;">해당 지역의 세무/토지과 데이터가 없습니다.</p>`;
+        html += `<p style="padding:15px; color:#999; font-size:14px;">❌ 일치하는 세무/토지과 데이터가 없습니다.</p>`;
     }
-    document.getElementById("result-content").innerHTML = html;
+
+    // 4. 화면에 실제 주입
+    contentEl.innerHTML = html;
+    console.log("화면 업데이트 완료!"); 
 }
 
 function createCard(o) {
@@ -566,6 +581,7 @@ document.addEventListener("DOMContentLoaded", function(){
 </script>
 </body>
 </html>
+
 
 
 

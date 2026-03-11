@@ -14,12 +14,12 @@
         .search-row { display: flex; gap: 6px; align-items: center; }
         input#keyword { padding: 10px; width: 100%; font-size: 13px; border: 2px solid #0056b3; border-radius: 6px; box-sizing: border-box; outline: none; }
         
-        /* 날짜 입력창: 구조 단순화하여 입력 문제 해결 */
-        .date-group { display: flex; align-items: center; background: #fff; border: 2px solid #94a3b8; border-radius: 6px; padding: 0 5px; height: 39px; box-sizing: border-box; flex: 1.4; position: relative; }
+        /* 날짜 입력창 디자인 */
+        .date-group { display: flex; align-items: center; background: #fff; border: 2px solid #94a3b8; border-radius: 6px; padding: 0 5px; height: 39px; box-sizing: border-box; flex: 1.4; position: relative; cursor: text; }
         .date-group input { width: 32px; border: none !important; padding: 0; text-align: center; font-size: 13px; font-weight: bold; color: #0056b3; outline: none; background: transparent; position: relative; z-index: 10; }
         .date-group span { color: #0056b3; font-weight: bold; width: 8px; text-align: center; display: none; } 
         
-        /* Placeholder: 입력 전에는 보이고 입력 시작하면 숨김 */
+        /* "최초 계약일" 통합 Placeholder */
         .fake-placeholder { position: absolute; left: 0; right: 0; text-align: center; color: #94a3b8; font-size: 13px; pointer-events: none; z-index: 5; }
 
         #result-area { flex: 1; overflow-y: auto; padding: 10px 15px; display: flex; flex-direction: column; gap: 8px; }
@@ -81,7 +81,6 @@
                     <p style="margin:0 0 2px 0;">• <b>공통:</b> 신분증, 등기부등본, 건축물대장, 임대계약서, 주민등록초본</p>
                     <p style="margin:0;">• <b>대리:</b> 위임장, 인감증명서, 대리인 신분증</p>
                 </div>
-
                 <div class="section-title">주요 업무 문의처</div>
                 <div class="info-box">
                     <div class="contact-item">한국부동산원<b>1600-2828</b></div>
@@ -535,7 +534,7 @@ let focusedIndex = -1;
 let debounceTimer;
 let currentAddressResults = [];
 
-// --- 날짜 로직 (입력 문제 해결) ---
+// --- 날짜 로직 ---
 const dateFields = [document.getElementById('yy'), document.getElementById('mm'), document.getElementById('dd')];
 const separators = [document.getElementById('sep1'), document.getElementById('sep2')];
 const fakePlaceholder = document.getElementById('fake-text');
@@ -543,8 +542,6 @@ const fakePlaceholder = document.getElementById('fake-text');
 dateFields.forEach((el, idx) => {
     el.addEventListener('input', (e) => {
         let val = e.target.value.replace(/[^0-9]/g, '');
-        
-        // 월/일 제한 로직
         if(idx === 1 && val.length === 2) { 
             if(parseInt(val) > 12) val = '12'; 
             if(val === '00') val = '01'; 
@@ -554,9 +551,7 @@ dateFields.forEach((el, idx) => {
             if(val === '00') val = '01'; 
         }
         e.target.value = val;
-        
         if(val.length === 2 && idx < 2) dateFields[idx + 1].focus();
-        
         updateDateUI();
     });
 
@@ -628,7 +623,9 @@ function findNearest(lat, lng, fullAddress){
     displayResults(recTargets, [...oneLand, ...oneTax]);
 }
 
+// 거리 계산 함수 (매우 중요)
 function getDistance(lat1, lon1, lat2, lon2){
+    if(!lat1 || !lon1 || !lat2 || !lon2) return 999;
     const R = 6371;
     const dLat = (lat2-lat1)*Math.PI/180;
     const dLon = (lon2-lon1)*Math.PI/180;
@@ -646,7 +643,7 @@ function displayResults(rec, admin) {
 }
 
 function createCard(o, isRec) {
-    const distText = (isRec && o.dist) ? `<span style="color:#16a34a; font-size:11px; font-weight:bold;">${o.dist.toFixed(1)}km</span>` : '';
+    const distText = (isRec && o.dist < 100) ? `<span style="color:#16a34a; font-size:11px; font-weight:bold;">${o.dist.toFixed(1)}km</span>` : '';
     return `<div class="office-card ${isRec ? 'recommend' : ''}"><div style="display:flex; justify-content:space-between; align-items:center;"><span class="office-name">${o.name}</span>${distText}</div><span class="phone-text">📞 ${o.phone}</span><p class="addr-text">🏠 ${o.address}</p></div>`;
 }
 
@@ -674,6 +671,3 @@ document.addEventListener("DOMContentLoaded", function(){
 </script>
 </body>
 </html>
-
-
-

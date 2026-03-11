@@ -441,7 +441,6 @@ const offices = [
 ];
 let focusedIndex = -1, debounceTimer;
 
-// 1. 두 지점 사이의 거리 계산 (하버사인 공식)
 function getDistance(lat1, lon1, lat2, lon2){
     const R = 6371;
     const dLat = (lat2-lat1)*Math.PI/180;
@@ -450,7 +449,6 @@ function getDistance(lat1, lon1, lat2, lon2){
     return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }
 
-// 2. 주소 자동완성 및 검색 로직
 function searchAddress(isFinal = false) {
     const keyword = document.getElementById("keyword").value.trim();
     const listEl = document.getElementById("addressList");
@@ -476,26 +474,24 @@ function searchAddress(isFinal = false) {
         }
     });
 }
-
-// 3. 주소 선택 시 실행되는 함수
 function selectItem(item) {
     document.getElementById("addressList").style.display = "none";
     document.getElementById("keyword").value = item.address_name;
-    // 좌표와 정식 주소 명칭을 전달
+    
     findNearest(parseFloat(item.y), parseFloat(item.x), item.address_name);
 }
 
-// 4. 관할 기관 매칭 및 필터링 핵심 로직
+
 function findNearest(lat, lng, fullAddress){
     const addrParts = fullAddress.split(' ');
-    // 주소에서 구/군/시 추출
+   
     const district = addrParts.find(p => p.endsWith('구') || p.endsWith('군') || p.endsWith('시')) || "";
-    // 주소 앞 2글자 (서울, 경기 등)
+   
     const city = addrParts[0].substring(0, 2); 
 
     console.log("매칭 시도 키워드:", city, district);
 
-    // [필터 1] 관할기관 (부동산원, 대법공, 주택공사, 지자체)
+   
     const recTargets = offices.filter(o => ["부동산원", "대법공", "주택공사", "지자체"].includes(o.type))
         .map(o => ({ 
             ...o, 
@@ -505,7 +501,7 @@ function findNearest(lat, lng, fullAddress){
         .sort((a,b) => b.isMatched - a.isMatched || a.dist - b.dist)
         .slice(0, 2);
 
-    // [필터 2] 세무/토지과 (세무서, 토지정보과)
+  
     const adminTargets = offices.filter(o => ["세무서", "토지정보과"].includes(o.type))
         .map(o => ({ 
             ...o, 
@@ -516,6 +512,7 @@ function findNearest(lat, lng, fullAddress){
 
     displayResults(recTargets, adminTargets, fullAddress);
 }
+
 
 
 

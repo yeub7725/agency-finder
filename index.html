@@ -14,12 +14,13 @@
         .search-row { display: flex; gap: 6px; align-items: center; }
         input#keyword { padding: 10px; width: 100%; font-size: 13px; border: 2px solid #0056b3; border-radius: 6px; box-sizing: border-box; outline: none; }
         
-        /* 분할 날짜 입력창 스타일 */
-        .date-group { display: flex; align-items: center; background: #fff; border: 2px solid #94a3b8; border-radius: 6px; padding: 0 5px; height: 39px; box-sizing: border-box; flex: 1.4; justify-content: center; }
-        .date-group input { width: 35px; border: none !important; padding: 0; text-align: center; font-size: 13px; font-weight: bold; color: #0056b3; outline: none; background: transparent; }
-        /* Placeholder 색상 조정 */
-        .date-group input::placeholder { color: #94a3b8; font-weight: normal; }
-        .date-group span { color: #0056b3; font-weight: bold; margin: 0; font-size: 13px; width: 8px; text-align: center; }
+        /* 날짜 입력창: 최초 계약일 문구가 합쳐 보이도록 개선 */
+        .date-group { display: flex; align-items: center; background: #fff; border: 2px solid #94a3b8; border-radius: 6px; padding: 0 8px; height: 39px; box-sizing: border-box; flex: 1.4; position: relative; }
+        .date-group input { width: 30px; border: none !important; padding: 0; text-align: center; font-size: 13px; font-weight: bold; color: #0056b3; outline: none; background: transparent; z-index: 2; }
+        .date-group span { color: #0056b3; font-weight: bold; width: 8px; text-align: center; visibility: hidden; } /* 입력 전엔 숨김 */
+        
+        /* 가짜 Placeholder: "최초 계약일"을 하나로 보이게 함 */
+        .fake-placeholder { position: absolute; left: 50%; transform: translateX(-50%); color: #94a3b8; font-size: 13px; pointer-events: none; white-space: nowrap; z-index: 1; }
 
         #result-area { flex: 1; overflow-y: auto; padding: 10px 15px; display: flex; flex-direction: column; gap: 8px; }
         #result-area::-webkit-scrollbar { width: 4px; }
@@ -58,12 +59,13 @@
                     <input id="keyword" placeholder="주소 입력" autocomplete="off">
                     <div id="addressList"></div>
                 </div>
-                <div class="date-group">
-                    <input type="text" id="yy" placeholder="최초" maxlength="2">
-                    <span id="sep1"></span>
-                    <input type="text" id="mm" placeholder="계약" maxlength="2">
-                    <span id="sep2"></span>
-                    <input type="text" id="dd" placeholder="일" maxlength="2">
+                <div class="date-group" id="date-container">
+                    <div class="fake-placeholder" id="fake-text">최초 계약일</div>
+                    <input type="text" id="yy" maxlength="2">
+                    <span id="sep1">.</span>
+                    <input type="text" id="mm" maxlength="2">
+                    <span id="sep2">.</span>
+                    <input type="text" id="dd" maxlength="2">
                 </div>
             </div>
         </div>
@@ -92,7 +94,6 @@
                     <div class="contact-item">대법공<b>132</b></div>
                     <div class="contact-item">국세청<b>126</b></div>
                 </div>
-
                 <div id="admin-section"></div>
             </div>
         </div>
@@ -534,13 +535,19 @@ let focusedIndex = -1;
 let debounceTimer;
 let currentAddressResults = [];
 
+// --- 날짜 로직 ---
 const dateFields = [document.getElementById('yy'), document.getElementById('mm'), document.getElementById('dd')];
 const separators = [document.getElementById('sep1'), document.getElementById('sep2')];
+const fakePlaceholder = document.getElementById('fake-text');
 
 dateFields.forEach((el, idx) => {
+    el.addEventListener('focus', () => { fakePlaceholder.style.display = 'none'; });
+    el.addEventListener('blur', () => { 
+        if (dateFields.every(f => f.value === "")) { fakePlaceholder.style.display = 'block'; }
+    });
+    
     el.addEventListener('input', (e) => {
         let val = e.target.value.replace(/[^0-9]/g, '');
-        
         if(idx === 1 && val.length === 2) { 
             if(parseInt(val) > 12) val = '12'; 
             if(val === '00') val = '01'; 
@@ -549,53 +556,42 @@ dateFields.forEach((el, idx) => {
             if(parseInt(val) > 31) val = '31'; 
             if(val === '00') val = '01'; 
         }
-        
         e.target.value = val;
-
-        if(val.length === 2 && idx < 2) {
-            dateFields[idx + 1].focus();
-        }
-
-        checkDateFormat();
+        
+        if(val.length === 2 && idx < 2) dateFields[idx + 1].focus();
+        
+        // 값이 하나라도 있으면 점(.) 보이기
+        const hasAnyValue = dateFields.some(f => f.value.length > 0);
+        separators.forEach(s => s.style.visibility = hasAnyValue ? 'visible' : 'hidden');
     });
 
     el.addEventListener('keydown', (e) => {
-        if(e.key === 'Backspace' && e.target.value === '' && idx > 0) {
-            dateFields[idx - 1].focus();
-        }
+        if(e.key === 'Backspace' && e.target.value === '' && idx > 0) dateFields[idx - 1].focus();
     });
 });
 
-function checkDateFormat() {
-    // 하나라도 입력값이 있으면 점(.)을 표시
-    const hasValue = dateFields.some(field => field.value.length > 0);
-    if(hasValue) {
-        separators[0].innerText = ".";
-        separators[1].innerText = ".";
-    } else {
-        separators[0].innerText = "";
-        separators[1].innerText = "";
-    }
-}
-
-// 기존 로직 유지
+// --- 주소 검색 및 재검색 로직 (완벽 복구) ---
 function searchAddress(isEnterPressed = false) {
     const keyword = document.getElementById("keyword").value.trim();
     const listEl = document.getElementById("addressList");
-    if(keyword.length < 2) return;
+    if(keyword.length < 2) { listEl.style.display = "none"; return; }
+
     const geocoder = new kakao.maps.services.Geocoder();
     geocoder.addressSearch(keyword, function(result, status){
         if(status === kakao.maps.services.Status.OK){
             currentAddressResults = result;
             if(isEnterPressed) { selectItem((focusedIndex > -1) ? result[focusedIndex] : result[0]); return; }
-            listEl.innerHTML = ""; listEl.style.display = "block";
-            result.forEach((item) => {
-                const div = document.createElement("div"); div.className = "search-item";
+            
+            listEl.innerHTML = ""; 
+            listEl.style.display = "block";
+            result.forEach((item, index) => {
+                const div = document.createElement("div"); 
+                div.className = "search-item";
                 div.innerHTML = item.address_name;
                 div.onmousedown = (e) => { e.preventDefault(); selectItem(item); };
                 listEl.appendChild(div);
             });
-            if(focusedIndex !== -1) updateFocus(listEl.getElementsByClassName("search-item"));
+            updateFocus(listEl.getElementsByClassName("search-item"));
         }
     });
 }
@@ -622,62 +618,58 @@ function findNearest(lat, lng, fullAddress){
     const addrParts = fullAddress.split(' ');
     const city = addrParts[0].substring(0, 2); 
     const district = addrParts.find(p => p.endsWith('구') || p.endsWith('군') || p.endsWith('시')) || "";
-    const checkMatch = (office) => {
-        if (!office || !office.covers || !Array.isArray(office.covers)) return false;
-        return office.covers.some(c => fullAddress.includes(c) || district.includes(c) || city.includes(c));
-    };
-    const getPriority = (type) => {
-        if (type === "부동산원") return 40;
-        if (type === "대법공") return 30;
-        if (type === "주택공사") return 20;
-        if (type === "지자체") return 10;
-        return 0;
-    };
+    
+    const checkMatch = (o) => o.covers?.some(c => fullAddress.includes(c) || district.includes(c) || city.includes(c));
+    const getPriority = (t) => ({ "부동산원": 40, "대법공": 30, "주택공사": 20, "지자체": 10 }[t] || 0);
+
     const recTargets = offices
         .filter(o => ["부동산원", "대법공", "주택공사", "지자체"].includes(o.type))
         .map(o => ({ ...o, dist: getDistance(lat, lng, o.lat, o.lng), isMatched: checkMatch(o), priority: getPriority(o.type) }))
         .sort((a, b) => (b.isMatched - a.isMatched) || (b.priority - a.priority) || (a.dist - b.dist)).slice(0, 2);
-    let adminResults = offices.filter(o => ["세무서", "토지정보과"].includes(o.type))
-        .map(o => ({ ...o, isMatched: checkMatch(o) }))
-        .sort((a, b) => (b.isMatched - a.isMatched));
-    let oneLand = adminResults.filter(o => o.type === "토지정보과" && o.isMatched).slice(0, 1);
-    let oneTax = adminResults.filter(o => o.type === "세무서" && o.isMatched).slice(0, 1);
+
+    const adminResults = offices.filter(o => ["세무서", "토지정보과"].includes(o.type)).map(o => ({ ...o, isMatched: checkMatch(o) }));
+    const oneLand = adminResults.filter(o => o.type === "토지정보과" && o.isMatched).slice(0, 1);
+    const oneTax = adminResults.filter(o => o.type === "세무서" && o.isMatched).slice(0, 1);
+
     displayResults(recTargets, [...oneLand, ...oneTax]);
 }
 
-function displayResults(recData, adminData) {
+function displayResults(rec, admin) {
     const recEl = document.getElementById("rec-section");
     const adminEl = document.getElementById("admin-section");
     recEl.innerHTML = `<span class="section-title">관할기관 안내</span>`;
-    recData.forEach(o => recEl.innerHTML += createCard(o, true));
+    rec.forEach(o => recEl.innerHTML += createCard(o, true));
     adminEl.innerHTML = `<span class="section-title">중개사, 세금관련 문의</span>`;
-    adminData.forEach(o => adminEl.innerHTML += createCard(o, false));
+    admin.forEach(o => adminEl.innerHTML += createCard(o, false));
 }
 
 function createCard(o, isRec) {
-    const distText = (isRec && o.dist !== null) ? `<span style="color:#16a34a; font-size:11px; font-weight:bold;">${o.dist.toFixed(1)}km</span>` : '';
+    const distText = (isRec && o.dist) ? `<span style="color:#16a34a; font-size:11px; font-weight:bold;">${o.dist.toFixed(1)}km</span>` : '';
     return `<div class="office-card ${isRec ? 'recommend' : ''}"><div style="display:flex; justify-content:space-between; align-items:center;"><span class="office-name">${o.name}</span>${distText}</div><span class="phone-text">📞 ${o.phone}</span><p class="addr-text">🏠 ${o.address}</p></div>`;
 }
 
 function updateFocus(items) {
-    if (!items) return;
-    for (let i = 0; i < items.length; i++) items[i].classList.remove("active");
-    if (focusedIndex >= 0 && items[focusedIndex]) { items[focusedIndex].classList.add("active"); items[focusedIndex].scrollIntoView({ block: "nearest" }); }
+    if (!items || items.length === 0) return;
+    Array.from(items).forEach((it, i) => it.classList.toggle("active", i === focusedIndex));
 }
 
 document.addEventListener("DOMContentLoaded", function(){
     const input = document.getElementById("keyword");
-    input.addEventListener("input", () => { clearTimeout(debounceTimer); debounceTimer = setTimeout(() => searchAddress(false), 200); });
+    input.addEventListener("input", () => { 
+        clearTimeout(debounceTimer); 
+        debounceTimer = setTimeout(() => searchAddress(false), 200); 
+    });
     input.addEventListener("keydown", function(e){
         const listEl = document.getElementById("addressList");
         const items = listEl.getElementsByClassName("search-item");
         if (listEl.style.display === "block" && items.length > 0) {
             if (e.key === "ArrowDown") { e.preventDefault(); focusedIndex = (focusedIndex + 1) % items.length; updateFocus(items); }
             else if (e.key === "ArrowUp") { e.preventDefault(); focusedIndex = (focusedIndex - 1 + items.length) % items.length; updateFocus(items); }
-            else if (e.key === "Enter") { e.preventDefault(); const targetIdx = (focusedIndex > -1) ? focusedIndex : 0; if (currentAddressResults[targetIdx]) selectItem(currentAddressResults[targetIdx]); }
-        }
+            else if (e.key === "Enter") { e.preventDefault(); searchAddress(true); }
+        } else if (e.key === "Enter") { searchAddress(true); }
     });
 });
 </script>
 </body>
 </html>
+

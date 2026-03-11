@@ -490,7 +490,6 @@ function findNearest(lat, lng, fullAddress){
     const adminTargets = [...oneLand, ...oneTax];
 
     displayResults(recTargets, adminTargets, fullAddress);
-}
 
     const recTargets = offices.filter(o => ["부동산원", "대법공", "주택공사", "지자체"].includes(o.type))
         .map(o => ({ 
@@ -603,6 +602,7 @@ document.addEventListener("DOMContentLoaded", function(){
 </script>
 </body>
 </html>
+
 
 
 

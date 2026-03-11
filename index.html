@@ -9,6 +9,7 @@
         .main-wrapper { display: flex; height: 100vh; width: 100vw; }
         #sidebar-search { width: 440px; min-width: 440px; border-right: 1px solid #ddd; display: flex; flex-direction: column; background: #fff; }
         
+        /* 헤더 섹션 */
         .search-header { padding: 20px 20px 10px 20px; }
         h1 { font-size: 1.1rem; margin: 0 0 12px 0; color: #111; font-weight: bold; }
         
@@ -21,32 +22,34 @@
 
         #search-location-info { font-size: 13px; color: #555; margin-bottom: 10px; display: none; padding-left: 5px; }
         
-        /* [개선] 주소 자동완성 화살표 가독성 강화 */
-        #addressList { position: absolute; top: 100%; left: 0; width: 100%; border: 1px solid #0056b3; background: white; z-index: 100; display: none; border-radius: 8px; box-shadow: 0 8px 16px rgba(0,0,0,0.15); max-height: 250px; overflow-y: auto; }
-        .search-item { padding: 12px 15px; border-bottom: 1px solid #eee; cursor: pointer; font-size: 14px; color: #333; transition: all 0.1s; }
-        
-        /* 화살표로 선택되었을 때 눈에 확 띄는 스타일 */
-        .search-item.active { background-color: #0056b3 !important; color: white !important; font-weight: bold; border-left: 5px solid #002d5e; }
+        /* 주소 리스트 스타일 (화살표 이동 가시성 극대화) */
+        #addressList { position: absolute; top: 100%; left: 0; width: 100%; border: 1px solid #0056b3; background: white; z-index: 100; display: none; border-radius: 8px; box-shadow: 0 8px 20px rgba(0,0,0,0.2); max-height: 250px; overflow-y: auto; }
+        .search-item { padding: 12px 15px; border-bottom: 1px solid #eee; cursor: pointer; font-size: 14px; color: #333; }
+        .search-item.active { background-color: #0056b3 !important; color: white !important; font-weight: bold; }
 
+        /* 결과 스크롤 영역 */
         #result-scroll { flex: 1; display: flex; flex-direction: column; overflow-y: auto; padding: 0 20px; }
         #rec-section, #admin-section { flex: 0 0 auto; } 
         #spacer { flex: 1; min-height: 40px; } 
 
         .section-title { font-size: 14px; font-weight: bold; color: #1e293b; margin: 15px 0 8px 5px; display: block; border-left: 4px solid #0056b3; padding-left: 10px; }
         
+        /* 카드 디자인 */
         .office-card { border: 1px solid #e2e8f0; padding: 15px; margin-bottom: 10px; border-radius: 10px; background: #fff; position: relative; }
         .office-card.recommend { border: 2px solid #0056b3; background: #f0f7ff; }
 
         .title-row { display: flex; justify-content: space-between; align-items: center; }
-        .office-name { font-size: 15px; color: #555; font-weight: normal; }
+        .office-name { font-size: 15px; color: #333; font-weight: normal; }
         
+        /* 우측 라벨 -4pt (약 11px) 및 한 줄 정렬 */
         .right-label { font-size: 11px; text-align: right; }
         .distance-text { color: #16a34a; font-weight: bold; margin-left: 4px; }
-        .office-type { color: #555; }
+        .office-type { color: #666; }
         
         .phone-text { font-size: 18px; font-weight: bold; color: #0056b3; display: block; margin: 4px 0; }
         .addr-text { font-size: 14px; color: #555; line-height: 1.4; margin: 0; }
 
+        /* 하단 고정 푸터 */
         .fixed-footer { background: #f8fafc; border-top: 1px solid #ddd; padding: 12px 20px; }
         .guide-table { width: 100%; border-collapse: collapse; font-size: 13px; }
         .guide-table td { padding: 3px 0; color: #334155; }
@@ -445,12 +448,11 @@ const offices = [
     {name:"신안군청 민원봉사과", type:"토지정보과", covers:["신안군"], phone:"061-240-8141", address:"전남 신안군 압해읍 천사로 1004"}
 
 ];
-const offices = [ /* 사용자의 오피스 데이터 데이터 */ ];
-
 let focusedIndex = -1;
 let debounceTimer;
+let currentAddressResults = []; 
 
-// 날짜 포맷팅
+// 날짜 포맷팅 로직 (23513 -> 23.05.13.)
 document.getElementById('contract-date').addEventListener('blur', function(e) {
     let val = e.target.value.replace(/[^0-9]/g, '');
     if (val.length === 5) val = val.substring(0, 2) + '0' + val.substring(2);
@@ -475,18 +477,19 @@ function searchAddress(isFinal = false) {
     const geocoder = new kakao.maps.services.Geocoder();
     geocoder.addressSearch(keyword, function(result, status){
         if(status === kakao.maps.services.Status.OK){
+            currentAddressResults = result; 
+            listEl.innerHTML = "";
+            listEl.style.display = "block";
+            focusedIndex = -1; 
+            
             if(result.length === 1 && isFinal) {
-                listEl.style.display = "none";
                 selectItem(result[0]);
             } else {
-                listEl.innerHTML = "";
-                listEl.style.display = "block";
-                focusedIndex = -1; 
                 result.forEach((item, idx) => {
                     const div = document.createElement("div");
                     div.className = "search-item";
                     div.innerHTML = item.address_name;
-                    div.onmousedown = (e) => { e.preventDefault(); selectItem(item); }; // 클릭 시 즉시 선택
+                    div.onmousedown = (e) => { e.preventDefault(); selectItem(item); };
                     listEl.appendChild(div);
                 });
             }
@@ -495,7 +498,6 @@ function searchAddress(isFinal = false) {
 }
 
 function selectItem(item) {
-    focusedIndex = -1;
     document.getElementById("addressList").style.display = "none";
     document.getElementById("keyword").value = item.address_name;
     document.getElementById("search-location-info").style.display = "block";
@@ -504,7 +506,6 @@ function selectItem(item) {
     const initialMsg = document.getElementById("initial-msg");
     if(initialMsg) initialMsg.style.display = "none";
 
-    // 결과 재계산 및 출력
     findNearest(parseFloat(item.y), parseFloat(item.x), item.address_name);
 }
 
@@ -518,7 +519,6 @@ function findNearest(lat, lng, fullAddress){
         return office.covers.some(c => fullAddress.includes(c) || district.includes(c) || city.includes(c));
     };
 
-    // 데이터 필터링 및 거리순 정렬
     const recTargets = offices.filter(o => ["부동산원", "대법공", "주택공사", "지자체"].includes(o.type))
         .map(o => ({ ...o, dist: getDistance(lat, lng, o.lat, o.lng), isMatched: checkMatch(o) }))
         .sort((a,b) => b.isMatched - a.isMatched || a.dist - b.dist)
@@ -538,7 +538,6 @@ function displayResults(recData, adminData) {
     const recEl = document.getElementById("rec-section");
     const adminEl = document.getElementById("admin-section");
     
-    // 섹션 내용 초기화 후 새로 그리기
     recEl.innerHTML = `<span class="section-title">관할기관</span>`;
     recData.forEach(o => recEl.innerHTML += createCard(o, 'recommend'));
 
@@ -589,14 +588,13 @@ document.addEventListener("DOMContentLoaded", function(){
             } else if (e.key === "Enter") {
                 e.preventDefault();
                 if (focusedIndex > -1) {
-                    selectItem({
-                        address_name: items[focusedIndex].innerText,
-                        // 카카오 API 결과를 다시 가져오기 위해 직접 searchAddress 호출
-                    });
-                    // 화살표 엔터 시 정확한 좌표 기반 검색을 위해 searchAddress(true) 유도 가능
-                    searchAddress(true); 
+                    selectItem(currentAddressResults[focusedIndex]);
+                } else {
+                    searchAddress(true);
                 }
             }
+        } else if (e.key === "Enter") {
+            searchAddress(true);
         }
     });
 
@@ -608,7 +606,6 @@ document.addEventListener("DOMContentLoaded", function(){
         }
     }
     
-    // 입력창 클릭 시 리스트 닫기 방지 등
     document.addEventListener("click", (e) => {
         if(e.target.id !== "keyword") document.getElementById("addressList").style.display = "none";
     });

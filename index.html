@@ -9,40 +9,43 @@
         .main-wrapper { display: flex; height: 100vh; width: 100vw; }
         #sidebar-search { width: 440px; min-width: 440px; border-right: 1px solid #ddd; display: flex; flex-direction: column; background: #fff; }
         
-        /* 헤더 영역 */
         .search-header { padding: 20px 20px 10px 20px; }
-        h1 { font-size: 1.2rem; margin: 0 0 12px 0; color: #111; font-weight: bold; }
-        .search-container { position: relative; width: 100%; margin-bottom: 8px; }
-        input#keyword { padding: 12px; width: 100%; font-size: 16px; border: 2px solid #0056b3; border-radius: 8px; box-sizing: border-box; outline: none; }
+        h1 { font-size: 1.1rem; margin: 0 0 12px 0; color: #111; font-weight: bold; }
         
-        /* 검색 지역 표시 (입력창 바로 밑) */
-        #search-location-info { font-size: 14px; color: #555; margin-bottom: 10px; display: none; padding-left: 5px; }
+        /* [요청] 검색창 2분할 레이아웃 */
+        .search-row { display: flex; gap: 8px; margin-bottom: 8px; }
+        .search-container { position: relative; flex: 2; }
+        .date-container { flex: 1; }
         
+        input#keyword, input#contract-date { padding: 12px; width: 100%; font-size: 14px; border: 2px solid #0056b3; border-radius: 8px; box-sizing: border-box; outline: none; }
+        input#contract-date { border-color: #64748b; text-align: center; }
+
+        #search-location-info { font-size: 13px; color: #555; margin-bottom: 10px; display: none; padding-left: 5px; }
         #addressList { position: absolute; top: 100%; left: 0; width: 100%; border: 1px solid #bbb; background: white; z-index: 100; display: none; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); max-height: 200px; overflow-y: auto; }
-        .search-item { padding: 10px; border-bottom: 1px solid #eee; cursor: pointer; font-size: 14px; }
+        .search-item { padding: 10px; border-bottom: 1px solid #eee; cursor: pointer; font-size: 13px; }
         .search-item.active { background-color: #f0f7ff; }
 
-        /* 결과 스크롤 구역 */
-        #result-scroll { flex: 1; overflow-y: auto; padding: 0 20px; }
+        /* 결과 표시 영역 구조 변경 */
+        #result-scroll { flex: 1; display: flex; flex-direction: column; overflow-y: auto; padding: 0 20px; }
+        #rec-section { flex: 0 0 auto; } /* 관할기관 영역 */
+        #spacer { flex: 1; min-height: 20px; } /* [요청] 중간 공백 보장 */
+        #admin-section { flex: 0 0 auto; margin-bottom: 10px; } /* 중개사 섹션 하단 밀착 */
+
         .section-title { font-size: 14px; font-weight: bold; color: #1e293b; margin: 15px 0 8px 5px; display: block; border-left: 4px solid #0056b3; padding-left: 10px; }
         
-        /* 카드 디자인 */
-        .office-card { border: 1px solid #e2e8f0; padding: 15px; margin-bottom: 10px; border-radius: 10px; background: #fff; }
-        .office-name-row { display: flex; align-items: baseline; gap: 4px; }
+        /* 카드 디자인 및 우측 끝 텍스트 정렬 */
+        .office-card { border: 1px solid #e2e8f0; padding: 15px; margin-bottom: 10px; border-radius: 10px; background: #fff; position: relative; }
+        .title-row { display: flex; justify-content: space-between; align-items: flex-start; }
         
-        /* [요청사항] 주소와 동일한 스타일 적용 */
-        .office-name, .office-type { font-size: 15px; color: #555; font-weight: normal; }
-        /* [요청사항] 킬로미터는 -2포인트 및 컬러 유지 */
-        .distance-text { font-size: 13px; color: #16a34a; font-weight: bold; }
+        .office-name { font-size: 15px; color: #555; font-weight: normal; }
+        
+        /* [요청] 우측 끝 정렬 및 -4포인트 축소 (기존 15px -> 11px) */
+        .right-label { font-size: 11px; text-align: right; line-height: 1.2; }
+        .distance-text { color: #16a34a; font-weight: bold; }
+        .office-type { color: #555; margin-right: 2px; }
         
         .phone-text { font-size: 18px; font-weight: bold; color: #0056b3; display: block; margin: 4px 0; }
-        .addr-text { font-size: 15px; color: #555; line-height: 1.4; margin: 0; }
-
-        /* 하단 행정기관 섹션 축소 */
-        .admin-section .office-card { padding: 10px 15px; margin-bottom: 6px; }
-        .admin-section .office-name { font-size: 14px; }
-        .admin-section .phone-text { font-size: 15px; margin: 2px 0; }
-        .admin-section .addr-text { font-size: 13px; }
+        .addr-text { font-size: 14px; color: #555; line-height: 1.4; margin: 0; }
 
         .fixed-footer { background: #f8fafc; border-top: 1px solid #ddd; padding: 12px 20px; }
         .guide-table { width: 100%; border-collapse: collapse; font-size: 13px; }
@@ -57,17 +60,25 @@
     <div id="sidebar-search">
         <div class="search-header">
             <h1>관할기관 검색 / 최초 계약일</h1>
-            <div class="search-container">
-                <input id="keyword" placeholder="주소를 입력하고 엔터를 치세요" autocomplete="off">
-                <div id="addressList"></div>
+            <div class="search-row">
+                <div class="search-container">
+                    <input id="keyword" placeholder="주소 입력 (Tab이동)" autocomplete="off">
+                    <div id="addressList"></div>
+                </div>
+                <div class="date-container">
+                    <input id="contract-date" placeholder="계약일(23513)" maxlength="10">
+                </div>
             </div>
             <div id="search-location-info">📍 검색 지역: <b id="selected-addr-text"></b></div>
         </div>
 
         <div id="result-scroll">
-            <div id="result-content">
-                <p style="text-align:center; color:#94a3b8; margin-top:50px; font-size: 14px;">지역명을 입력하시면<br>관할 기관 정보가 표시됩니다.</p>
+            <div id="rec-section">
+                <p id="initial-msg" style="text-align:center; color:#94a3b8; margin-top:50px; font-size: 14px;">주소를 입력하시면 관할 정보가 표시됩니다.</p>
             </div>
+            
+            <div id="spacer"></div> <div id="admin-section">
+                </div>
         </div>
 
         <div class="fixed-footer">
@@ -83,7 +94,6 @@
 </div>
 
 <script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=d791798c38589fc7cdc6bce91d9369be&libraries=services"></script>
-
 <script>
 const offices = [
     {name:"한국부동산원 서울동부지사", type:"부동산원", covers:["서울"], lat:37.557698, lng:127.079226, phone:"02-3394-9870~3", address:"서울시 광진구 천호대로 549, 지타워 10층"},
@@ -437,6 +447,18 @@ const offices = [
 ];
 let focusedIndex = -1, debounceTimer;
 
+// 날짜 자동 포맷팅 로직 (23513 -> 23.05.13)
+document.getElementById('contract-date').addEventListener('blur', function(e) {
+    let val = e.target.value.replace(/[^0-9]/g, '');
+    if (val.length === 5) {
+        // 5자리인 경우 (예: 23513 -> 230513으로 변환)
+        val = val.substring(0, 2) + '0' + val.substring(2);
+    }
+    if (val.length === 6) {
+        e.target.value = val.substring(0, 2) + '.' + val.substring(2, 4) + '.' + val.substring(4, 6) + '.';
+    }
+});
+
 function getDistance(lat1, lon1, lat2, lon2){
     const R = 6371;
     const dLat = (lat2-lat1)*Math.PI/180;
@@ -474,11 +496,9 @@ function searchAddress(isFinal = false) {
 function selectItem(item) {
     document.getElementById("addressList").style.display = "none";
     document.getElementById("keyword").value = item.address_name;
-    
-    // 검색 지역 텍스트 업데이트 및 노출
     document.getElementById("search-location-info").style.display = "block";
     document.getElementById("selected-addr-text").innerText = item.address_name;
-    
+    document.getElementById("initial-msg").style.display = "none";
     findNearest(parseFloat(item.y), parseFloat(item.x), item.address_name);
 }
 
@@ -486,7 +506,6 @@ function findNearest(lat, lng, fullAddress){
     const addrParts = fullAddress.split(' ');
     const district = addrParts.find(p => p.endsWith('구') || p.endsWith('군') || p.endsWith('시')) || "";
     const city = addrParts[0].substring(0, 2); 
-
     const checkMatch = (office) => {
         if (!office.covers || !Array.isArray(office.covers)) return false;
         return office.covers.some(c => fullAddress.includes(c) || district.includes(c) || city.includes(c));
@@ -503,39 +522,37 @@ function findNearest(lat, lng, fullAddress){
 
     const oneLand = allAdmin.filter(o => o.type === "토지정보과").slice(0, 1);
     const oneTax = allAdmin.filter(o => o.type === "세무서").slice(0, 1);
-    const adminTargets = [...oneLand, ...oneTax];
-
-    displayResults(recTargets, adminTargets);
+    
+    displayResults(recTargets, [...oneLand, ...oneTax]);
 }
 
 function displayResults(recData, adminData) {
-    const contentEl = document.getElementById("result-content");
-    let html = "";
+    const recEl = document.getElementById("rec-section");
+    const adminEl = document.getElementById("admin-section");
     
-    html += `<span class="section-title">관할기관</span>`;
-    recData.forEach(o => html += createCard(o, false));
+    let recHtml = `<span class="section-title">관할기관</span>`;
+    recData.forEach(o => recHtml += createCard(o, false));
+    recEl.innerHTML = recHtml;
 
-    html += `<div class="admin-section">`;
-    html += `<span class="section-title">중개사, 세금관련 문의</span>`;
-    adminData.forEach(o => html += createCard(o, true));
-    html += `</div>`;
-
-    contentEl.innerHTML = html;
+    let adminHtml = `<span class="section-title">중개사, 세금관련 문의</span>`;
+    adminData.forEach(o => adminHtml += createCard(o, true));
+    adminEl.innerHTML = adminHtml;
 }
 
 function createCard(o, isAdmin) {
     const isMatchedStyle = o.isMatched ? 'border: 2px solid #0056b3; background: #f0f7ff;' : '';
-    // 킬로미터 -2포인트 적용 (13px)
-    const distanceHtml = isAdmin ? "" : `<span class="distance-text">(${o.dist.toFixed(1)}km)</span>`;
-    // 타입 표시 (주소와 동일한 15px 스타일)
-    const typeHtml = isAdmin ? "" : `<span class="office-type">${o.type}</span>`;
+    // [요청] 우측 끝으로 라벨 이동 및 폰트 축소 (-4pt)
+    const labelHtml = isAdmin ? "" : `
+        <div class="right-label">
+            <span class="office-type">${o.type}</span><br>
+            <span class="distance-text">(${o.dist.toFixed(1)}km)</span>
+        </div>`;
 
     return `
         <div class="office-card" style="${isMatchedStyle}">
-            <div class="office-name-row">
+            <div class="title-row">
                 <span class="office-name">${o.name}</span>
-                ${typeHtml}
-                ${distanceHtml}
+                ${labelHtml}
             </div>
             <span class="phone-text">📞 ${o.phone}</span>
             <p class="addr-text">🏠 ${o.address}</p>

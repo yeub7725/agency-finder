@@ -432,7 +432,6 @@ function searchAddress(isFinal = false) {
     const listEl = document.getElementById("addressList");
     if(keyword.length < 2) { listEl.style.display = "none"; return; }
 
-    // 카카오 Geocoder 호출
     const geocoder = new kakao.maps.services.Geocoder();
     geocoder.addressSearch(keyword, function(result, status){
         if(status === kakao.maps.services.Status.OK){
@@ -460,6 +459,7 @@ function selectItem(item) {
     findNearest(parseFloat(item.y), parseFloat(item.x), item.address_name);
 }
 
+// 핵심 로직: 가장 가까운 관할기관 찾기
 function findNearest(lat, lng, fullAddress){
     const addrParts = fullAddress.split(' ');
     const district = addrParts.find(p => p.endsWith('구') || p.endsWith('군') || p.endsWith('시')) || "";
@@ -470,108 +470,51 @@ function findNearest(lat, lng, fullAddress){
         return office.covers.some(c => fullAddress.includes(c) || district.includes(c) || city.includes(c));
     };
 
-    // 1. 관할기관 (최대 2개) 추출
+    // 1. 관할기관 (부동산원, 대법공 등)
     const recTargets = offices.filter(o => ["부동산원", "대법공", "주택공사", "지자체"].includes(o.type))
         .map(o => ({ ...o, dist: getDistance(lat, lng, o.lat, o.lng), isMatched: checkMatch(o) }))
         .sort((a,b) => b.isMatched - a.isMatched || a.dist - b.dist)
         .slice(0, 2);
 
-    // 2. 행정기관 (세무서, 토지정보과) 추출 및 가공
+    // 2. 행정지원 (세무서, 토지정보과)
     const allAdmin = offices.filter(o => ["세무서", "토지정보과"].includes(o.type))
         .map(o => ({ ...o, dist: getDistance(lat, lng, o.lat, o.lng), isMatched: checkMatch(o) }))
         .sort((a,b) => b.isMatched - a.isMatched || a.dist - b.dist);
 
-    // 각 타입별로 가장 적합한 1개씩만 선택
     const oneLand = allAdmin.filter(o => o.type === "토지정보과").slice(0, 1);
     const oneTax = allAdmin.filter(o => o.type === "세무서").slice(0, 1);
-
-    // 최종 행정 타겟 리스트 생성
     const adminTargets = [...oneLand, ...oneTax];
 
-    // 3. 결과 표시 함수 호출 (딱 한 번만 실행되어야 합니다)
-    displayResults(recTargets, adminTargets, fullAddress);
-}
-
-    // 1. 관할기관 (최대 2개)
-    const recTargets = offices.filter(o => ["부동산원", "대법공", "주택공사", "지자체"].includes(o.type))
-        .map(o => ({ ...o, dist: getDistance(lat, lng, o.lat, o.lng), isMatched: checkMatch(o) }))
-        .sort((a,b) => b.isMatched - a.isMatched || a.dist - b.dist)
-        .slice(0, 2);
-
-    // 2. 중개사, 세금 관련 (토지정보과 1개 + 세무서 1개)
-    const allAdmin = offices.filter(o => ["세무서", "토지정보과"].includes(o.type))
-        .map(o => ({ ...o, dist: getDistance(lat, lng, o.lat, o.lng), isMatched: checkMatch(o) }))
-        .sort((a,b) => b.isMatched - a.isMatched || a.dist - b.dist);
-
-    // 토지정보과에서 가장 적합한 것 1개 추출
-    const oneLand = allAdmin.filter(o => o.type === "토지정보과").slice(0, 1);
-    // 세무서에서 가장 적합한 것 1개 추출
-    const oneTax = allAdmin.filter(o => o.type === "세무서").slice(0, 1);
-
-    // 토지정보과를 먼저 보여주기 위해 합침
-    const adminTargets = [...oneLand, ...oneTax];
-
-    displayResults(recTargets, adminTargets, fullAddress);
-
-    const recTargets = offices.filter(o => ["부동산원", "대법공", "주택공사", "지자체"].includes(o.type))
-        .map(o => ({ 
-            ...o, 
-            dist: getDistance(lat, lng, o.lat, o.lng), 
-            isMatched: checkMatch(o) // 위에서 만든 안전한 함수 사용
-        }))
-        .sort((a,b) => b.isMatched - a.isMatched || a.dist - b.dist)
-        .slice(0, 2);
-
-    const adminTargets = offices.filter(o => ["세무서", "토지정보과"].includes(o.type))
-        .map(o => ({ 
-            ...o, 
-            dist: getDistance(lat, lng, o.lat, o.lng), 
-            isMatched: checkMatch(o) // 위에서 만든 안전한 함수 사용
-        }))
-        .sort((a,b) => b.isMatched - a.isMatched || a.dist - b.dist);
-
+    // 결과 표시 호출
     displayResults(recTargets, adminTargets, fullAddress);
 }
 
 function displayResults(recData, adminData, fullAddress) {
     const contentEl = document.getElementById("result-content");
-    
-    // 1. 결과창 요소가 있는지 확인
-    if (!contentEl) {
-        console.error("ID가 'result-content'인 요소를 찾을 수 없습니다.");
-        return;
-    }
+    if (!contentEl) return;
 
     let html = `<p style="font-size:14px; color:#666; margin-bottom:15px;">📍 검색 지역: <b>${fullAddress}</b></p>`;
     
-    // 2. 관할기관 섹션
     html += `<span class="section-title">관할기관</span>`;
-    if(recData && recData.length > 0) {
+    if(recData.length > 0) {
         recData.forEach(o => html += createCard(o));
     } else {
         html += `<p style="padding:15px; color:#999; font-size:14px;">❌ 일치하는 관할기관 데이터가 없습니다.</p>`;
     }
 
-    // 3. 세무/토지 섹션
     html += `<span class="section-title">중개사, 세금관련 문의</span>`;
-    if(adminData && adminData.length > 0) {
+    if(adminData.length > 0) {
         adminData.forEach(o => html += createCard(o));
     } else {
         html += `<p style="padding:15px; color:#999; font-size:14px;">❌ 일치하는 세무/토지과 데이터가 없습니다.</p>`;
     }
 
-    // 4. 화면에 실제 주입
     contentEl.innerHTML = html;
-    console.log("화면 업데이트 완료!"); 
 }
 
 function createCard(o) {
-    // 킬로미터 표시 여부 결정 (세무서, 토지정보과는 거리 표시 안 함)
     const isSpecialType = ["세무서", "토지정보과"].includes(o.type);
     const distanceHtml = isSpecialType ? "" : `<span class="distance-text">(${o.dist.toFixed(1)}km)</span>`;
-    
-    // 타입(부동산원 등) 표시 HTML (이름보다 2pt 작게, 그린 색상)
-    // 부동산원 이름이 20px이므로 타입은 18px로 설정
     const typeHtml = isSpecialType ? "" : `<span style="font-size: 18px; color: #16a34a; font-weight: bold; margin-left: 5px;">${o.type}</span>`;
 
     return `
@@ -588,7 +531,7 @@ function createCard(o) {
         </div>`;
 }
 
-// 이벤트 리스너 등록
+// 이벤트 리스너
 document.addEventListener("DOMContentLoaded", function(){
     const input = document.getElementById("keyword");
     
@@ -624,6 +567,7 @@ document.addEventListener("DOMContentLoaded", function(){
 </script>
 </body>
 </html>
+
 
 
 

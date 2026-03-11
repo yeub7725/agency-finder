@@ -441,6 +441,7 @@ const offices = [
 ];
 let focusedIndex = -1, debounceTimer;
 
+// 거리 계산 함수
 function getDistance(lat1, lon1, lat2, lon2){
     const R = 6371;
     const dLat = (lat2-lat1)*Math.PI/180;
@@ -449,6 +450,7 @@ function getDistance(lat1, lon1, lat2, lon2){
     return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }
 
+// 주소 검색 함수
 function searchAddress(isFinal = false) {
     const keyword = document.getElementById("keyword").value.trim();
     const listEl = document.getElementById("addressList");
@@ -474,24 +476,20 @@ function searchAddress(isFinal = false) {
         }
     });
 }
+
+// 주소 선택 함수
 function selectItem(item) {
     document.getElementById("addressList").style.display = "none";
     document.getElementById("keyword").value = item.address_name;
-    
     findNearest(parseFloat(item.y), parseFloat(item.x), item.address_name);
 }
 
-
+// 근처 기관 매칭 로직
 function findNearest(lat, lng, fullAddress){
     const addrParts = fullAddress.split(' ');
-   
     const district = addrParts.find(p => p.endsWith('구') || p.endsWith('군') || p.endsWith('시')) || "";
-   
     const city = addrParts[0].substring(0, 2); 
 
-    console.log("매칭 시도 키워드:", city, district);
-
-   
     const recTargets = offices.filter(o => ["부동산원", "대법공", "주택공사", "지자체"].includes(o.type))
         .map(o => ({ 
             ...o, 
@@ -501,7 +499,6 @@ function findNearest(lat, lng, fullAddress){
         .sort((a,b) => b.isMatched - a.isMatched || a.dist - b.dist)
         .slice(0, 2);
 
-  
     const adminTargets = offices.filter(o => ["세무서", "토지정보과"].includes(o.type))
         .map(o => ({ 
             ...o, 
@@ -513,8 +510,73 @@ function findNearest(lat, lng, fullAddress){
     displayResults(recTargets, adminTargets, fullAddress);
 }
 
+// 결과 표시 함수 (추가됨)
+function displayResults(recData, adminData, fullAddress) {
+    let html = `<p style="font-size:14px; color:#666; margin-bottom:15px;">📍 검색 지역: <b>${fullAddress}</b></p>`;
+    
+    html += `<span class="section-title">관할기관</span>`;
+    if(recData.length > 0) {
+        recData.forEach(o => html += createCard(o));
+    } else {
+        html += `<p class="addr-text" style="padding:10px;">해당 지역의 관할기관 데이터가 없습니다.</p>`;
+    }
 
+    html += `<span class="section-title">중개사, 세금관련 문의</span>`;
+    if(adminData.length > 0) {
+        adminData.forEach(o => html += createCard(o));
+    } else {
+        html += `<p class="addr-text" style="padding:10px;">해당 지역의 세무/토지과 데이터가 없습니다.</p>`;
+    }
+    document.getElementById("result-content").innerHTML = html;
+}
 
+// 카드 생성 함수 (추가됨)
+function createCard(o) {
+    return `
+        <div class="office-card" style="${o.isMatched ? 'border: 2px solid #0056b3; background: #f0f7ff;' : ''}">
+            <span class="type-badge">${o.type}</span>
+            <div class="title-group">
+                <span class="office-name">${o.name}</span>
+                <span class="distance-text">(${o.dist.toFixed(1)}km)</span>
+            </div>
+            <span class="phone-text">📞 ${o.phone}</span>
+            <p class="addr-text">🏠 ${o.address}</p>
+        </div>`;
+}
 
+// ⭐ 가장 중요한 부분: 입력창과 코드를 연결하는 이벤트 리스너 (추가됨)
+document.addEventListener("DOMContentLoaded", function(){
+    const input = document.getElementById("keyword");
+    
+    // 글자 입력할 때마다 검색 실행
+    input.addEventListener("input", () => {
+        focusedIndex = -1;
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(() => searchAddress(false), 200);
+    });
 
+    // 엔터키 처리
+    input.addEventListener("keydown", function(e){
+        const listEl = document.getElementById("addressList");
+        const items = listEl.getElementsByClassName("search-item");
+        if (e.key === "Enter") {
+            e.preventDefault();
+            if (focusedIndex > -1 && items.length > 0) items[focusedIndex].click();
+            else searchAddress(true);
+        } else if (listEl.style.display === "block") {
+            if (e.key === "ArrowDown") {
+                focusedIndex = (focusedIndex + 1) % items.length;
+                updateFocus(items);
+            } else if (e.key === "ArrowUp") {
+                focusedIndex = (focusedIndex - 1 + items.length) % items.length;
+                updateFocus(items);
+            }
+        }
+    });
 
+    function updateFocus(items) {
+        for (let item of items) item.classList.remove("active");
+        if (focusedIndex > -1) items[focusedIndex].classList.add("active");
+    }
+});
+</script>

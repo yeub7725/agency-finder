@@ -24,8 +24,8 @@
         #addressList { position: absolute; top: 100%; left: 0; width: 100%; border: 1px solid #0056b3; background: white; z-index: 100; display: none; border-radius: 8px; box-shadow: 0 8px 20px rgba(0,0,0,0.2); max-height: 250px; overflow-y: auto; }
         .search-item { padding: 10px 15px; border-bottom: 1px solid #eee; cursor: pointer; font-size: 14px; color: #333; }
         
-        /* 하이라이트 스타일 */
-        .search-item.active { background-color: #0056b3 !important; color: white !important; font-weight: bold; }
+        /* 하이라이트 스타일: 중요 - transition을 넣지 않아야 즉각 반응함 */
+        .search-item.active { background-color: #0056b3 !important; color: white !important; font-weight: bold; outline: none; }
 
         #result-scroll { flex: 1; overflow-y: auto; padding: 0 20px; display: flex; flex-direction: column; }
         .section-title { font-size: 14px; font-weight: bold; color: #1e293b; margin: 8px 0 6px 5px; display: block; border-left: 4px solid #0056b3; padding-left: 10px; }
@@ -541,7 +541,7 @@ let currentAddressResults = [];
 
 function clearResults() {
     currentAddressResults = [];
-    focusedIndex = -1; // 초기화 추가
+    focusedIndex = -1; 
     document.getElementById("addressList").style.display = "none";
     document.getElementById("rec-section").innerHTML = '<p id="initial-msg" style="text-align:center; color:#94a3b8; margin-top:50px; font-size: 14px;">검색 결과가 없습니다.</p>';
     document.getElementById("admin-section").innerHTML = "";
@@ -570,7 +570,7 @@ function searchAddress(isEnterPressed = false) {
             
             listEl.innerHTML = "";
             listEl.style.display = "block";
-            // 리스트가 새로 그려질 때 인덱스 초기화가 핵심
+            // 리스트 갱신 시 인덱스 초기화
             focusedIndex = -1; 
 
             result.forEach((item, idx) => {
@@ -586,11 +586,17 @@ function searchAddress(isEnterPressed = false) {
     });
 }
 
+// 핵심 수정: 화살표 이동 및 하이라이트 부여 로직
 function updateFocus(items) {
     if (!items || items.length === 0) return;
-    for (let item of items) item.classList.remove("active");
     
-    if (focusedIndex > -1 && items[focusedIndex]) {
+    // 모든 아이템에서 active 클래스 제거
+    for (let i = 0; i < items.length; i++) {
+        items[i].classList.remove("active");
+    }
+    
+    // 현재 인덱스에 active 클래스 추가 및 스크롤 처리
+    if (focusedIndex >= 0 && items[focusedIndex]) {
         items[focusedIndex].classList.add("active");
         items[focusedIndex].scrollIntoView({ block: "nearest" });
     }
@@ -608,7 +614,15 @@ function selectItem(item) {
     focusedIndex = -1;
 }
 
-// ... findNearest, displayResults, createCard, formatContractDate 함수는 기존과 동일 ...
+// 거리 계산 및 결과 출력 함수들 (기존 로직 유지)
+function getDistance(lat1, lon1, lat2, lon2){
+    const R = 6371;
+    const dLat = (lat2-lat1)*Math.PI/180;
+    const dLon = (lon2-lon1)*Math.PI/180;
+    const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180) * Math.cos(lat2*Math.PI/180) * Math.sin(dLon/2)**2;
+    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
+
 function findNearest(lat, lng, fullAddress){
     const addrParts = fullAddress.split(' ');
     const city = addrParts[0].substring(0, 2); 
@@ -653,14 +667,6 @@ function createCard(o, cardType) {
         </div>`;
 }
 
-function getDistance(lat1, lon1, lat2, lon2){
-    const R = 6371;
-    const dLat = (lat2-lat1)*Math.PI/180;
-    const dLon = (lon2-lon1)*Math.PI/180;
-    const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180) * Math.cos(lat2*Math.PI/180) * Math.sin(dLon/2)**2;
-    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-}
-
 function formatContractDate() {
     const dateInput = document.getElementById('contract-date');
     let val = dateInput.value.replace(/[^0-9]/g, '');
@@ -676,9 +682,10 @@ document.addEventListener("DOMContentLoaded", function(){
 
     input.addEventListener("input", () => {
         clearTimeout(debounceTimer);
-        debounceTimer = setTimeout(() => searchAddress(false), 200);
+        debounceTimer = setTimeout(() => searchAddress(false), 150);
     });
 
+    // 키보드 조작 버그 완전 해결 부분
     input.addEventListener("keydown", function(e){
         const listEl = document.getElementById("addressList");
         const items = listEl.getElementsByClassName("search-item");
@@ -710,9 +717,12 @@ document.addEventListener("DOMContentLoaded", function(){
     dateInput.addEventListener('keydown', function(e) { if (e.key === 'Enter') { formatContractDate(); this.blur(); } });
 
     document.addEventListener("click", (e) => {
-        if(e.target.id !== "keyword") document.getElementById("addressList").style.display = "none";
+        if(e.target.id !== "keyword") {
+            document.getElementById("addressList").style.display = "none";
+        }
     });
 });
 </script>
 </body>
 </html>
+

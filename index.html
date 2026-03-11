@@ -465,24 +465,26 @@ function findNearest(lat, lng, fullAddress){
     const district = addrParts.find(p => p.endsWith('구') || p.endsWith('군') || p.endsWith('시')) || "";
     const city = addrParts[0].substring(0, 2); 
 
-    const recTargets = offices.filter(o => ["부동산원", "대법공", "주택공사", "지자체"].includes(o.type))
-        .map(o => ({ 
-            ...o, 
-            dist: getDistance(lat, lng, o.lat, o.lng), 
-            isMatched: o.covers.some(c => fullAddress.includes(c) || district.includes(c) || city.includes(c)) 
-        }))
-        .sort((a,b) => b.isMatched - a.isMatched || a.dist - b.dist)
-        .slice(0, 2);
+   // 1. 관할기관 필터링 부분 수정
+const recTargets = offices.filter(o => ["부동산원", "대법공", "주택공사", "지자체"].includes(o.type))
+    .map(o => ({ 
+        ...o, 
+        dist: getDistance(lat, lng, o.lat, o.lng), 
+        // 👇 이 부분을 아래처럼 '방어 코드'로 교체하세요
+        isMatched: Array.isArray(o.covers) && o.covers.some(c => fullAddress.includes(c) || district.includes(c) || city.includes(c)) 
+    }))
+    .sort((a,b) => b.isMatched - a.isMatched || a.dist - b.dist)
+    .slice(0, 2);
 
-    const adminTargets = offices.filter(o => ["세무서", "토지정보과"].includes(o.type))
-        .map(o => ({ 
-            ...o, 
-            dist: getDistance(lat, lng, o.lat, o.lng), 
-            isMatched: o.covers.some(c => fullAddress.includes(c) || district.includes(c) || city.includes(c)) 
-        }))
-        .sort((a,b) => b.isMatched - a.isMatched || a.dist - b.dist);
-
-    displayResults(recTargets, adminTargets, fullAddress);
+// 2. 세무/토지과 필터링 부분 수정
+const adminTargets = offices.filter(o => ["세무서", "토지정보과"].includes(o.type))
+    .map(o => ({ 
+        ...o, 
+        dist: getDistance(lat, lng, o.lat, o.lng), 
+        // 👇 이 부분도 동일하게 교체
+        isMatched: Array.isArray(o.covers) && o.covers.some(c => fullAddress.includes(c) || district.includes(c) || city.includes(c)) 
+    }))
+    .sort((a,b) => b.isMatched - a.isMatched || a.dist - b.dist);
 }
 
 function displayResults(recData, adminData, fullAddress) {
@@ -551,4 +553,5 @@ document.addEventListener("DOMContentLoaded", function(){
 </script>
 </body>
 </html>
+
 

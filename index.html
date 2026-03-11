@@ -2,72 +2,54 @@
 <html lang="ko">
 <head>
     <meta charset="utf-8">
-    <title>관할기관 통합 검색 시스템</title>
+    <title>관할기관 통합 검색</title>
     <script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=d791798c38589fc7cdc6bce91d9369be&libraries=services"></script>
     <style>
-        /* 기본 레이아웃 */
-        body, html { margin: 0; padding: 0; height: 100%; font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif; overflow: hidden; }
+        body, html { margin: 0; padding: 0; height: 100%; font-family: 'Malgun Gothic', sans-serif; overflow: hidden; }
         .main-wrapper { display: flex; height: 100vh; width: 100vw; }
 
-        /* 왼쪽 사이드바 영역 */
         #sidebar-search { 
-            width: 440px; min-width: 440px; 
-            border-right: 1px solid #e2e8f0; 
-            display: flex; flex-direction: column; 
-            background-color: #f8fafc; 
+            width: 440px; min-width: 440px; border-right: 1px solid #ddd; 
+            display: flex; flex-direction: column; background: #fff; 
         }
 
-        /* 검색창 상단 */
-        .search-header { padding: 25px 20px; background: #fff; border-bottom: 1px solid #eee; }
-        h1 { font-size: 1.4rem; margin: 0 0 15px 0; color: #0f172a; letter-spacing: -1px; }
-        .search-container { position: relative; width: 100%; }
+        .search-header { padding: 25px 20px 10px 20px; }
         input#keyword { 
             padding: 15px; width: 100%; font-size: 17px; 
             border: 2px solid #0056b3; border-radius: 10px; 
             box-sizing: border-box; outline: none;
-            box-shadow: 0 2px 8px rgba(0,86,179,0.1);
         }
         
-        /* 자동완성 목록 */
         #addressList { 
             position: absolute; top: 100%; left: 0; width: 100%; 
             border: 1px solid #bbb; background: white; z-index: 100; 
-            display: none; border-radius: 8px; max-height: 250px; 
-            overflow-y: auto; box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            margin-top: 5px;
+            display: none; border-radius: 8px;
         }
-        .search-item { padding: 12px 15px; border-bottom: 1px solid #eee; cursor: pointer; font-size: 15px; }
-        .search-item:hover { background-color: #f0f7ff; }
+        .search-item { padding: 12px; border-bottom: 1px solid #eee; cursor: pointer; }
 
-        /* 검색 결과 스크롤 영역 */
-        #result { flex: 1; overflow-y: auto; padding: 20px; box-sizing: border-box; }
-        .jurisdiction-label { font-weight: bold; color: #e11d48; margin-bottom: 15px; display: block; font-size: 1rem; }
-        
-        /* 기관 카드 디자인 */
+        /* 결과 스크롤 영역 (상단 추천 + 하단 행정기관) */
+        #result-container { flex: 1; overflow-y: auto; padding: 10px 20px; }
+        .section-title { font-size: 14px; font-weight: bold; color: #64748b; margin: 15px 0 10px 5px; display: block; }
+
         .office-card { 
-            border: 1px solid #e2e8f0; padding: 22px; margin-bottom: 16px; 
-            border-radius: 14px; background-color: #fff; position: relative;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            border: 1px solid #e2e8f0; padding: 18px; margin-bottom: 12px; 
+            border-radius: 12px; background: #fff; 
         }
-        /* 관할구역 매칭 시 강조 스타일 */
-        .office-card.matched { border: 2px solid #0056b3; background-color: #f0f7ff; }
+        .office-card.matched { border: 2px solid #0056b3; background: #f0f7ff; }
         
-        /* [이름 - 거리] 한 줄 배열 */
         .title-group { display: flex; align-items: baseline; justify-content: space-between; }
-        .office-name { font-size: 20px; color: #1e293b; font-weight: 800; letter-spacing: -0.5px; }
-        .distance-text { font-size: 18px; color: #16a34a; font-weight: bold; } /* 2pt 작게, 그린 컬러 */
+        .office-name { font-size: 19px; font-weight: 800; color: #000; }
+        .distance-text { font-size: 17px; color: #16a34a; font-weight: bold; } /* -2pt 그린 */
 
-        /* [전화번호] 강조 */
-        .phone-text { font-size: 19px; font-weight: bold; color: #2563eb; margin: 10px 0; display: block; }
-        /* [주소] */
-        .addr-text { font-size: 15px; color: #64748b; line-height: 1.5; margin: 0; word-break: keep-all; }
-        
-        /* 뱃지 스타일 */
-        .type-badge { font-size: 11px; padding: 2px 7px; border-radius: 4px; background: #cbd5e1; color: #334155; margin-left: 8px; vertical-align: middle; }
-        .match-badge { font-size: 11px; padding: 2px 7px; border-radius: 4px; background: #0056b3; color: #fff; margin-left: 5px; vertical-align: middle; }
+        .phone-text { font-size: 18px; font-weight: bold; color: #0056b3; display: block; margin: 5px 0; }
+        .addr-text { font-size: 14px; color: #555; line-height: 1.4; margin: 0; }
 
-        /* 오른쪽 빈 공간 (추후 기능용) */
-        #content-area { flex: 1; background-color: #ffffff; }
+        /* 하단 고정 안내 연락처 */
+        .fixed-footer { background: #f1f5f9; border-top: 1px solid #ddd; padding: 15px 20px; }
+        .guide-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        .guide-table td { padding: 2px 0; }
+
+        #content-area { flex: 1; background: #ffffff; }
     </style>
 </head>
 <body>
@@ -75,27 +57,35 @@
 <div class="main-wrapper">
     <div id="sidebar-search">
         <div class="search-header">
-            <h1>🏠 관할기관 통합 검색</h1>
-            <div class="search-container">
+            <h1 style="font-size:1.3rem; margin-bottom:15px;">🏠 관할기관 찾기</h1>
+            <div style="position:relative;">
                 <input type="text" id="keyword" placeholder="동/읍/면 이름을 입력하세요" autocomplete="off">
                 <div id="addressList"></div>
             </div>
         </div>
 
-        <div id="result">
-            <p style="text-align:center; color:#94a3b8; margin-top:100px; line-height:1.6;">
-                검색하신 지역의 <b>관할 구역 여부</b>를 우선 확인하고,<br>
-                추천 순위(부동산원>대법공>지자체>LH)에 따라<br>
-                가장 적합한 기관을 안내합니다.
-            </p>
+        <div id="result-container">
+            <div id="top-recommend">
+                <p style="text-align:center; color:#94a3b8; margin-top:30px;">지역을 검색해 주세요.</p>
+            </div>
+            
+            <div id="admin-offices"></div>
+        </div>
+
+        <div class="fixed-footer">
+            <p style="margin:0 0 5px 0; font-weight:bold; font-size:14px;">📞 주요 상담 센터</p>
+            <table class="guide-table">
+                <tr><td>한국부동산원 / 대법공</td><td align="right"><b>1600-2828 / 132</b></td></tr>
+                <tr><td>LH공사 / 국세청</td><td align="right"><b>1600-1004 / 126</b></td></tr>
+            </table>
         </div>
     </div>
-
     <div id="content-area"></div>
 </div>
 
 <script>
-const priorityOrder = { "부동산원": 1, "대법공": 2, "지자체": 3, "주택공사": 4 };
+const priorityOrder = { "부동산원": 1, "대법공": 2, "주택공사": 3, "지자체": 4 };
+
 const officeData = [
     {name:"한국부동산원 서울동부지사", type:"REB", covers:["서울"], lat:37.557698, lng:127.079226, phone:"02-3394-9870~3", address:"서울시 광진구 천호대로 549, 지타워 10층"},
     {name:"한국부동산원 고양지사", type:"REB", covers:["경기"], lat:37.652619, lng:126.776883, phone:"031-902-3573~5", address:"경기도 고양시 일산동구 중앙로 1187, 흥국생명빌딩 8층"},
@@ -270,22 +260,18 @@ const localOfficesData = [
     {name:"해운대세무서", type:"TAX", covers:["부산 해운대구"], phone:"051-660-9200", address:"부산광역시 해운대구 좌동순환로 17"}
 ];
 let geocoder;
-
 window.onload = function() {
     geocoder = new kakao.maps.services.Geocoder();
     const input = document.getElementById("keyword");
-
     input.addEventListener("input", function() {
         if(this.value.length < 2) return;
         geocoder.addressSearch(this.value, function(result, status) {
             if(status === kakao.maps.services.Status.OK) {
                 const listEl = document.getElementById("addressList");
-                listEl.innerHTML = "";
-                listEl.style.display = "block";
+                listEl.innerHTML = ""; listEl.style.display = "block";
                 result.forEach(addr => {
                     const div = document.createElement("div");
-                    div.className = "search-item";
-                    div.innerText = addr.address_name;
+                    div.className = "search-item"; div.innerText = addr.address_name;
                     div.onclick = () => selectLocation(addr);
                     listEl.appendChild(div);
                 });
@@ -294,7 +280,6 @@ window.onload = function() {
     });
 };
 
-// 거리 계산 함수 (Haversine)
 function getDistance(lat1, lon1, lat2, lon2) {
     const R = 6371;
     const dLat = (lat2 - lat1) * Math.PI / 180;
@@ -303,60 +288,49 @@ function getDistance(lat1, lon1, lat2, lon2) {
     return (R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))).toFixed(1);
 }
 
-// 위치 선택 시 실행
 function selectLocation(addr) {
     document.getElementById("addressList").style.display = "none";
     document.getElementById("keyword").value = addr.address_name;
-    
-    // 검색어에서 구/군 정보 추출
-    const addrParts = addr.address_name.split(" ");
-    const userDistrict = addrParts.find(p => p.endsWith('구') || p.endsWith('군') || p.endsWith('시'));
+    const userDistrict = addr.address_name.split(" ").find(p => p.endsWith('구') || p.endsWith('군'));
+    const uLat = parseFloat(addr.y), uLng = parseFloat(addr.x);
 
-    const uLat = parseFloat(addr.y);
-    const uLng = parseFloat(addr.x);
+    // 1. 추천 기관 필터링 (부동산원, 대법공, 주택공사)
+    const recommendData = officeData.filter(o => ["부동산원", "대법공", "주택공사"].includes(o.type))
+        .map(o => ({ ...o, dist: getDistance(uLat, uLng, o.lat, o.lng), isMatched: userDistrict && o.covers.some(c => userDistrict.includes(c)) }))
+        .sort((a, b) => (a.isMatched !== b.isMatched ? b.isMatched - a.isMatched : priorityOrder[a.type] - priorityOrder[b.type] || a.dist - b.dist));
 
-    // 정렬 로직 적용
-    const sortedData = officeData.map(o => {
-        const dist = getDistance(uLat, uLng, o.lat, o.lng);
-        // 관할구역 매칭 여부 (covers 배열에 포함되는지 확인)
-        const isMatched = userDistrict && o.covers.some(c => userDistrict.includes(c) || c.includes(userDistrict));
-        return { ...o, dist, isMatched };
-    }).sort((a, b) => {
-        // 1순위: 관할구역 매칭 우선
-        if (a.isMatched !== b.isMatched) return b.isMatched - a.isMatched;
-        // 2순위: 기관 유형 우선순위
-        if (priorityOrder[a.type] !== priorityOrder[b.type]) return priorityOrder[a.type] - priorityOrder[b.type];
-        // 3순위: 가까운 거리순
-        return a.dist - b.dist;
-    });
+    // 2. 행정 기관 필터링 (세무서, 토지정보과)
+    const adminData = officeData.filter(o => ["세무서", "토지정보과"].includes(o.type))
+        .map(o => ({ ...o, dist: getDistance(uLat, uLng, o.lat, o.lng), isMatched: userDistrict && o.covers.some(c => userDistrict.includes(c)) }))
+        .sort((a, b) => b.isMatched - a.isMatched || a.dist - b.dist);
 
-    renderResults(sortedData, addr.address_name);
+    renderResults(recommendData.slice(0, 2), adminData.slice(0, 2));
 }
 
-// 결과 렌더링
-function renderResults(data, searchName) {
-    let html = `<span class="jurisdiction-label">📍 관할 검색 결과: ${searchName}</span>`;
-    
-    data.forEach(o => {
-        const cardClass = o.isMatched ? "office-card matched" : "office-card";
-        const badgeMatch = o.isMatched ? `<span class="match-badge">관할구역</span>` : "";
-        
-        html += `
-            <div class="${cardClass}">
-                <div class="title-group">
-                    <div>
-                        <span class="office-name">${o.name}</span>
-                        <span class="type-badge">${o.type}</span>
-                        ${badgeMatch}
-                    </div>
-                    <span class="distance-text">(${o.dist}km)</span>
-                </div>
-                <span class="phone-text">📞 ${o.phone}</span>
-                <p class="addr-text">🏠 ${o.address}</p>
-            </div>`;
-    });
-    document.getElementById("result").innerHTML = html;
+function renderResults(rec, admin) {
+    // 추천 기관 출력
+    let recHtml = `<span class="section-title">⭐ 추천 상담 기관</span>`;
+    rec.forEach(o => { recHtml += createCard(o); });
+    document.getElementById("top-recommend").innerHTML = recHtml;
+
+    // 행정 기관 출력
+    let adminHtml = `<span class="section-title">🏢 관할 행정 기관</span>`;
+    admin.forEach(o => { adminHtml += createCard(o); });
+    document.getElementById("admin-offices").innerHTML = adminHtml;
+}
+
+function createCard(o) {
+    return `
+        <div class="office-card ${o.isMatched ? 'matched' : ''}">
+            <div class="title-group">
+                <span class="office-name">${o.name}</span>
+                <span class="distance-text">(${o.dist}km)</span>
+            </div>
+            <span class="phone-text">📞 ${o.phone}</span>
+            <p class="addr-text">🏠 ${o.address}</p>
+        </div>`;
 }
 </script>
 </body>
 </html>
+

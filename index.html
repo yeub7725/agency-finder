@@ -88,7 +88,7 @@
 
 <script>
 // 데이터 배열 (예시)
-const officeData = [
+const offices = [
     {name:"한국부동산원 서울동부지사", type:"REB", covers:["서울"], lat:37.557698, lng:127.079226, phone:"02-3394-9870~3", address:"서울시 광진구 천호대로 549, 지타워 10층"},
     {name:"한국부동산원 고양지사", type:"REB", covers:["경기"], lat:37.652619, lng:126.776883, phone:"031-902-3573~5", address:"경기도 고양시 일산동구 중앙로 1187, 흥국생명빌딩 8층"},
     {name:"한국부동산원 성남지사", type:"REB", covers:["경기"], lat:37.411158, lng:127.128242, phone:"031-8017-8488~90", address:"경기도 성남시 분당구 야탑로 81번길 16"},
@@ -485,13 +485,12 @@ function findNearest(lat, lng, fullAddress){
     const regionKeyword = addrParts[0].substring(0, 2); 
     const district = addrParts.find(p => p.endsWith('구') || p.endsWith('군') || p.endsWith('시'));
 
-    // 1. 관할기관용 필터링
+    // 이제 offices (상단 변수명과 일치)를 정상적으로 찾을 수 있습니다.
     const recTargets = offices.filter(o => ["부동산원", "대법공", "주택공사", "지자체"].includes(o.type))
         .map(o => ({ ...o, dist: getDistance(lat, lng, o.lat, o.lng), isMatched: o.covers.some(c => fullAddress.includes(c)) }))
         .sort((a,b) => b.isMatched - a.isMatched || a.dist - b.dist)
         .slice(0, 2);
 
-    // 2. 세무/토지용 필터링 (구 이름이 일치하는 경우 우선)
     const adminTargets = offices.filter(o => ["세무서", "토지정보과"].includes(o.type))
         .map(o => ({ ...o, dist: getDistance(lat, lng, o.lat, o.lng), isMatched: o.covers.some(c => fullAddress.includes(c)) }))
         .sort((a,b) => b.isMatched - a.isMatched || a.dist - b.dist);
@@ -502,7 +501,6 @@ function findNearest(lat, lng, fullAddress){
 function displayResults(recData, adminData, fullAddress) {
     let html = `<p style="font-size:14px; color:#666; margin-bottom:15px;">📍 검색 지역: <b>${fullAddress}</b></p>`;
     
-    // 섹션 1: 관할기관
     html += `<span class="section-title">관할기관</span>`;
     if(recData.length > 0) {
         recData.forEach(o => html += createCard(o));
@@ -510,7 +508,6 @@ function displayResults(recData, adminData, fullAddress) {
         html += `<p class="addr-text" style="padding:10px;">해당 지역의 관할기관 데이터가 없습니다.</p>`;
     }
 
-    // 섹션 2: 중개사, 세금관련 문의
     html += `<span class="section-title">중개사, 세금관련 문의</span>`;
     if(adminData.length > 0) {
         adminData.forEach(o => html += createCard(o));
@@ -568,3 +565,4 @@ document.addEventListener("DOMContentLoaded", function(){
 </script>
 </body>
 </html>
+

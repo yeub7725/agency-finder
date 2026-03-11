@@ -478,22 +478,34 @@ function searchAddress(isFinal = false) {
 function selectItem(item) {
     document.getElementById("addressList").style.display = "none";
     document.getElementById("keyword").value = item.address_name;
-    findNearest(parseFloat(item.y), parseFloat(item.x), item.address_name);
-}
-
-function findNearest(lat, lng, fullAddress){
+ function findNearest(lat, lng, fullAddress){
+    // 검색한 주소에서 '구'나 '시' 명칭만 따로 추출 (예: 강남구, 수원시)
     const addrParts = fullAddress.split(' ');
-    const regionKeyword = addrParts[0].substring(0, 2); 
-    const district = addrParts.find(p => p.endsWith('구') || p.endsWith('군') || p.endsWith('시'));
+    // 주소에서 구/군/시로 끝나는 단어 찾기
+    const district = addrParts.find(p => p.endsWith('구') || p.endsWith('군') || p.endsWith('시')) || "";
+    // 주소의 첫 단어에서 앞 2글자 (예: 서울, 경기, 강원)
+    const city = addrParts[0].substring(0, 2); 
 
-    // 이제 offices (상단 변수명과 일치)를 정상적으로 찾을 수 있습니다.
+    console.log("검색된 지역 키워드:", city, district); // 브라우저 콘솔(F12)에서 확인 가능
+
+    // 1. 관할기관용 필터링 (부동산원, 대법공, 주택공사, 지자체)
     const recTargets = offices.filter(o => ["부동산원", "대법공", "주택공사", "지자체"].includes(o.type))
-        .map(o => ({ ...o, dist: getDistance(lat, lng, o.lat, o.lng), isMatched: o.covers.some(c => fullAddress.includes(c)) }))
+        .map(o => ({ 
+            ...o, 
+            dist: getDistance(lat, lng, o.lat, o.lng), 
+            // covers 배열에 담긴 키워드가 전체주소/구이름/도시이름 중 하나에라도 포함되면 매칭
+            isMatched: o.covers.some(c => fullAddress.includes(c) || district.includes(c) || city.includes(c)) 
+        }))
         .sort((a,b) => b.isMatched - a.isMatched || a.dist - b.dist)
         .slice(0, 2);
 
+    // 2. 세무/토지용 필터링 (세무서, 토지정보과)
     const adminTargets = offices.filter(o => ["세무서", "토지정보과"].includes(o.type))
-        .map(o => ({ ...o, dist: getDistance(lat, lng, o.lat, o.lng), isMatched: o.covers.some(c => fullAddress.includes(c)) }))
+        .map(o => ({ 
+            ...o, 
+            dist: getDistance(lat, lng, o.lat, o.lng), 
+            isMatched: o.covers.some(c => fullAddress.includes(c) || district.includes(c) || city.includes(c)) 
+        }))
         .sort((a,b) => b.isMatched - a.isMatched || a.dist - b.dist);
 
     displayResults(recTargets, adminTargets, fullAddress);
@@ -566,5 +578,6 @@ document.addEventListener("DOMContentLoaded", function(){
 </script>
 </body>
 </html>
+
 
 

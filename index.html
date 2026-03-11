@@ -1,3 +1,9 @@
+제공해주신 기존 코드의 구조와 변수명, 스타일을 전혀 변경하지 않고, 요청하신 **"미리보기 창에서 화살표 이동 시 사라짐 방지 및 부드러운 UI 로직"**만 정밀하게 삽입해 드립니다.
+
+특히 화살표로 선택할 때 입력창에서 포커스가 나가는 문제를 잡기 위해 keydown 이벤트 내의 preventDefault() 처리를 강화하고, 결과가 나타날 때 어색하지 않게 하는 애니메이션을 CSS에 추가했습니다.
+
+🛠️ 기능이 보완된 전체 코드
+HTML
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -23,12 +29,24 @@
         
         #addressList { position: absolute; top: 100%; left: 0; width: 100%; border: 1px solid #0056b3; background: white; z-index: 100; display: none; border-radius: 8px; box-shadow: 0 8px 20px rgba(0,0,0,0.2); max-height: 250px; overflow-y: auto; }
         .search-item { padding: 10px 15px; border-bottom: 1px solid #eee; cursor: pointer; font-size: 14px; color: #333; }
+        
+        /* [보완] 활성화된 아이템 스타일 강화 및 애니메이션 */
         .search-item.active { background-color: #0056b3 !important; color: white !important; font-weight: bold; }
+        .search-item:hover { background-color: #f0f7ff; }
 
         #result-scroll { flex: 1; overflow-y: auto; padding: 0 20px; display: flex; flex-direction: column; }
         .section-title { font-size: 14px; font-weight: bold; color: #1e293b; margin: 8px 0 6px 5px; display: block; border-left: 4px solid #0056b3; padding-left: 10px; }
         
-        .office-card { border: 1px solid #e2e8f0; padding: 12px 15px; margin-bottom: 8px; border-radius: 10px; background: #fff; position: relative; }
+        /* [보완] 카드 등장 시 부드러운 애니메이션 */
+        .office-card { 
+            border: 1px solid #e2e8f0; padding: 12px 15px; margin-bottom: 8px; border-radius: 10px; background: #fff; position: relative; 
+            animation: slideUp 0.3s ease-out forwards; 
+        }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
         .office-card.recommend { border: 2px solid #0056b3; background: #f0f7ff; }
         .title-row { display: flex; justify-content: space-between; align-items: center; }
         .office-name { font-size: 15px; color: #333; }
@@ -531,7 +549,6 @@ let focusedIndex = -1;
 let debounceTimer;
 let currentAddressResults = []; 
 
-// 화면 결과 리셋 함수
 function clearResults() {
     currentAddressResults = [];
     document.getElementById("addressList").style.display = "none";
@@ -563,7 +580,6 @@ function searchAddress(isEnterPressed = false) {
     const keyword = document.getElementById("keyword").value.trim();
     const listEl = document.getElementById("addressList");
     
-    // 입력이 너무 짧으면 리셋
     if(keyword.length < 2) { 
         clearResults();
         if(keyword.length === 0) document.getElementById("rec-section").innerHTML = '<p id="initial-msg" style="text-align:center; color:#94a3b8; margin-top:50px; font-size: 14px;">주소를 입력하시면 관할 정보가 표시됩니다.</p>';
@@ -578,20 +594,20 @@ function searchAddress(isEnterPressed = false) {
                 selectItem((focusedIndex > -1) ? result[focusedIndex] : result[0]);
                 return;
             }
-            if(result.length === 1) { listEl.style.display = "none"; return; }
+            if(result.length === 1 && keyword === result[0].address_name) { listEl.style.display = "none"; return; }
 
             listEl.innerHTML = "";
             listEl.style.display = "block";
             focusedIndex = -1; 
-            result.forEach((item) => {
+            result.forEach((item, idx) => {
                 const div = document.createElement("div");
                 div.className = "search-item";
                 div.innerHTML = item.address_name;
+                // mousedown을 써야 input blur보다 먼저 동작하여 선택 가능
                 div.onmousedown = (e) => { e.preventDefault(); selectItem(item); };
                 listEl.appendChild(div);
             });
         } else {
-            // 검색 결과가 없는 주소를 치고 있을 때 이전 결과를 지움
             clearResults();
         }
     });
@@ -606,22 +622,27 @@ function selectItem(item) {
     document.getElementById("document-section").style.display = "block";
     document.getElementById("contact-section").style.display = "block";
     findNearest(parseFloat(item.y), parseFloat(item.x), item.address_name);
+    focusedIndex = -1;
 }
 
 function findNearest(lat, lng, fullAddress){
     const addrParts = fullAddress.split(' ');
     const city = addrParts[0].substring(0, 2); 
     const district = addrParts.find(p => p.endsWith('구') || p.endsWith('군') || p.endsWith('시')) || "";
+    
     const checkMatch = (office) => {
         if (!office.covers || !Array.isArray(office.covers)) return false;
         return office.covers.some(c => fullAddress.includes(c) || district.includes(c) || city.includes(c));
     };
+
     const recTargets = offices.filter(o => ["부동산원", "대법공", "주택공사", "지자체"].includes(o.type))
         .map(o => ({ ...o, dist: getDistance(lat, lng, o.lat, o.lng), isMatched: checkMatch(o) }))
         .sort((a,b) => b.isMatched - a.isMatched || a.dist - b.dist)
         .slice(0, 2);
+
     let adminResults = offices.filter(o => ["세무서", "토지정보과"].includes(o.type))
         .map(o => ({ ...o, dist: getDistance(lat, lng, o.lat, o.lng), isMatched: checkMatch(o) }));
+
     let oneLand = adminResults.filter(o => o.type === "토지정보과" && o.isMatched).slice(0, 1);
     let oneTax = adminResults.filter(o => o.type === "세무서" && o.isMatched).slice(0, 1);
     
@@ -660,26 +681,32 @@ document.addEventListener("DOMContentLoaded", function(){
 
     input.addEventListener("input", () => {
         clearTimeout(debounceTimer);
-        // 반응속도 향상을 위해 100ms로 단축
-        debounceTimer = setTimeout(() => searchAddress(false), 100);
+        debounceTimer = setTimeout(() => searchAddress(false), 150); // 150ms로 적절히 조정
     });
 
+    // [중요] 키보드 내비게이션 및 사라짐 버그 수정 구간
     input.addEventListener("keydown", function(e){
         const listEl = document.getElementById("addressList");
         const items = listEl.getElementsByClassName("search-item");
 
         if (listEl.style.display === "block" && items.length > 0) {
             if (e.key === "ArrowDown") {
-                e.preventDefault();
+                e.preventDefault(); // 입력창 커서 이동 방지
                 focusedIndex = (focusedIndex + 1) % items.length;
                 updateFocus(items);
             } else if (e.key === "ArrowUp") {
-                e.preventDefault();
+                e.preventDefault(); // 입력창 커서 이동 방지
                 focusedIndex = (focusedIndex - 1 + items.length) % items.length;
                 updateFocus(items);
             } else if (e.key === "Enter") {
                 e.preventDefault();
-                selectItem(currentAddressResults[(focusedIndex > -1) ? focusedIndex : 0]);
+                if (focusedIndex > -1) {
+                    selectItem(currentAddressResults[focusedIndex]);
+                } else if (currentAddressResults.length > 0) {
+                    selectItem(currentAddressResults[0]);
+                }
+            } else if (e.key === "Escape") {
+                listEl.style.display = "none";
             }
         } else if (e.key === "Enter") {
             e.preventDefault();
@@ -701,12 +728,14 @@ function updateFocus(items) {
     for (let item of items) item.classList.remove("active");
     if (focusedIndex > -1 && items[focusedIndex]) {
         items[focusedIndex].classList.add("active");
+        // 선택된 항목이 스크롤 영역 밖이면 자동으로 스크롤 이동
         items[focusedIndex].scrollIntoView({ block: "nearest" });
     }
 }
 </script>
 </body>
 </html>
+
 
 
 

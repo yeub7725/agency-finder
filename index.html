@@ -470,34 +470,25 @@ function findNearest(lat, lng, fullAddress){
         return office.covers.some(c => fullAddress.includes(c) || district.includes(c) || city.includes(c));
     };
 
-    // 1. 관할기관 (최대 2개)
+    // 1. 관할기관 (최대 2개) 추출
     const recTargets = offices.filter(o => ["부동산원", "대법공", "주택공사", "지자체"].includes(o.type))
-        .map(o => ({ 
-            ...o, 
-            dist: getDistance(lat, lng, o.lat, o.lng), 
-            isMatched: checkMatch(o) 
-        }))
+        .map(o => ({ ...o, dist: getDistance(lat, lng, o.lat, o.lng), isMatched: checkMatch(o) }))
         .sort((a,b) => b.isMatched - a.isMatched || a.dist - b.dist)
         .slice(0, 2);
 
-    // 2. 중개사, 세금 관련 (토지정보과 1개 + 세무서 1개)
+    // 2. 행정기관 (세무서, 토지정보과) 추출 및 가공
     const allAdmin = offices.filter(o => ["세무서", "토지정보과"].includes(o.type))
-        .map(o => ({ 
-            ...o, 
-            dist: getDistance(lat, lng, o.lat, o.lng), 
-            isMatched: checkMatch(o) 
-        }))
+        .map(o => ({ ...o, dist: getDistance(lat, lng, o.lat, o.lng), isMatched: checkMatch(o) }))
         .sort((a,b) => b.isMatched - a.isMatched || a.dist - b.dist);
 
-    // 토지정보과에서 가장 적합한 것 1개 추출
+    // 각 타입별로 가장 적합한 1개씩만 선택
     const oneLand = allAdmin.filter(o => o.type === "토지정보과").slice(0, 1);
-    // 세무서에서 가장 적합한 것 1개 추출
     const oneTax = allAdmin.filter(o => o.type === "세무서").slice(0, 1);
 
-    // 토지정보과를 먼저 보여주기 위해 합침
+    // 최종 행정 타겟 리스트 생성
     const adminTargets = [...oneLand, ...oneTax];
 
-    // 3. 최종 결과 표시
+    // 3. 결과 표시 함수 호출 (딱 한 번만 실행되어야 합니다)
     displayResults(recTargets, adminTargets, fullAddress);
 }
 
@@ -633,6 +624,7 @@ document.addEventListener("DOMContentLoaded", function(){
 </script>
 </body>
 </html>
+
 
 
 

@@ -456,7 +456,6 @@ let focusedIndex = -1;
 let debounceTimer;
 let currentAddressResults = []; 
 
-// [2] 날짜 포맷 함수
 function formatContractDate() {
     const dateInput = document.getElementById('contract-date');
     let val = dateInput.value.replace(/[^0-9]/g, '');
@@ -466,7 +465,6 @@ function formatContractDate() {
     }
 }
 
-// [3] 거리 계산 함수
 function getDistance(lat1, lon1, lat2, lon2){
     const R = 6371;
     const dLat = (lat2-lat1)*Math.PI/180;
@@ -475,7 +473,6 @@ function getDistance(lat1, lon1, lat2, lon2){
     return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }
 
-// [4] 주소 검색 핵심 로직
 function searchAddress(isEnterPressed = false) {
     const keyword = document.getElementById("keyword").value.trim();
     const listEl = document.getElementById("addressList");
@@ -486,20 +483,17 @@ function searchAddress(isEnterPressed = false) {
         if(status === kakao.maps.services.Status.OK){
             currentAddressResults = result;
             
-            // 엔터가 눌린 상황이라면 첫 번째 혹은 선택된 주소로 즉시 실행
             if(isEnterPressed) {
                 const targetIdx = (focusedIndex > -1) ? focusedIndex : 0;
                 selectItem(result[targetIdx]);
                 return;
             }
 
-            // 결과가 하나면 리스트 숨김 (엔터 시 바로 작동 유도)
             if(result.length === 1) {
                 listEl.style.display = "none";
                 return;
             }
 
-            // 여러 개일 때 리스트 생성
             listEl.innerHTML = "";
             listEl.style.display = "block";
             focusedIndex = -1; 
@@ -514,7 +508,6 @@ function searchAddress(isEnterPressed = false) {
     });
 }
 
-// [5] 아이템 선택 시 화면 갱신
 function selectItem(item) {
     if(!item) return;
     document.getElementById("addressList").style.display = "none";
@@ -527,7 +520,6 @@ function selectItem(item) {
     findNearest(parseFloat(item.y), parseFloat(item.x), item.address_name);
 }
 
-// [6] 관할기관 찾기
 function findNearest(lat, lng, fullAddress){
     const addrParts = fullAddress.split(' ');
     const city = addrParts[0].substring(0, 2); 
@@ -551,7 +543,6 @@ function findNearest(lat, lng, fullAddress){
     displayResults(recTargets, [...oneLand, ...oneTax]);
 }
 
-// [7] 결과 카드 그리기
 function displayResults(recData, adminData) {
     const recEl = document.getElementById("rec-section");
     const adminEl = document.getElementById("admin-section");
@@ -580,18 +571,15 @@ function createCard(o, cardType) {
         </div>`;
 }
 
-// [8] 이벤트 리스너 통합 관리
 document.addEventListener("DOMContentLoaded", function(){
     const input = document.getElementById("keyword");
     const dateInput = document.getElementById('contract-date');
 
-    // 주소 입력 이벤트
     input.addEventListener("input", () => {
         clearTimeout(debounceTimer);
         debounceTimer = setTimeout(() => searchAddress(false), 200);
     });
 
-    // 키보드 제어 (화살표, 엔터)
     input.addEventListener("keydown", function(e){
         const listEl = document.getElementById("addressList");
         const items = listEl.getElementsByClassName("search-item");
@@ -620,19 +608,16 @@ document.addEventListener("DOMContentLoaded", function(){
         }
     });
 
-    // 날짜 입력 이벤트
     dateInput.addEventListener('blur', formatContractDate);
     dateInput.addEventListener('keydown', function(e) {
         if (e.key === 'Enter') { formatContractDate(); this.blur(); }
     });
 
-    // 외부 클릭 시 리스트 닫기
     document.addEventListener("click", (e) => {
         if(e.target.id !== "keyword") document.getElementById("addressList").style.display = "none";
     });
 });
 
-// [9] 포커스 시각화 (중복 제거된 최종 버전)
 function updateFocus(items) {
     if (!items || items.length === 0) return;
     for (let item of items) item.classList.remove("active");
@@ -644,5 +629,6 @@ function updateFocus(items) {
 </script>
 </body>
 </html>
+
 
 

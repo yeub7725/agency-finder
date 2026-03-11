@@ -456,6 +456,7 @@ let focusedIndex = -1;
 let debounceTimer;
 let currentAddressResults = []; 
 
+// [2] 날짜 포맷 함수
 function formatContractDate() {
     const dateInput = document.getElementById('contract-date');
     let val = dateInput.value.replace(/[^0-9]/g, '');
@@ -465,11 +466,7 @@ function formatContractDate() {
     }
 }
 
-document.getElementById('contract-date').addEventListener('blur', formatContractDate);
-document.getElementById('contract-date').addEventListener('keydown', function(e) {
-    if (e.key === 'Enter') { formatContractDate(); this.blur(); }
-});
-
+// [3] 거리 계산 함수
 function getDistance(lat1, lon1, lat2, lon2){
     const R = 6371;
     const dLat = (lat2-lat1)*Math.PI/180;
@@ -478,6 +475,7 @@ function getDistance(lat1, lon1, lat2, lon2){
     return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }
 
+// [4] 주소 검색 핵심 로직
 function searchAddress(isEnterPressed = false) {
     const keyword = document.getElementById("keyword").value.trim();
     const listEl = document.getElementById("addressList");
@@ -488,20 +486,20 @@ function searchAddress(isEnterPressed = false) {
         if(status === kakao.maps.services.Status.OK){
             currentAddressResults = result;
             
-            // 결과가 1개뿐인데 엔터를 쳤거나, 여러 개 중 엔터를 쳤을 때 (선택된 게 없으면 0번 선택)
+            // 엔터가 눌린 상황이라면 첫 번째 혹은 선택된 주소로 즉시 실행
             if(isEnterPressed) {
-                const target = (focusedIndex > -1) ? result[focusedIndex] : result[0];
-                selectItem(target);
+                const targetIdx = (focusedIndex > -1) ? focusedIndex : 0;
+                selectItem(result[targetIdx]);
                 return;
             }
 
-            // 결과가 1개뿐이면 리스트 안 보여줌 (엔터 대기 상태)
+            // 결과가 하나면 리스트 숨김 (엔터 시 바로 작동 유도)
             if(result.length === 1) {
                 listEl.style.display = "none";
                 return;
             }
 
-            // 여러 개면 리스트 노출
+            // 여러 개일 때 리스트 생성
             listEl.innerHTML = "";
             listEl.style.display = "block";
             focusedIndex = -1; 
@@ -516,6 +514,7 @@ function searchAddress(isEnterPressed = false) {
     });
 }
 
+// [5] 아이템 선택 시 화면 갱신
 function selectItem(item) {
     if(!item) return;
     document.getElementById("addressList").style.display = "none";
@@ -528,6 +527,7 @@ function selectItem(item) {
     findNearest(parseFloat(item.y), parseFloat(item.x), item.address_name);
 }
 
+// [6] 관할기관 찾기
 function findNearest(lat, lng, fullAddress){
     const addrParts = fullAddress.split(' ');
     const city = addrParts[0].substring(0, 2); 
@@ -544,11 +544,14 @@ function findNearest(lat, lng, fullAddress){
         .map(o => ({ ...o, dist: getDistance(lat, lng, o.lat, o.lng), isMatched: checkMatch(o) }));
     let oneLand = adminResults.filter(o => o.type === "토지정보과" && o.isMatched).slice(0, 1);
     let oneTax = adminResults.filter(o => o.type === "세무서" && o.isMatched).slice(0, 1);
+    
     if (oneLand.length === 0) oneLand = offices.filter(o => o.type === "지자체").map(o => ({ ...o, dist: getDistance(lat, lng, o.lat, o.lng), isMatched: checkMatch(o) })).filter(o => o.isMatched).slice(0, 1);
     if (oneTax.length === 0) oneTax = offices.filter(o => o.type === "지자체").map(o => ({ ...o, dist: getDistance(lat, lng, o.lat, o.lng), isMatched: checkMatch(o) })).filter(o => o.isMatched).slice(0, 1);
+    
     displayResults(recTargets, [...oneLand, ...oneTax]);
 }
 
+// [7] 결과 카드 그리기
 function displayResults(recData, adminData) {
     const recEl = document.getElementById("rec-section");
     const adminEl = document.getElementById("admin-section");
@@ -577,70 +580,67 @@ function createCard(o, cardType) {
         </div>`;
 }
 
+// [8] 이벤트 리스너 통합 관리
 document.addEventListener("DOMContentLoaded", function(){
     const input = document.getElementById("keyword");
+    const dateInput = document.getElementById('contract-date');
+
+    // 주소 입력 이벤트
     input.addEventListener("input", () => {
         clearTimeout(debounceTimer);
         debounceTimer = setTimeout(() => searchAddress(false), 200);
     });
 
-   
+    // 키보드 제어 (화살표, 엔터)
     input.addEventListener("keydown", function(e){
         const listEl = document.getElementById("addressList");
         const items = listEl.getElementsByClassName("search-item");
 
-       
         if (listEl.style.display === "block" && items.length > 0) {
             if (e.key === "ArrowDown") {
                 e.preventDefault();
-             
                 focusedIndex = (focusedIndex + 1) % items.length;
                 updateFocus(items);
             } else if (e.key === "ArrowUp") {
                 e.preventDefault();
-          
                 focusedIndex = (focusedIndex - 1 + items.length) % items.length;
                 updateFocus(items);
             } else if (e.key === "Enter") {
                 e.preventDefault();
-           
                 const targetIdx = (focusedIndex > -1) ? focusedIndex : 0;
-                if (currentAddressResults[targetIdx]) {
-                    selectItem(currentAddressResults[targetIdx]);
-                }
+                selectItem(currentAddressResults[targetIdx]);
             }
-        } 
-     
-        else if (e.key === "Enter") {
+        } else if (e.key === "Enter") {
             e.preventDefault();
             if (currentAddressResults.length > 0) {
-              
                 selectItem(currentAddressResults[0]);
             } else {
-        
                 searchAddress(true);
             }
         }
     });
 
-  
-    function updateFocus(items) {
-        if (!items || items.length === 0) return;
-        for (let item of items) {
-            item.classList.remove("active");
-        }
-        if (focusedIndex > -1 && items[focusedIndex]) {
-            items[focusedIndex].classList.add("active");
-            items[focusedIndex].scrollIntoView({ block: "nearest" });
-        }
-    }
+    // 날짜 입력 이벤트
+    dateInput.addEventListener('blur', formatContractDate);
+    dateInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') { formatContractDate(); this.blur(); }
     });
-    function updateFocus(items) {
-        for (let item of items) item.classList.remove("active");
-        if (focusedIndex > -1) { items[focusedIndex].classList.add("active"); items[focusedIndex].scrollIntoView({ block: "nearest" }); }
-    }
-    document.addEventListener("click", (e) => { if(e.target.id !== "keyword") document.getElementById("addressList").style.display = "none"; });
+
+    // 외부 클릭 시 리스트 닫기
+    document.addEventListener("click", (e) => {
+        if(e.target.id !== "keyword") document.getElementById("addressList").style.display = "none";
+    });
 });
+
+// [9] 포커스 시각화 (중복 제거된 최종 버전)
+function updateFocus(items) {
+    if (!items || items.length === 0) return;
+    for (let item of items) item.classList.remove("active");
+    if (focusedIndex > -1 && items[focusedIndex]) {
+        items[focusedIndex].classList.add("active");
+        items[focusedIndex].scrollIntoView({ block: "nearest" });
+    }
+}
 </script>
 </body>
 </html>

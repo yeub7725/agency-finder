@@ -583,22 +583,57 @@ document.addEventListener("DOMContentLoaded", function(){
         clearTimeout(debounceTimer);
         debounceTimer = setTimeout(() => searchAddress(false), 200);
     });
+
+   
     input.addEventListener("keydown", function(e){
         const listEl = document.getElementById("addressList");
         const items = listEl.getElementsByClassName("search-item");
 
-        if (e.key === "ArrowDown" && listEl.style.display === "block") {
+       
+        if (listEl.style.display === "block" && items.length > 0) {
+            if (e.key === "ArrowDown") {
+                e.preventDefault();
+             
+                focusedIndex = (focusedIndex + 1) % items.length;
+                updateFocus(items);
+            } else if (e.key === "ArrowUp") {
+                e.preventDefault();
+          
+                focusedIndex = (focusedIndex - 1 + items.length) % items.length;
+                updateFocus(items);
+            } else if (e.key === "Enter") {
+                e.preventDefault();
+           
+                const targetIdx = (focusedIndex > -1) ? focusedIndex : 0;
+                if (currentAddressResults[targetIdx]) {
+                    selectItem(currentAddressResults[targetIdx]);
+                }
+            }
+        } 
+     
+        else if (e.key === "Enter") {
             e.preventDefault();
-            focusedIndex = (focusedIndex + 1) % items.length;
-            updateFocus(items);
-        } else if (e.key === "ArrowUp" && listEl.style.display === "block") {
-            e.preventDefault();
-            focusedIndex = (focusedIndex - 1 + items.length) % items.length;
-            updateFocus(items);
-        } else if (e.key === "Enter") {
-            e.preventDefault();
-            searchAddress(true); // 엔터 시 강제 선택 로직 실행
+            if (currentAddressResults.length > 0) {
+              
+                selectItem(currentAddressResults[0]);
+            } else {
+        
+                searchAddress(true);
+            }
         }
+    });
+
+  
+    function updateFocus(items) {
+        if (!items || items.length === 0) return;
+        for (let item of items) {
+            item.classList.remove("active");
+        }
+        if (focusedIndex > -1 && items[focusedIndex]) {
+            items[focusedIndex].classList.add("active");
+            items[focusedIndex].scrollIntoView({ block: "nearest" });
+        }
+    }
     });
     function updateFocus(items) {
         for (let item of items) item.classList.remove("active");
@@ -609,4 +644,5 @@ document.addEventListener("DOMContentLoaded", function(){
 </script>
 </body>
 </html>
+
 

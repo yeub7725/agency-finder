@@ -4,101 +4,74 @@
     <link rel="icon" href="data:;base64,iVBORw0KGgo=">
     <meta charset="utf-8">
     <title>관할기관 통합 검색</title>
- <style>
-    @font-face {
-        font-family: 'GovFont';
-        src: url('./fonts/govfont.TTF') format('truetype'); 
-        font-weight: normal;
-        font-style: normal;
-    }
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gov-blue: rgb(0, 55, 100);   
+            --gov-red: rgb(228, 3, 45);  
+            --gov-gray: rgb(87, 87, 87);   
+        }
 
-    :root {
-        --gov-blue: rgb(0, 55, 100);
-        --gov-red: rgb(228, 3, 45);
-        --gov-gray: rgb(87, 87, 87);
-    }
+        body, html { 
+            margin: 0; padding: 0; height: 100%; 
+            font-family: 'Noto Sans KR', sans-serif;
+            overflow: hidden; background: #fff;
+        }
 
-    body, html { 
-        margin: 0; padding: 0; height: 100%; 
-        font-family: 'GovFont', 'Malgun Gothic', sans-serif; 
-        overflow: hidden; background: #fff;
-    }
+        .main-wrapper { display: flex; height: 100vh; width: 100vw; }
+        #sidebar-search { width: 420px; min-width: 420px; border-right: 1px solid #e2e8f0; display: flex; flex-direction: column; background: #fff; height: 100%; }
+        
+        .search-header { padding: 15px 20px; flex-shrink: 0; border-bottom: 1px solid #f1f5f9; }
+        h1 { font-size: 1.3rem; margin: 0 0 10px 0; color: var(--gov-blue); font-weight: 900; line-height: 1.4; }
+        
+        .search-row { display: flex; gap: 8px; align-items: center; }
+        input#keyword { 
+            padding: 12px; width: 100%; font-size: 15px; 
+            border: 2px solid var(--gov-blue); border-radius: 4px; 
+            box-sizing: border-box; outline: none; box-shadow: none;
+        }
+        
+        .date-group { display: flex; align-items: center; background: #fff; border: 2px solid #94a3b8; border-radius: 4px; padding: 0 8px; height: 46px; box-sizing: border-box; flex: 1.1; }
+        .date-group input { width: 32px; border: none !important; padding: 0; text-align: center; font-size: 15px; font-weight: bold; color: var(--gov-blue); outline: none; background: transparent; }
 
-    .main-wrapper { display: flex; height: 100vh; width: 100vw; }
-    #sidebar-search { width: 450px; min-width: 450px; border-right: 1px solid #e2e8f0; display: flex; flex-direction: column; background: #fff; height: 100%; }
-    
-    .search-header { padding: 15px 20px; flex-shrink: 0; border-bottom: 1px solid #f1f5f9; }
-    
-    /* [긴급수정] '할'자 잘림 방지: 하단 여백 극단적 확보 */
-    h1 { 
-        font-size: 1.4rem; margin: 0; color: var(--gov-blue); 
-        font-weight: 800; line-height: 1.2; 
-        padding-bottom: 20px !important; /* 글자 하단 공간 강제 확보 */
-        display: block; overflow: visible !important;
-    }
-    
-    .search-row { display: flex; gap: 8px; align-items: center; }
+        #result-area { flex: 1; overflow-y: auto; padding: 10px 20px; display: flex; flex-direction: column; gap: 10px; }
 
-    /* [수정] 검색창 그림자 완전 제거 */
-    input#keyword { 
-        padding: 12px; width: 100%; font-size: 15px; 
-        border: 2px solid var(--gov-blue); border-radius: 4px; 
-        box-sizing: border-box; outline: none; 
-        box-shadow: none !important; appearance: none; -webkit-appearance: none;
-    }
-    
-    .date-group { display: flex; align-items: center; background: #fff; border: 2px solid #94a3b8; border-radius: 4px; padding: 0 8px; height: 46px; box-sizing: border-box; flex: 1.1; }
-    .date-group input { width: 32px; border: none !important; padding: 0; text-align: center; font-size: 15px; font-weight: bold; color: var(--gov-blue); outline: none; background: transparent; box-shadow: none !important; }
+        .intro-msg { 
+            text-align: center; color: #475569; margin-top: 50px; 
+            font-size: 18px; font-weight: bold; line-height: 1.6;
+        }
 
-    #result-area { flex: 1; overflow-y: auto; padding: 10px 20px; display: flex; flex-direction: column; gap: 5px; }
+        .section-title { 
+            font-size: 15px; font-weight: bold; color: #1e293b; 
+            margin: 10px 0 5px 0; display: flex; align-items: center; gap: 6px; 
+        }
+        .section-title::before { content: ''; display: inline-block; width: 4px; height: 14px; background: var(--gov-blue); border-radius: 2px; }
 
-    /* [수정] 메인 안내 문구: 크기 대폭 상향 및 '할'자 방어 */
-    #rec-section p {
-        font-size: 18px !important; color: #475569 !important; 
-        line-height: 2 !important; font-weight: bold;
-        padding-bottom: 20px !important; overflow: visible !important;
-    }
+        .office-card { border: 1px solid #e2e8f0; padding: 12px; border-radius: 8px; background: #fff; margin-bottom: 2px; }
+        .office-card.recommend { border: 2px solid var(--gov-blue); background: #f8fbff; padding: 15px; }
+        
+        .recommend .office-name { font-size: 17px; font-weight: 800; color: #1e293b; }
+        .recommend .phone-text { font-size: 26px; font-weight: 900; color: var(--gov-blue); display: block; margin: 6px 0; letter-spacing: -0.5px; }
+        
+        .office-name { font-size: 15px; font-weight: bold; color: #1e293b; }
+        .phone-text { font-size: 20px; font-weight: 800; color: var(--gov-blue); display: block; margin: 4px 0; }
+        .addr-text { font-size: 13.5px; color: #64748b; margin: 0; line-height: 1.4; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        
+        .info-box { background: #f8fafc; border: 1px solid #e2e8f0; padding: 10px 12px; border-radius: 8px; font-size: 14px; }
+        .info-box p { margin: 4px 0; white-space: nowrap; }
+        .contact-item { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px dotted #e2e8f0; font-size: 14.5px; white-space: nowrap; }
+        .contact-item b { color: var(--gov-red); font-size: 15px; }
 
-    .section-title { 
-        font-size: 15px; font-weight: bold; color: #1e293b; 
-        margin: 5px 0 0 0; display: flex; align-items: center; gap: 6px;
-        padding-bottom: 15px !important; overflow: visible !important;
-    }
-    .section-title::before { content: ''; display: inline-block; width: 4px; height: 14px; background: var(--gov-blue); border-radius: 2px; }
+        #addressList { 
+            position: absolute; top: calc(100% + 5px); left: 0; width: 100%; 
+            border: 2px solid var(--gov-blue); background: white; z-index: 100; 
+            display: none; border-radius: 0; box-shadow: 0 4px 10px rgba(0,0,0,0.1); 
+        }
+        .search-item { padding: 12px; border-bottom: 1px solid #f1f5f9; cursor: pointer; font-size: 14px; }
+        .search-item.active { background-color: var(--gov-blue); color: white; }
 
-    .office-card { border: 1px solid #e2e8f0; padding: 10px; border-radius: 8px; background: #fff; margin-bottom: 5px; overflow: visible !important; }
-    .office-card.recommend { border: 2px solid var(--gov-blue); background: #f8fbff; padding: 12px 15px; }
-    
-    /* 카드 내 텍스트 잘림 방어 */
-    .recommend .office-name { font-size: 17px; font-weight: 800; padding-bottom: 12px !important; overflow: visible !important; display: inline-block; }
-    .recommend .phone-text { font-size: 26px; font-weight: 900; color: var(--gov-blue); margin: 0; padding-bottom: 15px !important; overflow: visible !important; display: block; }
-    
-    .office-name { font-size: 15px; font-weight: bold; color: #1e293b; padding-bottom: 10px !important; overflow: visible !important; display: inline-block; }
-    .phone-text { font-size: 19px; font-weight: 800; color: var(--gov-blue); display: block; padding-bottom: 10px !important; overflow: visible !important; }
-    .addr-text { font-size: 13.5px; color: #475569; margin: 0; padding-bottom: 5px; white-space: nowrap; }
-    
-    /* 안내 박스 및 '렌'자 잘림 방어 */
-    .info-box { background: #f8fafc; border: 1px solid #e2e8f0; padding: 8px 12px; border-radius: 6px; font-size: 14px; }
-    .info-box p { margin: 0; white-space: nowrap; padding-bottom: 15px !important; overflow: visible !important; }
-    
-    .contact-item { 
-        display: flex; justify-content: space-between; align-items: center;
-        padding: 0; border-bottom: 1px dotted #e2e8f0; font-size: 14.5px; 
-        overflow: visible !important; height: 45px; /* 높이를 강제로 고정해서 잘림 방지 */
-    }
-    .contact-item b { color: var(--gov-red); font-size: 16px; padding-bottom: 10px !important; overflow: visible !important; display: inline-block; }
-
-    /* 자동완성 박스: 직사각형 스타일 고수 */
-    #addressList { 
-        position: absolute; top: calc(100% + 2px); left: 0; width: 100%; 
-        border: 2px solid var(--gov-blue); background: white; z-index: 1000; 
-        display: none; border-radius: 0; box-shadow: none; 
-    }
-    .search-item { padding: 12px; border-bottom: 1px solid #f1f5f9; cursor: pointer; font-size: 14.5px; overflow: visible !important; padding-bottom: 15px !important; }
-    .search-item.active { background-color: var(--gov-blue); color: white; }
-
-    #content-area { flex: 1; background: #ffffff; }
-</style>
+        #content-area { flex: 1; background: #ffffff; }
+    </style>
 </head>
 <body>
 <div class="main-wrapper">
@@ -122,27 +95,27 @@
 
         <div id="result-area">
             <div id="rec-section">
-                <p style="text-align:center; color:#94a3b8; margin-top:30px; font-size: 12px;">주소를 입력하시면 관할 정보가 표시됩니다.</p>
+                <p class="intro-msg">주소를 입력하시면<br>정보가 표시됩니다.</p>
             </div>
 
             <div id="sub-info-area" style="display:none;">
                 <div class="section-title">신청 시 필요 서류</div>
                 <div class="info-box">
-                    <p style="margin:0 0 2px 0;">• <b>공통:</b> 신분증, 등기부등본, 건축물대장, 임대계약서, 주민등록초본</p>
-                    <p style="margin:0;">• <b>대리:</b> 위임장, 인감증명서, 대리인 신분증</p>
+                    <p>• <b>공통:</b> 신분증, 등기부등본, 건축물대장, 임대계약서, 초본</p>
+                    <p>• <b>대리:</b> 위임장, 인감증명서, 대리인 신분증</p>
                 </div>
 
                 <div class="section-title">주요 업무 문의처</div>
                 <div class="info-box">
-                    <div class="contact-item">한국부동산원 1.공시 2.조정위 3.K-아파트 0.기타 <b>1600-2828</b></div>
-                    <div class="contact-item">전자계약<b>1833-4662</b></div>
-                    <div class="contact-item">임대차신고<b>1533-2949</b></div>
-                    <div class="contact-item">LH공사<b>1600-1004</b></div>
-                    <div class="contact-item">렌트홈<b>1670-8004</b></div>
-                    <div class="contact-item">공동주택 조정위(관리비)<b>031-738-3300</b></div>
-                    <div class="contact-item">국토부<b>1599-0001</b></div>
-                    <div class="contact-item">대법공<b>132</b></div>
-                    <div class="contact-item">국세청<b>126</b></div>
+                    <div class="contact-item">한국부동산원 1.공시 3.K-아파트 0.기타 <b>1600-2828</b></div>
+                    <div class="contact-item">전자계약 <b>1833-4662</b></div>
+                    <div class="contact-item">임대차신고 <b>1533-2949</b></div>
+                    <div class="contact-item">LH공사 <b>1600-1004</b></div>
+                    <div class="contact-item">렌트홈 <b>1670-8004</b></div>
+                    <div class="contact-item">공동주택 조정위 <b>031-738-3300</b></div>
+                    <div class="contact-item">국토부 <b>1599-0001</b></div>
+                    <div class="contact-item">대법공 <b>132</b></div>
+                    <div class="contact-item">국세청 <b>126</b></div>
                 </div>
                 <div id="admin-section"></div>
             </div>
@@ -724,6 +697,7 @@ document.addEventListener("DOMContentLoaded", function(){
 </script>
 </body>
 </html>
+
 
 
 

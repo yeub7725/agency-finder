@@ -1,3 +1,20 @@
+고생 많으셨습니다! 이제 검색 로직의 **'우선순위와 필터링'**을 아주 날카롭게 다듬어 보겠습니다. 말씀하신 핵심은 **"서울은 촘촘하게, 지방은 정확하게"**네요.
+
+🛠 수정된 검색 로직 (핵심 규칙)
+서울 지역:
+
+1순위: 입력한 **'구'**와 covers가 정확히 일치하는 지사 (가장 우선)
+
+2순위: 같은 서울 내에서 거리상 가장 가까운 지사
+
+지방(기타) 지역:
+
+해당 지역(예: 부산) 관할이 아닌 기관(예: 서울시청 등)은 아예 리스트에서 배제합니다.
+
+관할 지사가 1개만 있다면 굳이 2번째를 띄우지 않고 1개만 깔끔하게 보여줍니다.
+
+📋 최종 고도화 코드
+HTML
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -9,7 +26,6 @@
         :root {
             --gov-blue: rgb(0, 55, 100);
             --gov-red: rgb(228, 3, 45);
-            /* 정부 표준 어두운 회색 적용 */
             --gov-gray-std: rgb(87, 87, 87); 
             --gov-gray: rgb(30, 41, 59);
             --gov-light-gray: rgb(100, 116, 139);
@@ -61,7 +77,6 @@
         .contact-item { display: flex; justify-content: space-between; padding: 2px 0; border-bottom: 1px dotted #e2e8f0; font-size: 13.5px; align-items: center; white-space: nowrap; }
         .contact-item:last-child { border-bottom: none; }
         
-        /* 지정해주신 정부 표준 회색 적용 */
         .gov-std-text { color: var(--gov-gray-std); font-weight: 800; }
         .contact-item b { color: var(--gov-red); font-weight: 900; font-size: 14px; }
         .sub-desc { font-size: 11px; color: #64748b; margin-left: 3px; font-weight: normal; }
@@ -145,8 +160,7 @@ const offices = [
     {name:"서울시청 (지자체)", type:"지자체", covers:["서울", "강서구", "은평구", "종로구", "서대문구", "마포구", "영등포구", "양천구", "구로구"], lat:37.564554, lng:126.975613, phone:"02-2133-1200~8", address:"서울시 중구 덕수궁길 15, 서울시청 서소문별관"},
     {name:"경기도청 (지자체)", type:"지자체", covers:["경기"], lat:37.274666, lng:127.009619, phone:"031-8008-2868", address:"경기도 수원시 팔달구 효원로 1"}
 ];
-
-    let currentAddressResults = [];
+let currentAddressResults = [];
     let focusedIndex = -1;
     let debounceTimer;
     let lastSearchKeyword = "";
@@ -192,19 +206,47 @@ const offices = [
         const mySido = addrParts[0].substring(0, 2); 
         const myGu = addrParts.find(p => p.endsWith('구')) || "";
 
-        const scoredOffices = offices.map(o => {
+        // 1. 관할 필터링 및 점수화
+        let filtered = offices.map(o => {
             const dist = getDistance(lat, lng, o.lat, o.lng);
-            let isInJurisdiction = o.covers && (o.covers.includes(mySido) || (myGu && o.covers.includes(myGu)));
+            const hasSido = o.covers.includes(mySido);
+            const hasGu = myGu && o.covers.includes(myGu);
+            
+            // 점수 시스템: 구 일치(100점), 시도 일치(50점), 타지역(0점)
+            let score = 0;
+            if (hasGu) score = 100;
+            else if (hasSido) score = 50;
+
             let displayCover = o.type === "대법공" && o.covers.includes("서울") ? "서울·강원" : (o.covers.includes("서울") ? "서울" : (o.covers[0] || ""));
-            return { ...o, dist, isInJurisdiction, displayCover };
+            
+            return { ...o, dist, score, displayCover };
         });
 
-        const recTargets = scoredOffices
-            .filter(o => o.isInJurisdiction)
-            .sort((a, b) => a.dist - b.dist)
-            .slice(0, 2); 
+        // 2. 검색 로직 적용
+        let finalResults = [];
+        if (mySido === "서울") {
+            // 서울은 1순위 구 일치, 2순위 가까운 서울 관할
+            finalResults = filtered
+                .filter(o => o.score > 0)
+                .sort((a, b) => b.score - a.score || a.dist - b.dist)
+                .slice(0, 2);
+        } else {
+            // 지방은 해당 지사 관할(score > 0)만 보여줌 (서울 지사 노출 차단)
+            finalResults = filtered
+                .filter(o => o.score > 0)
+                .sort((a, b) => b.score - a.score || a.dist - b.dist);
+            
+            // 지방에서 관할이 1개만 있으면 1개만 출력 (불필요한 타지사 제거)
+            if (finalResults.length > 1) {
+                // 만약 정확히 '구'가 일치하는 100점짜리가 있다면 그것만 보여줌
+                const topScore = finalResults[0].score;
+                if (topScore === 100) {
+                    finalResults = finalResults.filter(o => o.score === 100).slice(0, 1);
+                }
+            }
+        }
 
-        displayResults(recTargets);
+        displayResults(finalResults);
     }
 
     function getDistance(lat1, lon1, lat2, lon2) {
@@ -218,6 +260,10 @@ const offices = [
     function displayResults(recData) {
         const officeList = document.getElementById("office-list");
         officeList.innerHTML = `<span class="section-title">관할기관 안내</span>`;
+        if (recData.length === 0) {
+            officeList.innerHTML += `<p style="font-size:13px; color:#64748b; padding:10px;">해당 지역의 관할 정보를 찾을 수 없습니다.</p>`;
+            return;
+        }
         recData.forEach((o) => {
             officeList.innerHTML += `
                 <div class="office-card recommend">

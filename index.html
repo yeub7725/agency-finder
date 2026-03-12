@@ -609,18 +609,43 @@ const offices = [
         findNearest(parseFloat(item.y), parseFloat(item.x), item.address_name);
     }
 
-    function findNearest(lat, lng, fullAddress) {
-        // 지역명 추출 (구, 시, 군)
+   function findNearest(lat, lng, fullAddress) {
         const addrParts = fullAddress.split(' ');
-        const myGu = addrParts.find(p => p.endsWith('구') || p.endsWith('시') || p.endsWith('군')) || "";
+        
+        // 검색된 주소에서 '구', '시', '군'을 모두 찾습니다.
+        const myGu = addrParts.find(p => p.endsWith('구')) || "";
+        const myCity = addrParts.find(p => p.endsWith('시')) || "";
+        const myGun = addrParts.find(p => p.endsWith('군')) || "";
 
-        // 서울 권역 그룹 정의
-        const seoulGroups = {
-            "중구": ["강서구", "양천구", "영등포구", "구로구", "마포구", "용산구", "서대문구", "종로구", "은평구", "중구"],
-            "광진구": ["성북구", "강북구", "도봉구", "노원구", "동대문구", "중랑구", "성동구", "강동구", "광진구"],
-            "서초구": ["금천구", "관악구", "동작구", "강남구", "송파구", "서초구"]
-        };
+        const scoredOffices = offices.map(o => {
+            const dist = getDistance(lat, lng, o.lat, o.lng);
+            let isCovered = false;
 
+            // 데이터의 covers 배열에 현재 주소의 시, 군, 구 중 하나라도 포함되어 있는지 확인
+            if (o.covers && (
+                (myGu && o.covers.includes(myGu)) || 
+                (myCity && o.covers.includes(myCity)) || 
+                (myGun && o.covers.includes(myGun))
+            )) {
+                isCovered = true;
+            }
+
+            return { ...o, dist, isCovered };
+        });
+
+        // 상단 관할기관 안내: '관할 구역이 일치하는(isCovered: true)' 기관만 표시
+        const recTargets = scoredOffices
+            .filter(o => ["부동산원", "대법공", "주택공사", "지자체"].includes(o.type) && o.isCovered)
+            .sort((a, b) => a.dist - b.dist); // 관할이 여러 개라면 그중 가까운 순
+
+        // 하단 세무서 등: 이건 관할 상관없이 무조건 가까운 곳 2개 (보통 세무서는 가까운 게 장땡이므로)
+        const adminResults = scoredOffices
+            .filter(o => ["세무서", "토지정보과"].includes(o.type))
+            .sort((a, b) => a.dist - b.dist)
+            .slice(0, 2);
+
+        displayResults(recTargets, adminResults);
+    }
         const scoredOffices = offices.map(o => {
             let score = 0;
             const dist = getDistance(lat, lng, o.lat, o.lng);
@@ -742,4 +767,5 @@ const offices = [
 </script>
 </body>
 </html>
+
 

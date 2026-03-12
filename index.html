@@ -551,23 +551,19 @@ const offices = [
     {name:"서귀포시청 종합민원실", type:"토지정보과", covers:["서귀포시"], phone:"064-760-2117", address:"제주특별자치도 서귀포시 중앙로 105"}
 
 ];
-let currentAddressResults = [];
-    let debounceTimer;
+let debounceTimer;
 
     function searchAddress(isEnterPressed = false) {
         const keyword = document.getElementById("keyword").value.trim();
         const listEl = document.getElementById("addressList");
         if(keyword.length < 2) { listEl.style.display = "none"; return; }
-        
         const geocoder = new kakao.maps.services.Geocoder();
         geocoder.addressSearch(keyword, function(result, status){
             if(status === kakao.maps.services.Status.OK){
-                currentAddressResults = result;
                 if(isEnterPressed) { selectItem(result[0]); return; }
                 listEl.innerHTML = ""; listEl.style.display = "block";
                 result.forEach((item) => {
-                    const div = document.createElement("div"); 
-                    div.className = "search-item";
+                    const div = document.createElement("div"); div.className = "search-item";
                     div.innerHTML = item.address_name;
                     div.onmousedown = (e) => { e.preventDefault(); selectItem(item); };
                     listEl.appendChild(div);
@@ -594,21 +590,28 @@ let currentAddressResults = [];
     }
 
     function findNearest(lat, lng, fullAddress){
-        const westSeoul = ["강서구", "은평구", "종로구", "서대문구", "마포구", "영등포구", "양천구", "구로구", "용산구"];
-        const isWestSeoul = westSeoul.some(gu => fullAddress.includes(gu));
+        const specialGus = ["강서구", "양천구", "구로구", "영등포구", "마포구", "서대문구", "종로구", "은평구", "용산구"];
+        const isSpecialSeoul = specialGus.some(gu => fullAddress.includes(gu));
+        const isSeoul = fullAddress.includes("서울");
+        const myGu = fullAddress.split(' ').find(part => part.endsWith('구')) || "";
 
         const mappedOffices = offices.map(o => {
             let priority = 0;
-            // 서쪽 지역일 때 이름에 '중구청'이 포함되면 최상단 우선순위
-            if (isWestSeoul && o.name.includes("중구청")) priority = 1; 
+            // 1. 관할 구역 매칭 (covers에 포함된 경우)
+            if (o.covers && o.covers.includes(myGu)) priority = 10;
+            // 2. 서울 특정 9개구 -> 중구청 우선
+            if (isSpecialSeoul && o.name.includes("중구청")) priority = 20;
+            
             return { ...o, dist: getDistance(lat, lng, o.lat, o.lng), priority: priority };
         });
 
+        // 관할기관 (우선순위 -> 거리순)
         const recTargets = mappedOffices
             .filter(o => ["부동산원", "대법공", "주택공사", "지자체"].includes(o.type))
             .sort((a, b) => b.priority - a.priority || a.dist - b.dist)
             .slice(0, 2);
 
+        // 행정기관 (거리순)
         const adminResults = mappedOffices
             .filter(o => ["세무서", "토지정보과"].includes(o.type))
             .sort((a, b) => a.dist - b.dist)
@@ -629,7 +632,7 @@ let currentAddressResults = [];
                 <div class="office-card recommend">
                     <div class="card-top">
                         <span class="office-name">${o.name}</span>
-                        ${zoneHtml} ${distHtml}
+                        <div class="meta-info">${zoneHtml}${distHtml}</div>
                     </div>
                     <span class="phone-text">${o.phone}</span>
                     <p class="addr-text">${o.address}</p>
@@ -647,12 +650,8 @@ let currentAddressResults = [];
         clearTimeout(debounceTimer);
         debounceTimer = setTimeout(() => searchAddress(false), 200);
     });
-
     document.getElementById("keyword").addEventListener("keydown", (e) => {
-        if(e.key === "Enter") {
-            e.preventDefault();
-            searchAddress(true);
-        }
+        if(e.key === "Enter") { e.preventDefault(); searchAddress(true); }
     });
 </script>
 </body>

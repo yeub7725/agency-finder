@@ -556,13 +556,14 @@ let currentAddressResults = [];
     let focusedIndex = -1;
     let debounceTimer;
     let lastSearchKeyword = "";
+    let isNavigating = false;
 
     const keywordInput = document.getElementById("keyword");
     const addressList = document.getElementById("addressList");
 
     function searchAddress() {
         const keyword = keywordInput.value.trim();
-        if(!keyword || keyword === lastSearchKeyword) return;
+        if(isNavigating || !keyword || keyword === lastSearchKeyword) return;
         
         if(keyword.length < 2) { 
             addressList.style.display = "none"; 
@@ -575,7 +576,7 @@ let currentAddressResults = [];
                 currentAddressResults = result;
                 addressList.innerHTML = "";
                 addressList.style.display = "block";
-                focusedIndex = -1; // 초기화
+                focusedIndex = -1; 
                 
                 result.forEach((item, idx) => {
                     const div = document.createElement("div");
@@ -640,9 +641,7 @@ let currentAddressResults = [];
         officeList.innerHTML = `<span class="section-title">관할기관 안내</span>`;
         
         recData.forEach(o => {
-            // covers 배열을 '·'로 연결하여 관할구역 생성
             const coverText = (o.covers && o.covers.length > 0) ? o.covers.join('·') : '';
-            
             officeList.innerHTML += `
                 <div class="office-card recommend">
                     <div class="card-top">
@@ -664,20 +663,24 @@ let currentAddressResults = [];
         adminEl.innerHTML += `</div>`;
     }
 
-    // 키보드 이벤트: 하이라이트 소멸 방지 및 자동변경 방지
     keywordInput.addEventListener("keydown", (e) => {
         const items = addressList.getElementsByClassName("search-item");
         if (items.length === 0) return;
 
-        if (e.key === "ArrowDown") {
+        if (e.key === "ArrowDown" || e.key === "ArrowUp") {
             e.preventDefault();
-            focusedIndex = (focusedIndex + 1) % items.length;
+            isNavigating = true;
+            if (e.key === "ArrowDown") {
+                focusedIndex = (focusedIndex + 1) % items.length;
+            } else {
+                focusedIndex = (focusedIndex - 1 + items.length) % items.length;
+            }
             updateHighlight(items);
-        } else if (e.key === "ArrowUp") {
-            e.preventDefault();
-            focusedIndex = (focusedIndex - 1 + items.length) % items.length;
-            updateHighlight(items);
-        } else if (e.key === "Enter") {
+            setTimeout(() => { isNavigating = false; }, 50);
+            return;
+        }
+
+        if (e.key === "Enter") {
             e.preventDefault();
             if (focusedIndex > -1) selectItem(currentAddressResults[focusedIndex]);
             else if (currentAddressResults.length > 0) selectItem(currentAddressResults[0]);
@@ -688,7 +691,6 @@ let currentAddressResults = [];
         for (let i = 0; i < items.length; i++) {
             if (i === focusedIndex) {
                 items[i].classList.add("active");
-                // 스크롤 가시성 확보
                 items[i].scrollIntoView({ block: "nearest" });
             } else {
                 items[i].classList.remove("active");
@@ -697,18 +699,14 @@ let currentAddressResults = [];
     }
 
     keywordInput.addEventListener("input", () => {
+        if (isNavigating) return;
         clearTimeout(debounceTimer);
-        debounceTimer = setTimeout(() => {
-            searchAddress();
-        }, 200);
+        debounceTimer = setTimeout(searchAddress, 200);
     });
 
-    // 외부 클릭 시 리스트 닫기
     document.addEventListener("click", (e) => {
         if (e.target !== keywordInput) addressList.style.display = "none";
     });
 </script>
-</body>
-</html>
 
 

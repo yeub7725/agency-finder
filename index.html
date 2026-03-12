@@ -9,7 +9,6 @@
         :root {
             --gov-blue: rgb(0, 55, 100);
             --gov-red: rgb(228, 3, 45);
-            --gov-gray-std: rgb(87, 87, 87); 
             --gov-gray: rgb(30, 41, 59);
             --gov-light-gray: rgb(100, 116, 139);
         }
@@ -22,27 +21,37 @@
             display: flex; flex-direction: column; background: #fff; height: 100%; position: relative;
         }
         
-        .search-header { padding: 8px 20px; border-bottom: 1px solid #f1f5f9; flex-shrink: 0; }
+        .search-header { padding: 8px 20px; border-bottom: 1px solid #f1f5f9; flex-shrink: 0; position: relative; z-index: 1000; }
         h1 { font-size: 1.1rem; margin: 0 0 5px 0; color: var(--gov-blue); font-weight: 900; }
         
-        /* 통합 검색바 라인 */
-        .search-row { display: flex; align-items: center; width: 100%; border: 2px solid var(--gov-blue); border-radius: 4px; overflow: hidden; background: #fff; box-sizing: border-box; }
+        /* 통합 검색바 (overflow 삭제하여 미리보기 보이게 수정) */
+        .search-row { display: flex; align-items: center; width: 100%; border: 2px solid var(--gov-blue); border-radius: 4px; background: #fff; box-sizing: border-box; }
         
         .search-container { flex: 1.5; position: relative; border-right: 1px solid #e2e8f0; }
-        input#keyword { width: 100%; padding: 8px 12px; font-size: 14px; border: none; outline: none; box-sizing: border-box; }
+        input#keyword { width: 100%; padding: 8px 12px; font-size: 14px; border: none; outline: none; box-sizing: border-box; background: transparent; }
         
         .date-container { flex: 0.8; display: flex; align-items: center; justify-content: center; border-right: 1px solid #e2e8f0; background: #fff; height: 35px; }
         .date-group { display: flex; align-items: center; }
         .date-group input { width: 22px; border: none !important; text-align: center; font-size: 13px; font-weight: bold; color: var(--gov-blue); outline: none; background: transparent; }
         .date-group span { color: #94a3b8; font-weight: bold; }
 
-        .price-container { flex: 1.4; display: flex; align-items: center; gap: 2px; padding: 0 5px; background: #fff; }
+        .price-container { flex: 1.4; display: flex; align-items: center; gap: 2px; padding: 0 5px; background: #fff; border-radius: 0 4px 4px 0; }
         .price-input-wrap { display: flex; align-items: center; gap: 1px; flex: 1; }
-        .price-input-wrap input { width: 100%; border: none; outline: none; font-size: 12px; font-weight: 700; color: var(--gov-gray); text-align: right; }
+        .price-input-wrap input { width: 100%; border: none; outline: none; font-size: 12px; font-weight: 700; color: var(--gov-gray); text-align: right; background: transparent; }
         .price-unit { font-size: 12px; color: var(--gov-gray); font-weight: 700; white-space: nowrap; }
         .price-slash { color: #e2e8f0; margin: 0 1px; }
 
-        /* 우측 그래픽 라인 (중앙 정렬) */
+        /* 미리보기 목록 레이어 순서 강화 */
+        #addressList { 
+            position: absolute; top: 100%; left: -2px; width: calc(100% + 2px); 
+            border: 2px solid var(--gov-blue); background: white; 
+            z-index: 9999; display: none; box-sizing: border-box; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1); 
+        }
+        .search-item { padding: 10px 15px; border-bottom: 1px solid #f1f5f9; cursor: pointer; font-size: 14px; text-align: left; color: #333; }
+        .search-item.active { background-color: #e2e8f0 !important; }
+
+        /* 우측 그래픽 */
         #date-visual-line { 
             visibility: hidden; position: absolute; left: 440px; top: 38px;
             display: flex; align-items: center; width: 320px;
@@ -58,44 +67,30 @@
 
         #result-area { flex: 1; overflow-y: auto; padding: 5px 15px; display: flex; flex-direction: column; }
         #sub-info-area { display: flex; flex-direction: column; gap: 10px; } 
-
         #office-list { display: flex; flex-direction: column; }
         .intro-msg { text-align: center; color: #64748b; opacity: 0.5; margin-top: 150px; font-size: 16px; }
 
         .section-title { font-size: 14px; font-weight: 800; color: var(--gov-gray); margin: 5px 0 2px 0; display: flex; align-items: center; gap: 5px; }
         .section-title::before { content: ''; width: 3px; height: 12px; background: var(--gov-blue); }
 
-        .office-card.recommend { 
-            border: 2px solid var(--gov-blue); background: #f8fbff; 
-            padding: 6px 12px; border-radius: 6px; margin-bottom: 5px; 
-            display: flex; flex-direction: column; 
-        }
-
+        .office-card.recommend { border: 2px solid var(--gov-blue); background: #f8fbff; padding: 6px 12px; border-radius: 6px; margin-bottom: 5px; display: flex; flex-direction: column; }
         .card-top { display: flex; justify-content: space-between; align-items: center; width: 100%; }
         .office-name { font-size: 16.5px; font-weight: 900; color: var(--gov-blue); letter-spacing: -0.5px; }
         .office-name-sub { font-size: 12.5px; font-weight: 700; color: var(--gov-blue); opacity: 0.8; }
-
         .meta-info { text-align: right; white-space: nowrap; }
         .zone-text { font-size: 11px; color: var(--gov-light-gray); font-weight: 700; margin-right: 3px; }
         .dist-text { font-size: 9px; color: var(--gov-blue); font-weight: 800; }
-        
         .phone-row { display: flex; align-items: baseline; gap: 5px; }
         .phone-text { font-size: 26px; font-weight: 900; color: var(--gov-red); margin: -2px 0 0px 0; line-height: 1; letter-spacing: -1px; }
         .sms-tag { font-size: 12px; font-weight: 800; color: var(--gov-red); opacity: 0.5; }
-
         .addr-text { font-size: 12px; color: var(--gov-gray); margin: 3px 0 0 0; border-top: 1px solid #eef2f6; padding-top: 3px; line-height: 1.2; }
         
         .info-box { background: #f8fafc; border: 1px solid #e2e8f0; padding: 5px 10px; border-radius: 6px; }
         .contact-item { display: flex; justify-content: space-between; padding: 2px 0; border-bottom: 1px dotted #e2e8f0; font-size: 13.5px; align-items: center; white-space: nowrap; }
         .contact-item:last-child { border-bottom: none; }
-        
         .contact-label { font-size: 15px; font-weight: 800; color: #000; }
         .contact-item b { color: var(--gov-red); font-weight: 900; font-size: 14px; }
         .sub-desc { font-size: 11px; color: #64748b; margin-left: 3px; font-weight: normal; }
-
-        #addressList { position: absolute; top: 100%; left: 0; width: 100%; border: 2px solid var(--gov-blue); background: white; z-index: 1000; display: none; box-sizing: border-box; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        .search-item { padding: 10px 15px; border-bottom: 1px solid #f1f5f9; cursor: pointer; font-size: 14px; text-align: left; color: #333; }
-        .search-item.active { background-color: #e2e8f0 !important; }
     </style>
 </head>
 <body>
@@ -140,20 +135,17 @@
                 <div id="bottom-static-info">
                     <div class="section-title">신청 시 필요 서류</div>
                     <div class="info-box">
-                        <div class="contact-item"><span style="font-size:13px;">• <span style="color:#000; font-weight:800;">공통:</span> 신분증, 주민등록초본, 임대차계약서, 등기부등본, 건축물대장</span></div>
-                        <div class="contact-item"><span style="font-size:13px;">• <span style="color:#000; font-weight:800;">대리:</span> 위임장, 인감증명서, 대리인 신분증</span></div>
+                        <div class="contact-item"><span>• <span style="font-weight:800;">공통:</span> 신분증, 주민등록초본, 임대차계약서, 등기부등본, 건축물대장</span></div>
+                        <div class="contact-item"><span>• <span style="font-weight:800;">대리:</span> 위임장, 인감증명서, 대리인 신분증</span></div>
                     </div>
                     <div class="section-title">주요 업무 문의처</div>
                     <div class="info-box">
-                        <div class="contact-item"><span class="contact-label">한국부동산원<span class="sub-desc">(1.공시 3.K-아파트 0.기타)</span></span><b>1600-2828</b></div>
+                        <div class="contact-item"><span class="contact-label">한국부동산원</span><b>1600-2828</b></div>
                         <div class="contact-item"><span class="contact-label">전자계약</span><b>1833-4662</b></div>
                         <div class="contact-item"><span class="contact-label">임대차신고</span><b>1533-2949</b></div>
                         <div class="contact-item"><span class="contact-label">LH공사</span><b>1600-1004</b></div>
                         <div class="contact-item"><span class="contact-label">렌트홈</span><b>1670-8004</b></div>
-                        <div class="contact-item"><span class="contact-label">공동주택 조정위<span class="sub-desc">(장기수선·관리비)</span></span><b>031-738-3300</b></div>
                         <div class="contact-item"><span class="contact-label">국토부</span><b>1599-0001</b></div>
-                        <div class="contact-item"><span class="contact-label">대법공</span><b>132</b></div>
-                        <div class="contact-item"><span class="contact-label">국세청</span><b>126</b></div>
                     </div>
                 </div>
             </div>
@@ -207,7 +199,6 @@ function calculateTwoYears() {
         let numD = Math.min(Math.max(parseInt(d), 1), 31);
         let fullYear = parseInt(y) > 50 ? 1900 + parseInt(y) : 2000 + parseInt(y);
         let dateObj = new Date(fullYear, numM - 1, numD);
-        
         beforeDateVal.innerText = `${y}.${String(numM).padStart(2, '0')}.${String(numD).padStart(2, '0')}`;
         dateObj.setFullYear(dateObj.getFullYear() + 2);
         afterDateVal.innerText = `${String(dateObj.getFullYear()).slice(-2)}.${String(dateObj.getMonth() + 1).padStart(2, '0')}.${String(dateObj.getDate()).padStart(2, '0')}`;
@@ -219,7 +210,7 @@ dateInputs.forEach((input, idx) => {
     input.addEventListener("input", () => {
         if (input.value.length === 2) {
             if (idx < 2) dateInputs[idx + 1].focus();
-            else depositInput.focus(); // DD 입력 끝나면 보증금으로
+            else depositInput.focus();
         }
         calculateTwoYears();
     });
@@ -239,6 +230,7 @@ function searchAddress() {
     const keyword = keywordInput.value.trim();
     if (isNavigating || !keyword || keyword === lastSearchKeyword) return;
     if (keyword.length < 2) { addressList.style.display = "none"; return; }
+    
     const geocoder = new kakao.maps.services.Geocoder();
     geocoder.addressSearch(keyword, function(result, status) {
         if (status === kakao.maps.services.Status.OK) {
@@ -264,7 +256,9 @@ function selectItem(item) {
     lastSearchKeyword = item.address_name;
     document.getElementById("rec-section").style.display = "none";
     document.getElementById("sub-info-area").style.display = "flex";
-    dateInputs[0].focus();
+    
+    // 주소 선택 후 날짜창으로 강제 이동
+    setTimeout(() => { document.getElementById("yy").focus(); }, 10);
     findNearest(parseFloat(item.y), parseFloat(item.x), item.address_name);
 }
 
@@ -327,7 +321,10 @@ keywordInput.addEventListener("keydown", (e) => {
         else focusedIndex = (focusedIndex - 1 + items.length) % items.length;
         for (let i = 0; i < items.length; i++) items[i].classList.toggle("active", i === focusedIndex);
     }
-    if (e.key === "Enter" && focusedIndex > -1) selectItem(currentAddressResults[focusedIndex]);
+    if (e.key === "Enter") {
+        if (focusedIndex > -1) selectItem(currentAddressResults[focusedIndex]);
+        else if (items.length > 0) selectItem(currentAddressResults[0]); // 아무것도 선택 안하고 엔터치면 첫번째꺼 선택
+    }
 });
 
 keywordInput.addEventListener("input", () => {
@@ -337,9 +334,8 @@ keywordInput.addEventListener("input", () => {
 });
 
 document.addEventListener("click", (e) => {
-    if (e.target !== keywordInput) addressList.style.display = "none";
+    if (!e.target.closest('.search-container')) addressList.style.display = "none";
 });
 </script>
 </body>
 </html>
-

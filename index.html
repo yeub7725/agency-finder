@@ -44,7 +44,6 @@
         .card-top { display: flex; justify-content: space-between; align-items: flex-start; width: 100%; }
         .office-name { font-size: 17px; font-weight: 800; color: var(--gov-blue); flex: 1; }
         
-        /* 관할 구역 및 거리 표시 영역 */
         .meta-info { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; min-width: 100px; text-align: right; } 
         .zone-text { font-size: 11px; color: var(--gov-light-gray); font-weight: normal; line-height: 1.2; word-break: keep-all; } 
         .dist-text { font-size: 12px; color: var(--gov-blue); font-weight: 700; } 
@@ -602,22 +601,19 @@ let currentAddressResults = [];
         findNearest(parseFloat(item.y), parseFloat(item.x), item.address_name);
     }
 
-   function findNearest(lat, lng, fullAddress) {
+    function findNearest(lat, lng, fullAddress) {
         const addrParts = fullAddress.split(' ');
-        
-        // 1. 현재 검색한 주소의 구성 요소 추출
-        const mySido = addrParts[0].substring(0, 2); // '서울', '전남' 등
+        const mySido = addrParts[0].substring(0, 2); 
         const myGu = addrParts.find(p => p.endsWith('구')) || "";
         const myCity = addrParts.find(p => p.endsWith('시')) || "";
         const myGun = addrParts.find(p => p.endsWith('군')) || "";
 
         const scoredOffices = offices.map(o => {
             const dist = getDistance(lat, lng, o.lat, o.lng);
-            let isInJurisdiction = false; // 관할권 내 여부
-            let isPrimaryZone = false;    // 특정구(내 동네) 직접 해당 여부
+            let isInJurisdiction = false; 
+            let isPrimaryZone = false;    
 
-            // [조건 1] 관할권 울타리 확인
-            // covers에 내 시/도 혹은 시/군/구가 하나라도 들어있으면 관할권 안으로 인정
+            // 관할권 확인
             if (o.covers && (
                 o.covers.includes(mySido) || 
                 (myGu && o.covers.includes(myGu)) || 
@@ -627,8 +623,7 @@ let currentAddressResults = [];
                 isInJurisdiction = true;
             }
 
-            // [조건 2] 1순위 배정 (Primary Zone)
-            // 내 구(혹은 시/군) 명칭이 정확히 포함된 경우
+            // 특정 동네 담당 확인 (1순위용)
             if (o.covers && (
                 (myGu && o.covers.includes(myGu)) || 
                 (myCity && o.covers.includes(myCity)) || 
@@ -637,7 +632,7 @@ let currentAddressResults = [];
                 isPrimaryZone = true;
             }
 
-            // 노출용 관할 텍스트 로직
+            // 노출용 관할 텍스트
             let displayCover = "";
             if (o.type === "대법공") {
                 const c = o.covers || [];
@@ -655,48 +650,14 @@ let currentAddressResults = [];
             return { ...o, dist, isInJurisdiction, isPrimaryZone, displayCover };
         });
 
-        // 2. 최종 리스트업 (관할 내에서 정렬)
+        // 결과 필터링 및 정렬
         const recTargets = scoredOffices
             .filter(o => ["부동산원", "대법공", "주택공사", "지자체"].includes(o.type) && o.isInJurisdiction)
             .sort((a, b) => {
-                // 특정구가 포함된 곳(isPrimaryZone)을 1순위로
                 if (a.isPrimaryZone !== b.isPrimaryZone) return b.isPrimaryZone - a.isPrimaryZone;
-                // 그 안에서는 거리순
                 return a.dist - b.dist;
             })
-            .slice(0, 2); // 깔끔하게 2개만
-
-        // 세무서 등 (단순 거리순)
-        const adminResults = scoredOffices
-            .filter(o => ["세무서", "토지정보과"].includes(o.type))
-            .sort((a, b) => a.dist - b.dist)
-            .slice(0, 2);
-
-        displayResults(recTargets, adminResults);
-    }
-
-            // 노출용 관할 텍스트 로직
-            let displayCover = "";
-            if (o.type === "대법공") {
-                // 대법공 전용 광역 노출 텍스트
-                if (o.covers.includes("서울") || o.covers.includes("강원")) displayCover = "서울·강원";
-                else if (o.covers.includes("경기") || o.covers.includes("인천")) displayCover = "경기·인천";
-                else if (o.covers.some(c => ["대전","세종","충남","충북"].some(v => c.includes(v)))) displayCover = "대전·세종·충남북";
-                else if (o.covers.some(c => ["대구","경북"].some(v => c.includes(v)))) displayCover = "대구·경북";
-                else if (o.covers.some(c => ["부산","울산","경남"].some(v => c.includes(v)))) displayCover = "부산·울산·경남";
-                else if (o.covers.some(c => ["광주","전남","전북","제주"].some(v => c.includes(v)))) displayCover = "광주·전남북·제주";
-                else displayCover = o.covers[0]; // 예외 시 첫번째 요소
-            } else {
-                // 일반 기관: 서울이면 "서울", 그 외엔 첫번째 대표 지역
-                displayCover = o.covers.includes("서울") ? "서울" : (o.covers[0] || "");
-            }
-
-            return { ...o, dist, isCovered, displayCover };
-        });
-
-        const recTargets = scoredOffices
-            .filter(o => ["부동산원", "대법공", "주택공사", "지자체"].includes(o.type) && o.isCovered)
-            .sort((a, b) => a.dist - b.dist);
+            .slice(0, 2); 
 
         const adminResults = scoredOffices
             .filter(o => ["세무서", "토지정보과"].includes(o.type))
@@ -746,7 +707,6 @@ let currentAddressResults = [];
         adminEl.innerHTML += `</div>`;
     }
 
-    // 기본 이벤트들
     keywordInput.addEventListener("keydown", (e) => {
         const items = addressList.getElementsByClassName("search-item");
         if (e.key === "ArrowDown" || e.key === "ArrowUp") {
@@ -793,5 +753,3 @@ let currentAddressResults = [];
 </script>
 </body>
 </html>
-
-

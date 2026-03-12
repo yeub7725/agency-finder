@@ -17,51 +17,59 @@
         body, html { margin: 0; padding: 0; height: 100%; font-family: 'Noto Sans KR', sans-serif; overflow: hidden; background: #fff; }
         .main-wrapper { display: flex; height: 100vh; width: 100vw; }
         
+        /* 사이드바 및 헤더 설정 */
         #sidebar-search { width: 440px; min-width: 440px; display: flex; flex-direction: column; background: #fff; height: 100%; position: relative; }
         .search-header { padding: 15px 20px; flex-shrink: 0; position: relative; z-index: 1000; }
         h1 { font-size: 1.1rem; margin: 0 0 10px 0; color: var(--gov-blue); font-weight: 900; }
         
-        /* 통합 검색바 */
+        /* 통합 검색바 디자인 */
         .search-row { display: flex; align-items: center; width: 100%; border: 2.5px solid var(--gov-blue); border-radius: 6px; background: #fff; box-sizing: border-box; height: 45px; }
         .search-container { flex: 1.5; position: relative; }
         input#keyword { width: 100%; padding: 0 15px; font-size: 14px; border: none; outline: none; background: transparent; height: 100%; }
+        
         .date-container { flex: 0.8; display: flex; align-items: center; justify-content: center; height: 100%; }
         .date-group { display: flex; align-items: center; }
         .date-group input { width: 25px; border: none !important; text-align: center; font-size: 14px; font-weight: bold; color: var(--gov-blue); outline: none; background: transparent; }
         .date-group span { color: #cbd5e1; font-weight: bold; }
+
         .price-container { flex: 1.4; display: flex; align-items: center; gap: 2px; padding: 0 10px; height: 100%; }
         .price-input-wrap { display: flex; align-items: center; flex: 1; }
         .price-input-wrap input { width: 100%; border: none; outline: none; font-size: 13px; font-weight: 700; color: var(--gov-gray); text-align: right; background: transparent; }
         .price-unit { font-size: 12px; color: var(--gov-gray); font-weight: 700; margin-left: 2px; }
         .price-slash { color: #e2e8f0; margin: 0 5px; }
 
+        /* 주소 미리보기 목록 */
         #addressList { position: absolute; top: calc(100% + 5px); left: 0; width: 100%; border: 2px solid var(--gov-blue); background: white; z-index: 9999; display: none; border-radius: 6px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
-        .search-item { padding: 12px 15px; border-bottom: 1px solid #f1f5f9; cursor: pointer; font-size: 14px; }
+        .search-item { padding: 12px 15px; border-bottom: 1px solid #f1f5f9; cursor: pointer; font-size: 14px; text-align: left; }
         .search-item.active { background-color: #f0f4f8; }
 
-        /* 시각화 라인 */
+        /* 우측 날짜 시각화 그래픽 */
         #date-visual-line { visibility: hidden; position: absolute; left: 440px; top: 45px; display: flex; align-items: center; width: 500px; }
         .line-bar { height: 2px; background: var(--gov-blue); flex: 1; position: relative; margin: 0 40px; }
         .line-bar::before { content: ''; position: absolute; left: 0; top: -5px; width: 2px; height: 12px; background: var(--gov-blue); }
         .line-bar::after { content: ''; position: absolute; right: 0; top: -5px; width: 2px; height: 12px; background: var(--gov-blue); }
         .mid-point { position: absolute; left: 50%; top: -5px; width: 2px; height: 12px; background: #cbd5e1; transform: translateX(-50%); }
 
+        /* 갱신구간 블록 */
         .renew-zone { position: absolute; height: 20px; background: var(--renew-bg); border-left: 1px dashed var(--gov-blue); border-right: 1px dashed var(--gov-blue); top: -9px; display: flex; align-items: center; justify-content: center; }
         .renew-text { font-size: 11px; color: var(--gov-blue); font-weight: 900; white-space: nowrap; position: absolute; top: -22px; }
 
+        /* 날짜 라벨 레이아웃 */
         .date-label { font-size: 12px; font-weight: 900; color: var(--gov-gray); position: absolute; top: 18px; white-space: nowrap; transform: translateX(-50%); text-align: center; }
         .date-label b { display: block; font-size: 10px; font-weight: 400; color: #64748b; margin-top: 2px; line-height: 1.2; }
         .date-label.start { left: 40px; } 
         .date-label.end { left: calc(100% - 40px); }
-        .date-label.renew-start { font-size: 11px; color: var(--gov-blue); top: 35px; }
-        .date-label.renew-end { font-size: 11px; color: var(--gov-blue); top: 35px; }
+        .date-label.renew-start { font-size: 11px; color: var(--gov-blue); top: 38px; }
+        .date-label.renew-end { font-size: 11px; color: var(--gov-blue); top: 38px; }
 
+        /* 결과 영역 */
         #result-area { flex: 1; overflow-y: auto; padding: 10px 20px; }
         .section-title { font-size: 14px; font-weight: 800; color: var(--gov-gray); margin: 15px 0 8px 0; display: flex; align-items: center; gap: 6px; }
         .section-title::before { content: ''; width: 3px; height: 13px; background: var(--gov-blue); }
         .office-card.recommend { border: 2px solid var(--gov-blue); background: #f8fbff; padding: 12px; border-radius: 8px; margin-bottom: 10px; }
         .office-name { font-size: 17px; font-weight: 900; color: var(--gov-blue); }
         .phone-text { font-size: 28px; font-weight: 900; color: var(--gov-red); letter-spacing: -1px; }
+        
         .info-box { background: #f8fafc; border: 1px solid #e2e8f0; padding: 10px; border-radius: 8px; }
         .contact-item { display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px dotted #e2e8f0; font-size: 13.5px; align-items: center; }
         .contact-label { font-size: 14.5px; font-weight: 800; color: #000; }
@@ -98,11 +106,14 @@
                     </div>
                 </div>
             </div>
+
             <div id="date-visual-line">
                 <div id="before-date-val" class="date-label start"></div>
                 <div class="line-bar">
                     <div class="mid-point"></div>
-                    <div id="renew-block" class="renew-zone"><span class="renew-text">갱신 의사표시 기간</span></div>
+                    <div id="renew-block" class="renew-zone">
+                        <span class="renew-text">갱신 의사표시 기간</span>
+                    </div>
                 </div>
                 <div id="after-date-val" class="date-label end"></div>
                 <div id="renew-start-val" class="date-label renew-start"></div>
@@ -114,11 +125,13 @@
             <div id="rec-section"><p style="text-align:center; color:#94a3b8; margin-top:100px; opacity:0.5;">주소를 입력해 주세요.</p></div>
             <div id="sub-info-area" style="display:none;">
                 <div id="office-list"></div>
+                
                 <div class="section-title">신청 시 필요 서류</div>
                 <div class="info-box">
                     <div class="contact-item"><span>• <b>공통:</b> 신분증, 주민등록초본, 임대차계약서, 등기부등본, 건축물대장</span></div>
                     <div class="contact-item"><span>• <b>대리:</b> 위임장, 인감증명서, 대리인 신분증</span></div>
                 </div>
+
                 <div class="section-title">주요 업무 문의처</div>
                 <div class="info-box">
                     <div class="contact-item"><span class="contact-label">한국부동산원<span class="sub-desc">(1.공시 3.K-아파트 0.기타)</span></span><b>1600-2828</b></div>
@@ -178,7 +191,7 @@ const renewStartVal = document.getElementById("renew-start-val");
 const renewEndVal = document.getElementById("renew-end-val");
 const renewBlock = document.getElementById("renew-block");
 
-// 1. 날짜 계산 및 시각화 로직 (전날 24:00 기준 정밀 표기)
+// 1. 날짜 계산 및 시각화 (24:00 로직 포함)
 function calculateDates() {
     let y = dateInputs[0].value, m = dateInputs[1].value, d = dateInputs[2].value;
     if (y.length === 2 && m.length === 2 && d.length === 2) {
@@ -188,15 +201,12 @@ function calculateDates() {
         let start = new Date(fullYear, numM - 1, numD);
         let end = new Date(fullYear + 2, numM - 1, numD);
         
-        // 갱신구간 계산: 끝지점 기준 6개월 전 ~ 2개월 전
         let rStart = new Date(end); rStart.setMonth(rStart.getMonth() - 6);
         let rEnd = new Date(end); rEnd.setMonth(rEnd.getMonth() - 2);
 
-        // 상단 날짜 텍스트 (입력일 00:00 ~ 2년뒤 24:00)
         beforeDateVal.innerHTML = `${y}.${m}.${d}<b>00:00부터</b>`;
         afterDateVal.innerHTML = `${String(end.getFullYear()).slice(-2)}.${m}.${d}<b>24:00까지</b>`;
         
-        // 갱신구간 상세 표기 (전날 24:00부터 로직 적용)
         let rsPrev = new Date(rStart); rsPrev.setDate(rsPrev.getDate() - 1);
         let rsY = String(rStart.getFullYear()).slice(-2), rsM = String(rStart.getMonth()+1).padStart(2,'0'), rsD = String(rStart.getDate()).padStart(2,'0');
         let rspY = String(rsPrev.getFullYear()).slice(-2), rspM = String(rsPrev.getMonth()+1).padStart(2,'0'), rspD = String(rsPrev.getDate()).padStart(2,'0');
@@ -205,7 +215,6 @@ function calculateDates() {
         renewStartVal.innerHTML = `${rsY}.${rsM}.${rsD}<b>(${rspY}.${rspM}.${rspD} 24시부터)</b>`;
         renewEndVal.innerHTML = `${reY}.${reM}.${reD}<b>(24:00까지)</b>`;
 
-        // 그래픽 블록 및 라벨 위치 세팅
         renewBlock.style.left = "75%"; 
         renewBlock.style.width = "16.66%";
         renewStartVal.style.left = "calc(40px + 420px * 0.75)";
@@ -216,7 +225,7 @@ function calculateDates() {
     }
 }
 
-// 2. 포커스 제어 및 입력 마스크
+// 2. 입력 포커스 및 금액 콤마 제어
 dateInputs.forEach((input, idx) => {
     input.addEventListener("input", () => {
         if (input.value.length === 2) {
@@ -237,7 +246,7 @@ dateInputs.forEach((input, idx) => {
     });
 });
 
-// 3. 주소 검색 및 화살표 키 네비게이션
+// 3. 주소 검색 및 키보드 조작
 function searchAddress() {
     const keyword = keywordInput.value.trim();
     if (isNavigating || !keyword || keyword === lastSearchKeyword) return;
@@ -280,7 +289,9 @@ keywordInput.addEventListener("keydown", (e) => {
         isNavigating = true;
         if (e.key === "ArrowDown") focusedIndex = (focusedIndex + 1) % items.length;
         else focusedIndex = (focusedIndex - 1 + items.length) % items.length;
-        for (let i = 0; i < items.length; i++) items[i].classList.toggle("active", i === focusedIndex);
+        for (let i = 0; i < items.length; i++) {
+            items[i].classList.toggle("active", i === focusedIndex);
+        }
     }
     if (e.key === "Enter") {
         if (focusedIndex > -1) selectItem(currentAddressResults[focusedIndex]);
@@ -294,7 +305,7 @@ keywordInput.addEventListener("input", () => {
     debounceTimer = setTimeout(searchAddress, 200);
 });
 
-// 4. 관할기관 매칭 및 거리 계산 로직
+// 4. 거리 및 관할 매칭 로직
 function getDistance(lat1, lon1, lat2, lon2) {
     const R = 6371;
     const dLat = (lat2-lat1)*Math.PI/180;
@@ -346,4 +357,5 @@ document.addEventListener("click", (e) => {
 </script>
 </body>
 </html>
+
 

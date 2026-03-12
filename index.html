@@ -552,27 +552,40 @@ const offices = [
     {name:"서귀포시청 종합민원실", type:"토지정보과", covers:["서귀포시"], phone:"064-760-2117", address:"제주특별자치도 서귀포시 중앙로 105"}
 
 ];
-let currentAddressResults = [];
+<script>
+    // [데이터 섹션]
+    const offices = [
+        /* 사용자의 데이터를 여기에 입력하세요 */
+    ];
+
+    let currentAddressResults = [];
     let focusedIndex = -1;
     let debounceTimer;
     let lastSearchKeyword = "";
-    let isNavigating = false;
+    let isNavigating = false; 
 
     const keywordInput = document.getElementById("keyword");
     const addressList = document.getElementById("addressList");
 
+    // [검색 로직]
     function searchAddress() {
         const keyword = keywordInput.value.trim();
-        if(isNavigating || !keyword || keyword === lastSearchKeyword) return;
         
-        if(keyword.length < 2) { 
+        // 조작 중이거나 키워드가 같거나 비어있으면 중단
+        if (isNavigating || !keyword || keyword === lastSearchKeyword) return;
+        
+        if (keyword.length < 2) { 
             addressList.style.display = "none"; 
+            addressList.innerHTML = "";
             return; 
         }
         
         const geocoder = new kakao.maps.services.Geocoder();
-        geocoder.addressSearch(keyword, function(result, status){
-            if(status === kakao.maps.services.Status.OK){
+        geocoder.addressSearch(keyword, function(result, status) {
+            // 키보드 조작 중 뒤늦게 온 응답은 무시 (하이라이트 유지 핵심)
+            if (isNavigating) return;
+
+            if (status === kakao.maps.services.Status.OK) {
                 currentAddressResults = result;
                 addressList.innerHTML = "";
                 addressList.style.display = "block";
@@ -588,12 +601,15 @@ let currentAddressResults = [];
                     };
                     addressList.appendChild(div);
                 });
+            } else {
+                addressList.style.display = "none";
             }
         });
     }
 
     function selectItem(item) {
-        if(!item) return;
+        if (!item) return;
+        isNavigating = false; 
         addressList.style.display = "none";
         keywordInput.value = item.address_name;
         lastSearchKeyword = item.address_name;
@@ -602,7 +618,8 @@ let currentAddressResults = [];
         findNearest(parseFloat(item.y), parseFloat(item.x), item.address_name);
     }
 
-    function findNearest(lat, lng, fullAddress){
+    // [거리 및 관할 계산 로직]
+    function findNearest(lat, lng, fullAddress) {
         const specialGus = ["강서구", "양천구", "구로구", "영등포구", "마포구", "서대문구", "종로구", "은평구", "용산구"];
         const isSpecialSeoul = specialGus.some(gu => fullAddress.includes(gu));
         const myGu = fullAddress.split(' ').find(part => part.endsWith('구')) || "";
@@ -627,7 +644,7 @@ let currentAddressResults = [];
         displayResults(recTargets, adminResults);
     }
 
-    function getDistance(lat1, lon1, lat2, lon2){
+    function getDistance(lat1, lon1, lat2, lon2) {
         const R = 6371;
         const dLat = (lat2-lat1)*Math.PI/180;
         const dLon = (lon2-lon1)*Math.PI/180;
@@ -635,6 +652,7 @@ let currentAddressResults = [];
         return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     }
 
+    // [출력 디자인 로직]
     function displayResults(recData, adminData) {
         const officeList = document.getElementById("office-list");
         const adminEl = document.getElementById("admin-section");
@@ -663,27 +681,31 @@ let currentAddressResults = [];
         adminEl.innerHTML += `</div>`;
     }
 
+    // [키보드 및 이벤트 조작]
     keywordInput.addEventListener("keydown", (e) => {
         const items = addressList.getElementsByClassName("search-item");
-        if (items.length === 0) return;
-
+        
         if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+            if (items.length === 0) return;
             e.preventDefault();
-            isNavigating = true;
+            isNavigating = true; 
+
             if (e.key === "ArrowDown") {
                 focusedIndex = (focusedIndex + 1) % items.length;
             } else {
                 focusedIndex = (focusedIndex - 1 + items.length) % items.length;
             }
             updateHighlight(items);
-            setTimeout(() => { isNavigating = false; }, 50);
             return;
         }
 
         if (e.key === "Enter") {
             e.preventDefault();
-            if (focusedIndex > -1) selectItem(currentAddressResults[focusedIndex]);
-            else if (currentAddressResults.length > 0) selectItem(currentAddressResults[0]);
+            if (focusedIndex > -1) {
+                selectItem(currentAddressResults[focusedIndex]);
+            } else if (currentAddressResults.length > 0) {
+                selectItem(currentAddressResults[0]);
+            }
         }
     });
 
@@ -699,14 +721,24 @@ let currentAddressResults = [];
     }
 
     keywordInput.addEventListener("input", () => {
-        if (isNavigating) return;
+        isNavigating = false; 
         clearTimeout(debounceTimer);
         debounceTimer = setTimeout(searchAddress, 200);
     });
 
+    // 검색창 클릭 시 리스트가 있으면 다시 보여주기
+    keywordInput.addEventListener("click", () => {
+        if (addressList.innerHTML !== "") {
+            addressList.style.display = "block";
+        }
+    });
+
     document.addEventListener("click", (e) => {
-        if (e.target !== keywordInput) addressList.style.display = "none";
+        if (e.target !== keywordInput) {
+            addressList.style.display = "none";
+            isNavigating = false;
+        }
     });
 </script>
-
-
+</body>
+</html>

@@ -557,7 +557,7 @@ const offices = [
     {name:"서귀포시청 종합민원실", type:"토지정보과", covers:["서귀포시"], phone:"064-760-2117", address:"제주특별자치도 서귀포시 중앙로 105"}
 
 ];
-   let currentAddressResults = [];
+  let currentAddressResults = [];
     let focusedIndex = -1;
     let debounceTimer;
     let lastSearchKeyword = "";
@@ -586,15 +586,10 @@ const offices = [
                     const div = document.createElement("div");
                     div.className = "search-item";
                     div.innerHTML = item.address_name;
-                    div.onmousedown = (e) => { 
-                        e.preventDefault(); 
-                        selectItem(item); 
-                    };
+                    div.onmousedown = (e) => { e.preventDefault(); selectItem(item); };
                     addressList.appendChild(div);
                 });
-            } else { 
-                addressList.style.display = "none"; 
-            }
+            } else { addressList.style.display = "none"; }
         });
     }
 
@@ -609,10 +604,8 @@ const offices = [
         findNearest(parseFloat(item.y), parseFloat(item.x), item.address_name);
     }
 
-   function findNearest(lat, lng, fullAddress) {
+    function findNearest(lat, lng, fullAddress) {
         const addrParts = fullAddress.split(' ');
-        
-        // 검색된 주소에서 '구', '시', '군'을 모두 찾습니다.
         const myGu = addrParts.find(p => p.endsWith('구')) || "";
         const myCity = addrParts.find(p => p.endsWith('시')) || "";
         const myGun = addrParts.find(p => p.endsWith('군')) || "";
@@ -621,7 +614,7 @@ const offices = [
             const dist = getDistance(lat, lng, o.lat, o.lng);
             let isCovered = false;
 
-            // 데이터의 covers 배열에 현재 주소의 시, 군, 구 중 하나라도 포함되어 있는지 확인
+            // 관할 구역 매칭 (구, 시, 군 단위 확인)
             if (o.covers && (
                 (myGu && o.covers.includes(myGu)) || 
                 (myCity && o.covers.includes(myCity)) || 
@@ -633,45 +626,12 @@ const offices = [
             return { ...o, dist, isCovered };
         });
 
-        // 상단 관할기관 안내: '관할 구역이 일치하는(isCovered: true)' 기관만 표시
+        // 1. 관할 구역이 일치하는 기관만 필터링 (부동산원, 대법공 등)
         const recTargets = scoredOffices
             .filter(o => ["부동산원", "대법공", "주택공사", "지자체"].includes(o.type) && o.isCovered)
-            .sort((a, b) => a.dist - b.dist); // 관할이 여러 개라면 그중 가까운 순
+            .sort((a, b) => a.dist - b.dist);
 
-        // 하단 세무서 등: 이건 관할 상관없이 무조건 가까운 곳 2개 (보통 세무서는 가까운 게 장땡이므로)
-        const adminResults = scoredOffices
-            .filter(o => ["세무서", "토지정보과"].includes(o.type))
-            .sort((a, b) => a.dist - b.dist)
-            .slice(0, 2);
-
-        displayResults(recTargets, adminResults);
-    }
-        const scoredOffices = offices.map(o => {
-            let score = 0;
-            const dist = getDistance(lat, lng, o.lat, o.lng);
-
-            // 1순위: 관할구역(covers) 직접 매칭
-            if (o.covers && o.covers.includes(myGu)) {
-                score = 100;
-            }
-
-            // 서울 특수 권역 배정 가중치 (이름에 중심지 이름이 포함된 경우 우선순위 업)
-            for (const [center, covers] of Object.entries(seoulGroups)) {
-                if (covers.includes(myGu) && o.name.includes(center)) {
-                    score = 110; 
-                }
-            }
-
-            return { ...o, dist, score };
-        });
-
-        // 상단 관할기관: 관할구역 일치(score > 0)하는 것만 필터링 후 정렬
-        const recTargets = scoredOffices
-            .filter(o => ["부동산원", "대법공", "주택공사", "지자체"].includes(o.type) && o.score > 0)
-            .sort((a, b) => b.score - a.score || a.dist - b.dist)
-            .slice(0, 2);
-
-        // 하단 세무서 등: 관할 상관없이 순수 거리순
+        // 2. 세무서 등 (관할 상관없이 가까운 순 2개)
         const adminResults = scoredOffices
             .filter(o => ["세무서", "토지정보과"].includes(o.type))
             .sort((a, b) => a.dist - b.dist)
@@ -694,17 +654,15 @@ const offices = [
         officeList.innerHTML = `<span class="section-title">관할기관 안내</span>`;
         
         if (recData.length === 0) {
-            officeList.innerHTML += `<p style="font-size:13px; color:#999; padding:10px;">관할 정보가 없습니다.</p>`;
+            officeList.innerHTML += `<p style="font-size:13px; color:#94a3b8; padding:15px;">해당 지역의 관할 정보를 찾을 수 없습니다.</p>`;
         }
 
         recData.forEach(o => {
-            const coverText = (o.covers && o.covers.length > 0) ? o.covers.slice(0, 3).join('·') + (o.covers.length > 3 ? '...' : '') : '';
             officeList.innerHTML += `
                 <div class="office-card recommend">
                     <div class="card-top">
                         <span class="office-name">${o.name}</span>
                         <div class="meta-info">
-                            <span class="zone-text">${coverText}</span>
                             <span class="dist-text">(${o.dist.toFixed(1)}km)</span>
                         </div>
                     </div>
@@ -714,13 +672,13 @@ const offices = [
         });
 
         adminEl.innerHTML = `<span class="section-title">중개사, 세금관련 문의</span><div class="slim-list">`;
+        if (adminData.length === 0) adminEl.innerHTML += `<div class="slim-item">데이터 없음</div>`;
         adminData.forEach(o => {
             adminEl.innerHTML += `<div class="slim-item"><span class="name">${o.name}</span><span class="phone">${o.phone}</span></div>`;
         });
         adminEl.innerHTML += `</div>`;
     }
 
-    // 키보드 네비게이션
     keywordInput.addEventListener("keydown", (e) => {
         const items = addressList.getElementsByClassName("search-item");
         if (e.key === "ArrowDown" || e.key === "ArrowUp") {
@@ -767,5 +725,3 @@ const offices = [
 </script>
 </body>
 </html>
-
-

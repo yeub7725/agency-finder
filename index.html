@@ -40,12 +40,11 @@
         .section-title { font-size: 13.5px; font-weight: bold; color: var(--gov-gray); margin: 12px 0 5px 0; display: flex; align-items: center; gap: 5px; }
         .section-title::before { content: ''; width: 3px; height: 12px; background: var(--gov-blue); }
 
-        /* 결과 카드 디자인 적용 */
         .office-card.recommend { border: 2px solid var(--gov-blue); background: #f8fbff; padding: 8px 12px; border-radius: 6px; margin-bottom: 8px; display: flex; flex-direction: column; }
         .card-top { display: flex; justify-content: space-between; align-items: center; width: 100%; }
         .office-name { font-size: 17px; font-weight: 800; color: var(--gov-blue); }
-        .meta-info { display: flex; align-items: center; gap: 6px; color: #000; }
-        .zone-text { font-size: 14px; font-weight: 500; } 
+        .meta-info { display: flex; align-items: center; gap: 4px; color: var(--gov-blue); } /* 남색 변경 */
+        .zone-text { font-size: 14px; font-weight: 700; } 
         .dist-text { font-size: 12px; font-weight: 500; } 
         
         .phone-text { font-size: 22px; font-weight: 900; color: var(--gov-red); margin: 0; line-height: 1.1; }
@@ -62,10 +61,10 @@
         .contact-item .sub-desc { font-size: 11px; color: #64748b; font-weight: normal; margin-left: 5px; }
         .contact-item b { color: var(--gov-red); }
 
-        /* 미리보기 리스트 및 하이라이트 */
-        #addressList { position: absolute; top: 100%; left: 0; width: 100%; border: 2px solid var(--gov-blue); background: white; z-index: 1000; display: none; box-sizing: border-box; }
-        .search-item { padding: 10px; border-bottom: 1px solid #f1f5f9; cursor: pointer; font-size: 14px; text-align: left; }
-        .search-item.active { background-color: #f1f5f9; font-weight: bold; color: var(--gov-blue); }
+        /* 미리보기 리스트 가독성 강화 */
+        #addressList { position: absolute; top: 100%; left: 0; width: 100%; border: 2px solid var(--gov-blue); background: white; z-index: 1000; display: none; box-sizing: border-box; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+        .search-item { padding: 12px 15px; border-bottom: 1px solid #f1f5f9; cursor: pointer; font-size: 14px; text-align: left; color: #334155; }
+        .search-item.active { background-color: var(--gov-blue); color: #ffffff; font-weight: bold; } /* 고대비 하이라이트 */
         #content-area { flex: 1; background: #ffffff; }
     </style>
 </head>
@@ -564,9 +563,12 @@ let currentAddressResults = [];
     function searchAddress() {
         const keyword = keywordInput.value.trim();
         if(keyword === lastSearchKeyword) return;
-        lastSearchKeyword = keyword;
-
-        if(keyword.length < 2) { addressList.style.display = "none"; return; }
+        
+        if(keyword.length < 2) { 
+            addressList.style.display = "none"; 
+            lastSearchKeyword = "";
+            return; 
+        }
         
         const geocoder = new kakao.maps.services.Geocoder();
         geocoder.addressSearch(keyword, function(result, status){
@@ -579,7 +581,10 @@ let currentAddressResults = [];
                     const div = document.createElement("div");
                     div.className = "search-item";
                     div.innerHTML = item.address_name;
-                    div.onmousedown = (e) => { e.preventDefault(); selectItem(item); };
+                    div.onmousedown = (e) => { 
+                        e.preventDefault(); 
+                        selectItem(item); 
+                    };
                     addressList.appendChild(div);
                 });
             }
@@ -590,7 +595,7 @@ let currentAddressResults = [];
         if(!item) return;
         addressList.style.display = "none";
         keywordInput.value = item.address_name;
-        lastSearchKeyword = item.address_name;
+        lastSearchKeyword = item.address_name; // 선택한 주소를 마지막 키워드로 고정하여 재검색 방지
         document.getElementById("rec-section").style.display = "none";
         document.getElementById("sub-info-area").style.display = "flex";
         findNearest(parseFloat(item.y), parseFloat(item.x), item.address_name);
@@ -640,7 +645,7 @@ let currentAddressResults = [];
                         <span class="office-name">${o.name}</span>
                         <div class="meta-info">
                             <span class="zone-text">${o.region || ''}</span>
-                            <span class="dist-text">${o.dist.toFixed(1)}km</span>
+                            <span class="dist-text">(${o.dist.toFixed(1)}km)</span>
                         </div>
                     </div>
                     <span class="phone-text">${o.phone}</span>
@@ -662,11 +667,13 @@ let currentAddressResults = [];
     keywordInput.addEventListener("keydown", (e) => {
         const items = addressList.getElementsByClassName("search-item");
         if (e.key === "ArrowDown") {
+            e.preventDefault();
             focusedIndex = (focusedIndex + 1) % items.length;
-            updateHighlight(items);
+            updateHighlight(items, false);
         } else if (e.key === "ArrowUp") {
+            e.preventDefault();
             focusedIndex = (focusedIndex - 1 + items.length) % items.length;
-            updateHighlight(items);
+            updateHighlight(items, false);
         } else if (e.key === "Enter") {
             e.preventDefault();
             if (focusedIndex > -1) selectItem(currentAddressResults[focusedIndex]);
@@ -674,15 +681,16 @@ let currentAddressResults = [];
         }
     });
 
-    function updateHighlight(items) {
+    function updateHighlight(items, updateText) {
         for (let i = 0; i < items.length; i++) {
             items[i].classList.toggle("active", i === focusedIndex);
         }
-        if(focusedIndex > -1) keywordInput.value = currentAddressResults[focusedIndex].address_name;
+        if(updateText && focusedIndex > -1) {
+            keywordInput.value = currentAddressResults[focusedIndex].address_name;
+        }
     }
 </script>
 </body>
 </html>
-
 
 

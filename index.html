@@ -25,12 +25,24 @@
         .search-header { padding: 8px 20px; border-bottom: 1px solid #f1f5f9; flex-shrink: 0; }
         h1 { font-size: 1.1rem; margin: 0 0 5px 0; color: var(--gov-blue); font-weight: 900; }
         
-        .search-row { display: flex; gap: 8px; width: 100%; align-items: center; }
+        .search-row { display: flex; gap: 8px; width: 100%; align-items: center; position: relative; }
         .search-container { flex: 1.8; position: relative; }
         input#keyword { width: 100%; padding: 8px; font-size: 14px; border: 2px solid var(--gov-blue); border-radius: 4px; outline: none; box-sizing: border-box; }
         
-        .date-group { display: flex; align-items: center; border: 2px solid #94a3b8; border-radius: 4px; padding: 0 5px; height: 35px; flex: 1; box-sizing: border-box; justify-content: center; }
-        .date-group input { width: 25px; border: none !important; text-align: center; font-size: 13px; font-weight: bold; color: var(--gov-blue); outline: none; background: transparent; }
+        /* 날짜 그룹 및 2년후 표시 */
+        .date-wrapper { position: relative; display: flex; align-items: center; gap: 5px; flex: 1.2; }
+        .date-group { display: flex; align-items: center; border: 2px solid #94a3b8; border-radius: 4px; padding: 0 5px; height: 35px; box-sizing: border-box; justify-content: center; background: #fff; z-index: 2; }
+        .date-group input { width: 22px; border: none !important; text-align: center; font-size: 13px; font-weight: bold; color: var(--gov-blue); outline: none; background: transparent; }
+        
+        /* 2년 후 날짜 커넥터 그래픽 */
+        #date-result-box { 
+            position: absolute; left: 100%; top: 50%; transform: translateY(-50%);
+            display: none; align-items: center; padding-left: 10px; white-space: nowrap;
+            pointer-events: none;
+        }
+        .date-arrow { width: 30px; height: 2px; background: var(--gov-blue); position: relative; margin: 0 8px; }
+        .date-arrow::after { content: ''; position: absolute; right: 0; top: -3px; border-left: 5px solid var(--gov-blue); border-top: 4px solid transparent; border-bottom: 4px solid transparent; }
+        .after-date-text { font-size: 13px; font-weight: 900; color: var(--gov-red); background: #fff; padding: 2px 5px; border: 1px solid #e2e8f0; border-radius: 4px; }
 
         #result-area { flex: 1; overflow-y: auto; padding: 5px 15px; display: flex; flex-direction: column; }
         #sub-info-area { display: flex; flex-direction: column; gap: 10px; } 
@@ -43,23 +55,24 @@
 
         .office-card.recommend { 
             border: 2px solid var(--gov-blue); background: #f8fbff; 
-            padding: 6px 12px; border-radius: 6px; margin-bottom: 5px; 
+            padding: 8px 12px; border-radius: 6px; margin-bottom: 8px; 
             display: flex; flex-direction: column; 
+            user-select: text; /* 드래그 교정 */
         }
 
-        .card-top { display: flex; justify-content: space-between; align-items: center; width: 100%; }
-        .office-name { font-size: 16.5px; font-weight: 900; color: var(--gov-blue); letter-spacing: -0.5px; }
-        .office-name-sub { font-size: 12.5px; font-weight: 700; color: var(--gov-blue); opacity: 0.8; } /* 기관명 내 지자체 텍스트 스타일 */
+        .card-top { display: flex; justify-content: space-between; align-items: center; width: 100%; margin-bottom: 2px; }
+        .office-name { font-size: 16.5px; font-weight: 900; color: var(--gov-blue); letter-spacing: -0.5px; pointer-events: none; }
+        .office-name-sub { font-size: 12.5px; font-weight: 700; color: var(--gov-blue); opacity: 0.8; }
 
-        .meta-info { text-align: right; white-space: nowrap; }
+        .meta-info { text-align: right; white-space: nowrap; pointer-events: none; }
         .zone-text { font-size: 11px; color: var(--gov-light-gray); font-weight: 700; margin-right: 3px; }
-        .dist-text { font-size: 9px; color: var(--gov-blue); font-weight: 800; } /* 관할구역보다 2pt 작게 */
+        .dist-text { font-size: 9px; color: var(--gov-blue); font-weight: 800; }
         
-        .phone-row { display: flex; align-items: baseline; gap: 5px; }
-        .phone-text { font-size: 26px; font-weight: 900; color: var(--gov-red); margin: -2px 0 0px 0; line-height: 1; letter-spacing: -1px; }
-        .sms-tag { font-size: 12px; font-weight: 800; color: var(--gov-red); opacity: 0.5; } /* 문자 여부 태그 */
+        .phone-row { display: flex; align-items: baseline; gap: 6px; margin-top: 2px; }
+        .phone-text { font-size: 26px; font-weight: 900; color: var(--gov-red); margin: 0; line-height: 1; letter-spacing: -1px; }
+        .sms-tag { font-size: 12px; font-weight: 800; color: var(--gov-red); opacity: 0.5; }
 
-        .addr-text { font-size: 12px; color: var(--gov-gray); margin: 3px 0 0 0; border-top: 1px solid #eef2f6; padding-top: 3px; line-height: 1.2; }
+        .addr-text { font-size: 12px; color: var(--gov-gray); margin: 5px 0 0 0; border-top: 1px solid #eef2f6; padding-top: 5px; line-height: 1.3; }
         
         .info-box { background: #f8fafc; border: 1px solid #e2e8f0; padding: 5px 10px; border-radius: 6px; }
         .contact-item { display: flex; justify-content: space-between; padding: 2px 0; border-bottom: 1px dotted #e2e8f0; font-size: 13.5px; align-items: center; white-space: nowrap; }
@@ -70,7 +83,7 @@
         .contact-item b { color: var(--gov-red); font-weight: 900; font-size: 14px; }
         .sub-desc { font-size: 11px; color: #64748b; margin-left: 3px; font-weight: normal; }
 
-        #addressList { position: absolute; top: 100%; left: 0; width: 100%; border: 2px solid var(--gov-blue); background: white; z-index: 1000; display: none; box-sizing: border-box; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        #addressList { position: absolute; top: 100%; left: 0; width: 100%; border: 2px solid var(--gov-blue); background: white; z-index: 1000; display: none; box-sizing: border-box; shadow: 0 4px 10px rgba(0,0,0,0.1); }
         .search-item { padding: 10px 15px; border-bottom: 1px solid #f1f5f9; cursor: pointer; font-size: 14px; text-align: left; }
         .search-item.active { background-color: #e2e8f0 !important; font-weight: 800; }
     </style>
@@ -82,13 +95,19 @@
             <h1>관할기관 통합 검색</h1>
             <div class="search-row">
                 <div class="search-container">
-                    <input id="keyword" placeholder="주소 입력" autocomplete="off">
+                    <input id="keyword" placeholder="주소 입력" autocomplete="off" autofocus>
                     <div id="addressList"></div>
                 </div>
-                <div class="date-group">
-                    <input type="text" id="yy" placeholder="YY" maxlength="2"><span>/</span>
-                    <input type="text" id="mm" placeholder="MM" maxlength="2"><span>/</span>
-                    <input type="text" id="dd" placeholder="DD" maxlength="2">
+                <div class="date-wrapper">
+                    <div class="date-group">
+                        <input type="text" id="yy" placeholder="YY" maxlength="2"><span>/</span>
+                        <input type="text" id="mm" placeholder="MM" maxlength="2"><span>/</span>
+                        <input type="text" id="dd" placeholder="DD" maxlength="2">
+                    </div>
+                    <div id="date-result-box">
+                        <div class="date-arrow"></div>
+                        <div id="after-date" class="after-date-text"></div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -96,14 +115,12 @@
             <div id="rec-section"><p class="intro-msg">주소를 입력해주세요.</p></div>
             <div id="sub-info-area" style="display:none;">
                 <div id="office-list"></div>
-                
                 <div id="bottom-static-info">
                     <div class="section-title">신청 시 필요 서류</div>
                     <div class="info-box">
                         <div class="contact-item"><span style="font-size:13px;">• <span style="color:#000; font-weight:800;">공통:</span> 신분증, 주민등록초본, 임대차계약서, 등기부등본, 건축물대장</span></div>
                         <div class="contact-item"><span style="font-size:13px;">• <span style="color:#000; font-weight:800;">대리:</span> 위임장, 인감증명서, 대리인 신분증</span></div>
                     </div>
-
                     <div class="section-title">주요 업무 문의처</div>
                     <div class="info-box">
                         <div class="contact-item"><span class="contact-label">한국부동산원<span class="sub-desc">(1.공시 3.K-아파트 0.기타)</span></span><b>1600-2828</b></div>
@@ -124,6 +141,7 @@
 
 <script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=d791798c38589fc7cdc6bce91d9369be&libraries=services"></script>
 <script>
+// --- 기존 데이터 로직 유지 ---
 const offices = [
     {name:"한국부동산원 서울동부지사", type:"부동산원", covers:["서울", "도봉구", "강북구", "노원구", "성북구", "중랑구", "동대문구", "성동구", "광진구", "강동구"], lat:37.557698, lng:127.079226, phone:"02-3394-9870~3", address:"서울시 광진구 천호대로 549, 지타워 10층"},
     {name:"한국부동산원 고양지사", type:"부동산원", covers:["경기"], lat:37.652619, lng:126.776883, phone:"031-902-3573~5", address:"경기도 고양시 일산동구 중앙로 1187, 흥국생명빌딩 8층"},
@@ -146,152 +164,183 @@ const offices = [
     {name:"서울시청 (지자체)", type:"지자체", covers:["서울", "강서구", "은평구", "종로구", "서대문구", "마포구", "영등포구", "양천구", "구로구"], lat:37.564554, lng:126.975613, phone:"02-2133-1200~8", address:"서울시 중구 덕수궁길 15, 서울시청 서소문별관"},
     {name:"경기도청 (지자체)", type:"지자체", covers:["경기"], lat:37.274666, lng:127.009619, phone:"031-8008-2868", address:"경기도 수원시 팔달구 효원로 1"}
 ];
+
 let currentAddressResults = [];
-    let focusedIndex = -1;
-    let debounceTimer;
-    let lastSearchKeyword = "";
-    let isNavigating = false; 
+let focusedIndex = -1;
+let debounceTimer;
+let lastSearchKeyword = "";
+let isNavigating = false; 
 
-    const keywordInput = document.getElementById("keyword");
-    const addressList = document.getElementById("addressList");
+const keywordInput = document.getElementById("keyword");
+const addressList = document.getElementById("addressList");
+const dateInputs = [document.getElementById("yy"), document.getElementById("mm"), document.getElementById("dd")];
+const dateResultBox = document.getElementById("date-result-box");
+const afterDateText = document.getElementById("after-date");
 
-    function searchAddress() {
-        const keyword = keywordInput.value.trim();
-        if (isNavigating || !keyword || keyword === lastSearchKeyword) return;
-        if (keyword.length < 2) { addressList.style.display = "none"; return; }
-        const geocoder = new kakao.maps.services.Geocoder();
-        geocoder.addressSearch(keyword, function(result, status) {
-            if (status === kakao.maps.services.Status.OK) {
-                currentAddressResults = result;
-                addressList.innerHTML = "";
-                addressList.style.display = "block";
-                focusedIndex = -1; 
-                result.forEach((item, idx) => {
-                    const div = document.createElement("div");
-                    div.className = "search-item";
-                    div.innerHTML = item.address_name;
-                    div.onmousedown = (e) => { e.preventDefault(); selectItem(item); };
-                    addressList.appendChild(div);
-                });
-            }
-        });
-    }
+// --- 날짜 관련 로직 ---
+function formatAndCalculate() {
+    let y = dateInputs[0].value.padStart(2, '0');
+    let m = dateInputs[1].value.padStart(2, '0');
+    let d = dateInputs[2].value.padStart(2, '0');
+    
+    // 입력값 업데이트 (01, 02 형식으로)
+    if(dateInputs[0].value) dateInputs[0].value = y;
+    if(dateInputs[1].value) dateInputs[1].value = m;
+    if(dateInputs[2].value) dateInputs[2].value = d;
 
-    function selectItem(item) {
-        if (!item) return;
-        addressList.style.display = "none";
-        keywordInput.value = item.address_name;
-        lastSearchKeyword = item.address_name;
-        document.getElementById("rec-section").style.display = "none";
-        document.getElementById("sub-info-area").style.display = "flex";
-        findNearest(parseFloat(item.y), parseFloat(item.x), item.address_name);
-    }
-
-    function findNearest(lat, lng, fullAddress) {
-        const addrParts = fullAddress.split(' ');
-        const mySido = addrParts[0].substring(0, 2); 
-        const myGu = addrParts.find(p => p.endsWith('구')) || "";
+    if (y && m && d && y.length===2 && m.length===2 && d.length===2) {
+        let fullYear = parseInt(y) > 50 ? 1900 + parseInt(y) : 2000 + parseInt(y);
+        let dateObj = new Date(fullYear, parseInt(m) - 1, parseInt(d));
         
-        let filtered = offices.map(o => {
-            const dist = getDistance(lat, lng, o.lat, o.lng);
-            const hasSido = o.covers.includes(mySido);
-            const hasGu = myGu && o.covers.includes(myGu);
-         
-            let score = 0;
-            if (hasGu) score = 100;
-            else if (hasSido) score = 50;
-
-            let displayCover = o.type === "대법공" && o.covers.includes("서울") ? "서울·강원" : (o.covers.includes("서울") ? "서울" : (o.covers[0] || ""));
+        if (!isNaN(dateObj.getTime())) {
+            dateObj.setFullYear(dateObj.getFullYear() + 2);
+            let ny = String(dateObj.getFullYear()).slice(-2);
+            let nm = String(dateObj.getMonth() + 1).padStart(2, '0');
+            let nd = String(dateObj.getDate()).padStart(2, '0');
             
-            return { ...o, dist, score, displayCover };
-        });
+            afterDateText.innerText = `${ny}/${nm}/${nd}`;
+            dateResultBox.style.display = "flex";
+        }
+    } else {
+        dateResultBox.style.display = "none";
+    }
+}
 
-        let finalResults = [];
-        if (mySido === "서울") {
-            finalResults = filtered
-                .filter(o => o.score > 0)
-                .sort((a, b) => b.score - a.score || a.dist - b.dist)
-                .slice(0, 2);
-        } else {
-            finalResults = filtered
-                .filter(o => o.score > 0)
-                .sort((a, b) => b.score - a.score || a.dist - b.dist);
-            
-            if (finalResults.length > 1) {
-                const topScore = finalResults[0].score;
-                if (topScore === 100) {
-                    finalResults = finalResults.filter(o => o.score === 100).slice(0, 1);
-                }
+dateInputs.forEach((input, idx) => {
+    input.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === "Tab") {
+            formatAndCalculate();
+            if (e.key === "Enter" && idx < 2) {
+                e.preventDefault();
+                dateInputs[idx+1].focus();
             }
         }
-        displayResults(finalResults);
-    }
+    });
+    input.addEventListener("blur", formatAndCalculate);
+});
 
-    function getDistance(lat1, lon1, lat2, lon2) {
-        const R = 6371;
-        const dLat = (lat2-lat1)*Math.PI/180;
-        const dLon = (lon2-lon1)*Math.PI/180;
-        const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180) * Math.cos(lat2*Math.PI/180) * Math.sin(dLon/2)**2;
-        return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    }
-
-    function displayResults(recData) {
-        const officeList = document.getElementById("office-list");
-        officeList.innerHTML = `<span class="section-title">관할기관 안내</span>`;
-        if (recData.length === 0) {
-            officeList.innerHTML += `<p style="font-size:13px; color:#64748b; padding:10px;">해당 지역의 관할 정보를 찾을 수 없습니다.</p>`;
-            return;
+// --- 검색 로직 ---
+function searchAddress() {
+    const keyword = keywordInput.value.trim();
+    if (isNavigating || !keyword || keyword === lastSearchKeyword) return;
+    if (keyword.length < 2) { addressList.style.display = "none"; return; }
+    const geocoder = new kakao.maps.services.Geocoder();
+    geocoder.addressSearch(keyword, function(result, status) {
+        if (status === kakao.maps.services.Status.OK) {
+            currentAddressResults = result;
+            addressList.innerHTML = "";
+            addressList.style.display = "block";
+            focusedIndex = -1; 
+            result.forEach((item, idx) => {
+                const div = document.createElement("div");
+                div.className = "search-item";
+                div.innerHTML = item.address_name;
+                div.onmousedown = (e) => { e.preventDefault(); selectItem(item); };
+                addressList.appendChild(div);
+            });
         }
-        recData.forEach((o) => {
-            // (지자체) 텍스트 분리 및 크기 조정
-            let displayName = o.name;
-            if (o.name.includes("(지자체)")) {
-                displayName = o.name.replace("(지자체)", `<span class="office-name-sub">(지자체)</span>`);
-            }
-            
-            // 문자 가능 여부 판단
-            let smsStatus = (o.type === "지자체") ? "문자 X" : "문자 O";
+    });
+}
 
-            officeList.innerHTML += `
-                <div class="office-card recommend">
-                    <div class="card-top">
-                        <span class="office-name">${displayName}</span>
-                        <div class="meta-info">
-                            <span class="zone-text">${o.displayCover}</span>
-                            <span class="dist-text">(${o.dist.toFixed(1)}km)</span>
-                        </div>
-                    </div>
-                    <div class="phone-row">
-                        <span class="phone-text">${o.phone}</span>
-                        <span class="sms-tag">${smsStatus}</span>
-                    </div>
-                    <p class="addr-text">${o.address}</p>
-                </div>`;
-        });
+function selectItem(item) {
+    if (!item) return;
+    addressList.style.display = "none";
+    keywordInput.value = item.address_name;
+    lastSearchKeyword = item.address_name;
+    document.getElementById("rec-section").style.display = "none";
+    document.getElementById("sub-info-area").style.display = "flex";
+    findNearest(parseFloat(item.y), parseFloat(item.x), item.address_name);
+}
+
+function findNearest(lat, lng, fullAddress) {
+    const addrParts = fullAddress.split(' ');
+    const mySido = addrParts[0].substring(0, 2); 
+    const myGu = addrParts.find(p => p.endsWith('구')) || "";
+    
+    let filtered = offices.map(o => {
+        const dist = getDistance(lat, lng, o.lat, o.lng);
+        const hasSido = o.covers.includes(mySido);
+        const hasGu = myGu && o.covers.includes(myGu);
+        let score = 0;
+        if (hasGu) score = 100;
+        else if (hasSido) score = 50;
+        let displayCover = o.type === "대법공" && o.covers.includes("서울") ? "서울·강원" : (o.covers.includes("서울") ? "서울" : (o.covers[0] || ""));
+        return { ...o, dist, score, displayCover };
+    });
+
+    let finalResults = (mySido === "서울") ? 
+        filtered.filter(o => o.score > 0).sort((a, b) => b.score - a.score || a.dist - b.dist).slice(0, 2) :
+        filtered.filter(o => o.score > 0).sort((a, b) => b.score - a.score || a.dist - b.dist);
+    
+    if (mySido !== "서울" && finalResults.length > 1 && finalResults[0].score === 100) {
+        finalResults = finalResults.filter(o => o.score === 100).slice(0, 1);
     }
+    displayResults(finalResults);
+}
 
-    keywordInput.addEventListener("keydown", (e) => {
-        const items = addressList.getElementsByClassName("search-item");
-        if (e.key === "ArrowDown" || e.key === "ArrowUp") {
-            if (items.length === 0) return;
-            e.preventDefault();
-            isNavigating = true; 
-            if (e.key === "ArrowDown") focusedIndex = (focusedIndex + 1) % items.length;
-            else focusedIndex = (focusedIndex - 1 + items.length) % items.length;
-            for (let i = 0; i < items.length; i++) items[i].classList.toggle("active", i === focusedIndex);
-        }
-        if (e.key === "Enter" && focusedIndex > -1) selectItem(currentAddressResults[focusedIndex]);
-    });
+function getDistance(lat1, lon1, lat2, lon2) {
+    const R = 6371;
+    const dLat = (lat2-lat1)*Math.PI/180;
+    const dLon = (lon2-lon1)*Math.PI/180;
+    const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180) * Math.cos(lat2*Math.PI/180) * Math.sin(dLon/2)**2;
+    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
 
-    keywordInput.addEventListener("input", () => {
-        isNavigating = false; 
-        clearTimeout(debounceTimer);
-        debounceTimer = setTimeout(searchAddress, 200);
-    });
+function displayResults(recData) {
+    const officeList = document.getElementById("office-list");
+    officeList.innerHTML = `<span class="section-title">관할기관 안내</span>`;
+    if (recData.length === 0) {
+        officeList.innerHTML += `<p style="font-size:13px; color:#64748b; padding:10px;">해당 지역의 관할 정보를 찾을 수 없습니다.</p>`;
+        return;
+    }
+    recData.forEach((o) => {
+        let displayName = o.name.includes("(지자체)") ? 
+            o.name.replace("(지자체)", `<span class="office-name-sub">(지자체)</span>`) : o.name;
+        let smsStatus = (o.type === "지자체") ? "문자 X" : "문자 O";
 
-    document.addEventListener("click", (e) => {
-        if (e.target !== keywordInput) addressList.style.display = "none";
+        officeList.innerHTML += `
+            <div class="office-card recommend">
+                <div class="card-top">
+                    <span class="office-name">${displayName}</span>
+                    <div class="meta-info">
+                        <span class="zone-text">${o.displayCover}</span>
+                        <span class="dist-text">(${o.dist.toFixed(1)}km)</span>
+                    </div>
+                </div>
+                <div class="phone-row">
+                    <span class="phone-text">${o.phone}</span>
+                    <span class="sms-tag">${smsStatus}</span>
+                </div>
+                <p class="addr-text">${o.address}</p>
+            </div>`;
     });
+}
+
+keywordInput.addEventListener("keydown", (e) => {
+    const items = addressList.getElementsByClassName("search-item");
+    if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+        if (items.length === 0) return;
+        e.preventDefault();
+        isNavigating = true; 
+        if (e.key === "ArrowDown") focusedIndex = (focusedIndex + 1) % items.length;
+        else focusedIndex = (focusedIndex - 1 + items.length) % items.length;
+        for (let i = 0; i < items.length; i++) items[i].classList.toggle("active", i === focusedIndex);
+    }
+    if (e.key === "Enter" && focusedIndex > -1) selectItem(currentAddressResults[focusedIndex]);
+});
+
+keywordInput.addEventListener("input", () => {
+    isNavigating = false; 
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(searchAddress, 200);
+});
+
+document.addEventListener("click", (e) => {
+    if (e.target !== keywordInput) addressList.style.display = "none";
+});
+
+// 페이지 로드 시 검색창 포커스
+window.onload = () => { keywordInput.focus(); };
 </script>
 </body>
 </html>

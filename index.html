@@ -49,17 +49,23 @@
 
         .card-top { display: flex; justify-content: space-between; align-items: center; width: 100%; }
         .office-name { font-size: 16.5px; font-weight: 900; color: var(--gov-blue); letter-spacing: -0.5px; }
+        .office-name-sub { font-size: 12.5px; font-weight: 700; color: var(--gov-blue); opacity: 0.8; } /* 기관명 내 지자체 텍스트 스타일 */
+
         .meta-info { text-align: right; white-space: nowrap; }
-        .zone-text { font-size: 11px; color: var(--gov-light-gray); font-weight: 700; margin-right: 5px; }
-        .dist-text { font-size: 12px; color: var(--gov-blue); font-weight: 800; } 
+        .zone-text { font-size: 11px; color: var(--gov-light-gray); font-weight: 700; margin-right: 3px; }
+        .dist-text { font-size: 9px; color: var(--gov-blue); font-weight: 800; } /* 관할구역보다 2pt 작게 */
         
+        .phone-row { display: flex; align-items: baseline; gap: 5px; }
         .phone-text { font-size: 26px; font-weight: 900; color: var(--gov-red); margin: -2px 0 0px 0; line-height: 1; letter-spacing: -1px; }
+        .sms-tag { font-size: 12px; font-weight: 800; color: var(--gov-red); opacity: 0.5; } /* 문자 여부 태그 */
+
         .addr-text { font-size: 12px; color: var(--gov-gray); margin: 3px 0 0 0; border-top: 1px solid #eef2f6; padding-top: 3px; line-height: 1.2; }
         
         .info-box { background: #f8fafc; border: 1px solid #e2e8f0; padding: 5px 10px; border-radius: 6px; }
         .contact-item { display: flex; justify-content: space-between; padding: 2px 0; border-bottom: 1px dotted #e2e8f0; font-size: 13.5px; align-items: center; white-space: nowrap; }
         .contact-item:last-child { border-bottom: none; }
         
+        .contact-label { font-size: 15px; font-weight: 800; color: #000; }
         .gov-std-text { color: var(--gov-gray-std); font-weight: 800; }
         .contact-item b { color: var(--gov-red); font-weight: 900; font-size: 14px; }
         .sub-desc { font-size: 11px; color: #64748b; margin-left: 3px; font-weight: normal; }
@@ -94,21 +100,21 @@
                 <div id="bottom-static-info">
                     <div class="section-title">신청 시 필요 서류</div>
                     <div class="info-box">
-                        <div class="contact-item"><span style="font-size:13px;">• <b class="gov-std-text">공통:</b> 신분증, 등본, 초본, 건축물대장, 계약서</span></div>
-                        <div class="contact-item"><span style="font-size:13px;">• <b class="gov-std-text">대리:</b> 위임장, 인감증명서, 대리인 신분증</span></div>
+                        <div class="contact-item"><span style="font-size:13px;">• <span style="color:#000; font-weight:800;">공통:</span> 신분증, 주민등록초본, 임대차계약서, 등기부등본, 건축물대장</span></div>
+                        <div class="contact-item"><span style="font-size:13px;">• <span style="color:#000; font-weight:800;">대리:</span> 위임장, 인감증명서, 대리인 신분증</span></div>
                     </div>
 
                     <div class="section-title">주요 업무 문의처</div>
                     <div class="info-box">
-                        <div class="contact-item"><span>한국부동산원<span class="sub-desc">(1.공시 3.K-아파트 0.기타)</span></span><b>1600-2828</b></div>
-                        <div class="contact-item"><span>전자계약</span><b>1833-4662</b></div>
-                        <div class="contact-item"><span>임대차신고</span><b>1533-2949</b></div>
-                        <div class="contact-item"><span>LH공사</span><b>1600-1004</b></div>
-                        <div class="contact-item"><span>렌트홈</span><b>1670-8004</b></div>
-                        <div class="contact-item"><span>공동주택 조정위<span class="sub-desc">(장기수선·관리비)</span></span><b>031-738-3300</b></div>
-                        <div class="contact-item"><span>국토부</span><b>1599-0001</b></div>
-                        <div class="contact-item"><span>대법공</span><b>132</b></div>
-                        <div class="contact-item"><span>국세청</span><b>126</b></div>
+                        <div class="contact-item"><span class="contact-label">한국부동산원<span class="sub-desc">(1.공시 3.K-아파트 0.기타)</span></span><b>1600-2828</b></div>
+                        <div class="contact-item"><span class="contact-label">전자계약</span><b>1833-4662</b></div>
+                        <div class="contact-item"><span class="contact-label">임대차신고</span><b>1533-2949</b></div>
+                        <div class="contact-item"><span class="contact-label">LH공사</span><b>1600-1004</b></div>
+                        <div class="contact-item"><span class="contact-label">렌트홈</span><b>1670-8004</b></div>
+                        <div class="contact-item"><span class="contact-label">공동주택 조정위<span class="sub-desc">(장기수선·관리비)</span></span><b>031-738-3300</b></div>
+                        <div class="contact-item"><span class="contact-label">국토부</span><b>1599-0001</b></div>
+                        <div class="contact-item"><span class="contact-label">대법공</span><b>132</b></div>
+                        <div class="contact-item"><span class="contact-label">국세청</span><b>126</b></div>
                     </div>
                 </div>
             </div>
@@ -129,17 +135,14 @@ const offices = [
     {name:"한국부동산원 포항지사", type:"부동산원", covers:["경북"], lat:36.030918, lng:129.366140, phone:"054-275-9771~2", address:"경북 포항시 북구 중앙로 201, 한화생명빌딩 8층"},
     {name:"한국부동산원 울산지사", type:"부동산원", covers:["울산"], lat:35.53823, lng:129.31132, phone:"052-224-8872~4", address:"울산시 남구 북부순환대로 17, 남운프라자 906호"},
     {name:"한국부동산원 창원지사", type:"부동산원", covers:["경남"], lat:35.218066, lng:128.675982, phone:"055-289-0136~8", address:"창원시 성산구 중앙대로 32, 2층"},
-      // --- 한토공 ---
     {name:"한국토지주택공사 충북본부", type:"주택공사", covers:["충북"], lat:36.614249, lng:127.450780, phone:"043-905-1784", address:"충북 청주시 서원구 구룡산로 52번길 2, 303호"},
     {name:"한국토지주택공사 제주본부", type:"주택공사", covers:["제주"], lat:33.505062, lng:126.525532, phone:"064-901-3802", address:"제주시 중앙로 150, 대한항공제주사옥 3층"},
-      // --- 대법공 ---
     {name:"대한법률구조공단 서울중앙지부", type:"대법공", covers:["서울", "금천구", "관악구", "동작구", "서초구", "강남구", "송파구"], lat:37.494383, lng:127.013104, phone:"02-6941-3430", address:"서울시 서초구 법원로 2길 21, 칠보빌딩 1층"},
     {name:"대한법률구조공단 수원지부", type:"대법공", covers:["경기", "인천"], lat:37.277533, lng:127.049515, phone:"031-8007-3430", address:"경기도 수원시 영통구 월드컵로 150번길 10, YM빌딩 3층"},
     {name:"대한법률구조공단 대전지부", type:"대법공", covers:["대전", "세종", "충남", "충북"], lat:36.356309, lng:127.387871, phone:"042-721-3430", address:"대전시 서구 둔산북로 121, 1층 117~121호"},
     {name:"대한법률구조공단 대구지부", type:"대법공", covers:["대구", "경북"], lat:35.859195, lng:128.631891, phone:"053-710-3430", address:"대구시 수성구 달구벌대로 2461, 디에스라이프빌딩 3층"},
     {name:"대한법률구조공단 부산지부", type:"대법공", covers:["부산", "울산", "경남"], lat:35.190787, lng:129.074010, phone:"051-711-3430", address:"부산시 연제구 법원남로 15번길 4, 성신프라이어빌딩 5층"},
     {name:"대한법률구조공단 광주지부", type:"대법공", covers:["광주", "전남", "전북", "제주"], lat:35.149140, lng:126.848917, phone:"062-710-3430", address:"광주시 서구 상무중앙로 28번길 4, 세진빌딩 4층 401호"},
-     // --- 지자체 ---
     {name:"서울시청 (지자체)", type:"지자체", covers:["서울", "강서구", "은평구", "종로구", "서대문구", "마포구", "영등포구", "양천구", "구로구"], lat:37.564554, lng:126.975613, phone:"02-2133-1200~8", address:"서울시 중구 덕수궁길 15, 서울시청 서소문별관"},
     {name:"경기도청 (지자체)", type:"지자체", covers:["경기"], lat:37.274666, lng:127.009619, phone:"031-8008-2868", address:"경기도 수원시 팔달구 효원로 1"}
 ];
@@ -205,18 +208,15 @@ let currentAddressResults = [];
 
         let finalResults = [];
         if (mySido === "서울") {
-       
             finalResults = filtered
                 .filter(o => o.score > 0)
                 .sort((a, b) => b.score - a.score || a.dist - b.dist)
                 .slice(0, 2);
         } else {
-     
             finalResults = filtered
                 .filter(o => o.score > 0)
                 .sort((a, b) => b.score - a.score || a.dist - b.dist);
             
-          
             if (finalResults.length > 1) {
                 const topScore = finalResults[0].score;
                 if (topScore === 100) {
@@ -224,7 +224,6 @@ let currentAddressResults = [];
                 }
             }
         }
-
         displayResults(finalResults);
     }
 
@@ -244,16 +243,28 @@ let currentAddressResults = [];
             return;
         }
         recData.forEach((o) => {
+            // (지자체) 텍스트 분리 및 크기 조정
+            let displayName = o.name;
+            if (o.name.includes("(지자체)")) {
+                displayName = o.name.replace("(지자체)", `<span class="office-name-sub">(지자체)</span>`);
+            }
+            
+            // 문자 가능 여부 판단
+            let smsStatus = (o.type === "지자체") ? "문자 X" : "문자 O";
+
             officeList.innerHTML += `
                 <div class="office-card recommend">
                     <div class="card-top">
-                        <span class="office-name">${o.name}</span>
+                        <span class="office-name">${displayName}</span>
                         <div class="meta-info">
                             <span class="zone-text">${o.displayCover}</span>
-                            <span class="dist-text">${o.dist.toFixed(1)}km</span>
+                            <span class="dist-text">(${o.dist.toFixed(1)}km)</span>
                         </div>
                     </div>
-                    <span class="phone-text">${o.phone}</span>
+                    <div class="phone-row">
+                        <span class="phone-text">${o.phone}</span>
+                        <span class="sms-tag">${smsStatus}</span>
+                    </div>
                     <p class="addr-text">${o.address}</p>
                 </div>`;
         });
@@ -284,7 +295,3 @@ let currentAddressResults = [];
 </script>
 </body>
 </html>
-
-
-
-

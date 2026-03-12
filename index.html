@@ -22,38 +22,48 @@
         }
         
         .search-header { padding: 8px 20px; border-bottom: 1px solid #f1f5f9; flex-shrink: 0; position: relative; z-index: 1000; }
-        h1 { font-size: 1.1rem; margin: 0 0 5px 0; color: var(--gov-blue); font-weight: 900; }
+        h1 { font-size: 1.1rem; margin: 0 0 8px 0; color: var(--gov-blue); font-weight: 900; }
         
-        /* 통합 검색바 (overflow 삭제하여 미리보기 보이게 수정) */
-        .search-row { display: flex; align-items: center; width: 100%; border: 2px solid var(--gov-blue); border-radius: 4px; background: #fff; box-sizing: border-box; }
+        /* [수정] 통합 검색바: 중간 선을 제거하고 하나의 창처럼 보이게 수정 */
+        .search-row { 
+            display: flex; align-items: center; width: 100%; 
+            border: 2px solid var(--gov-blue); border-radius: 4px; 
+            background: #fff; box-sizing: border-box; height: 40px;
+        }
         
-        .search-container { flex: 1.5; position: relative; border-right: 1px solid #e2e8f0; }
-        input#keyword { width: 100%; padding: 8px 12px; font-size: 14px; border: none; outline: none; box-sizing: border-box; background: transparent; }
+        /* 주소 영역 */
+        .search-container { flex: 1.8; position: relative; }
+        input#keyword { width: 100%; padding: 0 12px; font-size: 14px; border: none; outline: none; background: transparent; }
         
-        .date-container { flex: 0.8; display: flex; align-items: center; justify-content: center; border-right: 1px solid #e2e8f0; background: #fff; height: 35px; }
-        .date-group { display: flex; align-items: center; }
-        .date-group input { width: 22px; border: none !important; text-align: center; font-size: 13px; font-weight: bold; color: var(--gov-blue); outline: none; background: transparent; }
-        .date-group span { color: #94a3b8; font-weight: bold; }
+        /* 날짜 영역: 중간 구분선 제거 */
+        .date-container { flex: 1; display: flex; align-items: center; justify-content: center; background: #fff; height: 100%; }
+        .date-group { display: flex; align-items: center; gap: 1px; }
+        .date-group input { width: 22px; border: none !important; text-align: center; font-size: 13px; font-weight: bold; color: var(--gov-blue); outline: none; background: transparent; padding: 0; }
+        .date-group span { color: #cbd5e1; font-weight: bold; font-size: 12px; }
 
-        .price-container { flex: 1.4; display: flex; align-items: center; gap: 2px; padding: 0 5px; background: #fff; border-radius: 0 4px 4px 0; }
-        .price-input-wrap { display: flex; align-items: center; gap: 1px; flex: 1; }
-        .price-input-wrap input { width: 100%; border: none; outline: none; font-size: 12px; font-weight: 700; color: var(--gov-gray); text-align: right; background: transparent; }
-        .price-unit { font-size: 12px; color: var(--gov-gray); font-weight: 700; white-space: nowrap; }
-        .price-slash { color: #e2e8f0; margin: 0 1px; }
+        /* 가격 영역: 줄바꿈 방지 및 구분선 제거 */
+        .price-container { 
+            flex: 2; display: flex; align-items: center; justify-content: flex-end;
+            padding: 0 10px; background: #fff; height: 100%; 
+        }
+        .price-input-wrap { display: flex; align-items: center; gap: 2px; flex-shrink: 0; }
+        .price-input-wrap input { width: 55px; border: none; outline: none; font-size: 12px; font-weight: 700; color: var(--gov-gray); text-align: right; background: transparent; }
+        .price-unit { font-size: 12px; color: var(--gov-gray); font-weight: 700; white-space: nowrap; flex-shrink: 0; }
+        .price-slash { color: #e2e8f0; margin: 0 6px; flex-shrink: 0; }
 
-        /* 미리보기 목록 레이어 순서 강화 */
+        /* 미리보기 목록 */
         #addressList { 
-            position: absolute; top: 100%; left: -2px; width: calc(100% + 2px); 
-            border: 2px solid var(--gov-blue); background: white; 
-            z-index: 9999; display: none; box-sizing: border-box; 
+            position: absolute; top: 100%; left: -2px; width: calc(100% + 4px); 
+            border: 2px solid var(--gov-blue); border-top: 1px solid #eee;
+            background: white; z-index: 9999; display: none; box-sizing: border-box; 
             box-shadow: 0 4px 10px rgba(0,0,0,0.1); 
         }
         .search-item { padding: 10px 15px; border-bottom: 1px solid #f1f5f9; cursor: pointer; font-size: 14px; text-align: left; color: #333; }
-        .search-item.active { background-color: #e2e8f0 !important; }
+        .search-item.active { background-color: #f0f7ff !important; }
 
         /* 우측 그래픽 */
         #date-visual-line { 
-            visibility: hidden; position: absolute; left: 440px; top: 38px;
+            visibility: hidden; position: absolute; left: 440px; top: 40px;
             display: flex; align-items: center; width: 320px;
         }
         .line-bar { height: 1px; background: #cbd5e1; flex: 1; position: relative; margin: 0 20px; }
@@ -105,9 +115,9 @@
                 </div>
                 <div class="date-container">
                     <div class="date-group">
-                        <input type="text" id="yy" maxlength="2"><span>.</span>
-                        <input type="text" id="mm" maxlength="2"><span>.</span>
-                        <input type="text" id="dd" maxlength="2">
+                        <input type="text" id="yy" maxlength="2" placeholder="00"><span>.</span>
+                        <input type="text" id="mm" maxlength="2" placeholder="00"><span>.</span>
+                        <input type="text" id="dd" maxlength="2" placeholder="00">
                     </div>
                 </div>
                 <div class="price-container">
@@ -140,15 +150,15 @@
                     </div>
                     <div class="section-title">주요 업무 문의처</div>
                     <div class="info-box">
-                    <div class="contact-item"><span class="contact-label">한국부동산원<span class="sub-desc">(1.공시 3.K-아파트 0.기타)</span></span><b>1600-2828</b></div>
-                    <div class="contact-item"><span class="contact-label">전자계약</span><b>1833-4662</b></div>
-                    <div class="contact-item"><span class="contact-label">임대차신고</span><b>1533-2949</b></div>
-                    <div class="contact-item"><span class="contact-label">LH공사</span><b>1600-1004</b></div>
-                    <div class="contact-item"><span class="contact-label">렌트홈</span><b>1670-8004</b></div>
-                    <div class="contact-item"><span class="contact-label">공동주택 조정위<span class="sub-desc">(장기수선·관리비)</span></span><b>031-738-3300</b></div>
-                    <div class="contact-item"><span class="contact-label">국토부</span><b>1599-0001</b></div>
-                    <div class="contact-item"><span class="contact-label">대법공</span><b>132</b></div>
-                    <div class="contact-item"><span class="contact-label">국세청</span><b>126</b></div>
+                        <div class="contact-item"><span class="contact-label">한국부동산원<span class="sub-desc">(1.공시 3.K-아파트 0.기타)</span></span><b>1600-2828</b></div>
+                        <div class="contact-item"><span class="contact-label">전자계약</span><b>1833-4662</b></div>
+                        <div class="contact-item"><span class="contact-label">임대차신고</span><b>1533-2949</b></div>
+                        <div class="contact-item"><span class="contact-label">LH공사</span><b>1600-1004</b></div>
+                        <div class="contact-item"><span class="contact-label">렌트홈</span><b>1670-8004</b></div>
+                        <div class="contact-item"><span class="contact-label">공동주택 조정위<span class="sub-desc">(장기수선·관리비)</span></span><b>031-738-3300</b></div>
+                        <div class="contact-item"><span class="contact-label">국토부</span><b>1599-0001</b></div>
+                        <div class="contact-item"><span class="contact-label">대법공</span><b>132</b></div>
+                        <div class="contact-item"><span class="contact-label">국세청</span><b>126</b></div>
                     </div>
                 </div>
             </div>
@@ -158,6 +168,7 @@
 
 <script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=d791798c38589fc7cdc6bce91d9369be&libraries=services"></script>
 <script>
+// [데이터 로직 생략 없이 유지]
 const offices = [
     {name:"한국부동산원 서울동부지사", type:"부동산원", covers:["서울", "도봉구", "강북구", "노원구", "성북구", "중랑구", "동대문구", "성동구", "광진구", "강동구"], lat:37.557698, lng:127.079226, phone:"02-3394-9870~3", address:"서울시 광진구 천호대로 549, 지타워 10층"},
     {name:"한국부동산원 고양지사", type:"부동산원", covers:["경기"], lat:37.652619, lng:126.776883, phone:"031-902-3573~5", address:"경기도 고양시 일산동구 중앙로 1187, 흥국생명빌딩 8층"},
@@ -180,6 +191,7 @@ const offices = [
     {name:"서울시청 (지자체)", type:"지자체", covers:["서울", "강서구", "은평구", "종로구", "서대문구", "마포구", "영등포구", "양천구", "구로구"], lat:37.564554, lng:126.975613, phone:"02-2133-1200~8", address:"서울시 중구 덕수궁길 15, 서울시청 서소문별관"},
     {name:"경기도청 (지자체)", type:"지자체", covers:["경기"], lat:37.274666, lng:127.009619, phone:"031-8008-2868", address:"경기도 수원시 팔달구 효원로 1"}
 ];
+
 let currentAddressResults = [];
 let focusedIndex = -1;
 let debounceTimer;
@@ -195,13 +207,34 @@ const visualLine = document.getElementById("date-visual-line");
 const beforeDateVal = document.getElementById("before-date-val");
 const afterDateVal = document.getElementById("after-date-val");
 
+// [수정된 날짜 계산 로직]
 function calculateTwoYears() {
     let y = dateInputs[0].value, m = dateInputs[1].value, d = dateInputs[2].value;
     if (y.length === 2 && m.length === 2 && d.length === 2) {
-        let numM = Math.min(Math.max(parseInt(m), 1), 12);
-        let numD = Math.min(Math.max(parseInt(d), 1), 31);
+        let numM = parseInt(m);
+        let numD = parseInt(d);
+
+        // 월(MM) 유효성 체크: 1~12 사이가 아니면 계산 중단
+        if (numM < 1 || numM > 12) { 
+            visualLine.style.visibility = "hidden";
+            return; 
+        }
+        
+        // 일(DD) 유효성 체크 (간단히 31일로 제한)
+        if (numD < 1 || numD > 31) {
+            visualLine.style.visibility = "hidden";
+            return;
+        }
+
         let fullYear = parseInt(y) > 50 ? 1900 + parseInt(y) : 2000 + parseInt(y);
         let dateObj = new Date(fullYear, numM - 1, numD);
+        
+        // 날짜 객체 생성 후 월이 바뀌어버리면(예: 2월 30일 입력 시 3월로 넘어감) 무효 처리
+        if (dateObj.getMonth() !== numM - 1) {
+             visualLine.style.visibility = "hidden";
+             return;
+        }
+
         beforeDateVal.innerText = `${y}.${String(numM).padStart(2, '0')}.${String(numD).padStart(2, '0')}`;
         dateObj.setFullYear(dateObj.getFullYear() + 2);
         afterDateVal.innerText = `${String(dateObj.getFullYear()).slice(-2)}.${String(dateObj.getMonth() + 1).padStart(2, '0')}.${String(dateObj.getDate()).padStart(2, '0')}`;
@@ -209,9 +242,25 @@ function calculateTwoYears() {
     } else { visualLine.style.visibility = "hidden"; }
 }
 
+// [날짜 입력 제어] 
+// 제시하신 해결책: 개별 Input 방식(yy, mm, dd)을 유지하여 2자리 입력 시 강제 이동시킴으로써 모호성을 0%로 만듭니다.
 dateInputs.forEach((input, idx) => {
     input.addEventListener("input", () => {
-        if (input.value.length === 2) {
+        let val = input.value.replace(/[^0-9]/g, "");
+        input.value = val;
+
+        if (val.length === 2) {
+            // MM(월) 입력 시 12가 넘어가면 12로 강제 고정
+            if (idx === 1) {
+                if (parseInt(val) > 12) input.value = "12";
+                if (parseInt(val) === 0) input.value = "01";
+            }
+            // DD(일) 입력 시 31이 넘어가면 31로 강제 고정
+            if (idx === 2) {
+                if (parseInt(val) > 31) input.value = "31";
+                if (parseInt(val) === 0) input.value = "01";
+            }
+
             if (idx < 2) dateInputs[idx + 1].focus();
             else depositInput.focus();
         }
@@ -260,7 +309,6 @@ function selectItem(item) {
     document.getElementById("rec-section").style.display = "none";
     document.getElementById("sub-info-area").style.display = "flex";
     
-    // 주소 선택 후 날짜창으로 강제 이동
     setTimeout(() => { document.getElementById("yy").focus(); }, 10);
     findNearest(parseFloat(item.y), parseFloat(item.x), item.address_name);
 }
@@ -326,7 +374,7 @@ keywordInput.addEventListener("keydown", (e) => {
     }
     if (e.key === "Enter") {
         if (focusedIndex > -1) selectItem(currentAddressResults[focusedIndex]);
-        else if (items.length > 0) selectItem(currentAddressResults[0]); // 아무것도 선택 안하고 엔터치면 첫번째꺼 선택
+        else if (items.length > 0) selectItem(currentAddressResults[0]);
     }
 });
 
@@ -342,4 +390,3 @@ document.addEventListener("click", (e) => {
 </script>
 </body>
 </html>
-

@@ -40,16 +40,16 @@
         .section-title { font-size: 13.5px; font-weight: bold; color: var(--gov-gray); margin: 12px 0 5px 0; display: flex; align-items: center; gap: 5px; }
         .section-title::before { content: ''; width: 3px; height: 12px; background: var(--gov-blue); }
 
-        /* 결과 카드 수정 */
-        .office-card.recommend { border: 2px solid var(--gov-blue); background: #f8fbff; padding: 8px 12px; border-radius: 6px; margin-bottom: 8px; position: relative; display: flex; flex-direction: column; }
-        .card-top { display: flex; justify-content: space-between; align-items: center; width: 100%; margin-bottom: -2px; }
+        /* 결과 카드 디자인 적용 */
+        .office-card.recommend { border: 2px solid var(--gov-blue); background: #f8fbff; padding: 8px 12px; border-radius: 6px; margin-bottom: 8px; display: flex; flex-direction: column; }
+        .card-top { display: flex; justify-content: space-between; align-items: center; width: 100%; }
         .office-name { font-size: 17px; font-weight: 800; color: var(--gov-blue); }
         .meta-info { display: flex; align-items: center; gap: 6px; color: #000; }
         .zone-text { font-size: 14px; font-weight: 500; } 
         .dist-text { font-size: 12px; font-weight: 500; } 
         
         .phone-text { font-size: 22px; font-weight: 900; color: var(--gov-red); margin: 0; line-height: 1.1; }
-        .addr-text { font-size: 12px; color: var(--gov-light-gray); margin-top: 6px; border-top: 1px solid #eef2f6; padding-top: 4px; }
+        .addr-text { font-size: 12px; color: var(--gov-light-gray); margin: 6px 0 0 0; border-top: 1px solid #eef2f6; padding-top: 4px; }
         
         .slim-list { background: #fff; border: 1px solid #e2e8f0; border-radius: 6px; padding: 2px 10px; }
         .slim-item { display: flex; justify-content: space-between; align-items: center; padding: 5px 0; border-bottom: 1px dotted #e2e8f0; font-size: 13px; }
@@ -62,8 +62,10 @@
         .contact-item .sub-desc { font-size: 11px; color: #64748b; font-weight: normal; margin-left: 5px; }
         .contact-item b { color: var(--gov-red); }
 
+        /* 미리보기 리스트 및 하이라이트 */
         #addressList { position: absolute; top: 100%; left: 0; width: 100%; border: 2px solid var(--gov-blue); background: white; z-index: 1000; display: none; box-sizing: border-box; }
         .search-item { padding: 10px; border-bottom: 1px solid #f1f5f9; cursor: pointer; font-size: 14px; text-align: left; }
+        .search-item.active { background-color: #f1f5f9; font-weight: bold; color: var(--gov-blue); }
         #content-area { flex: 1; background: #ffffff; }
     </style>
 </head>
@@ -551,22 +553,34 @@ const offices = [
     {name:"서귀포시청 종합민원실", type:"토지정보과", covers:["서귀포시"], phone:"064-760-2117", address:"제주특별자치도 서귀포시 중앙로 105"}
 
 ];
-let debounceTimer;
+let currentAddressResults = [];
+    let focusedIndex = -1;
+    let debounceTimer;
+    let lastSearchKeyword = "";
 
-    function searchAddress(isEnterPressed = false) {
-        const keyword = document.getElementById("keyword").value.trim();
-        const listEl = document.getElementById("addressList");
-        if(keyword.length < 2) { listEl.style.display = "none"; return; }
+    const keywordInput = document.getElementById("keyword");
+    const addressList = document.getElementById("addressList");
+
+    function searchAddress() {
+        const keyword = keywordInput.value.trim();
+        if(keyword === lastSearchKeyword) return;
+        lastSearchKeyword = keyword;
+
+        if(keyword.length < 2) { addressList.style.display = "none"; return; }
+        
         const geocoder = new kakao.maps.services.Geocoder();
         geocoder.addressSearch(keyword, function(result, status){
             if(status === kakao.maps.services.Status.OK){
-                if(isEnterPressed) { selectItem(result[0]); return; }
-                listEl.innerHTML = ""; listEl.style.display = "block";
-                result.forEach((item) => {
-                    const div = document.createElement("div"); div.className = "search-item";
+                currentAddressResults = result;
+                addressList.innerHTML = "";
+                addressList.style.display = "block";
+                focusedIndex = -1;
+                result.forEach((item, idx) => {
+                    const div = document.createElement("div");
+                    div.className = "search-item";
                     div.innerHTML = item.address_name;
                     div.onmousedown = (e) => { e.preventDefault(); selectItem(item); };
-                    listEl.appendChild(div);
+                    addressList.appendChild(div);
                 });
             }
         });
@@ -574,11 +588,37 @@ let debounceTimer;
 
     function selectItem(item) {
         if(!item) return;
-        document.getElementById("addressList").style.display = "none";
-        document.getElementById("keyword").value = item.address_name;
+        addressList.style.display = "none";
+        keywordInput.value = item.address_name;
+        lastSearchKeyword = item.address_name;
         document.getElementById("rec-section").style.display = "none";
         document.getElementById("sub-info-area").style.display = "flex";
         findNearest(parseFloat(item.y), parseFloat(item.x), item.address_name);
+    }
+
+    function findNearest(lat, lng, fullAddress){
+        const specialGus = ["강서구", "양천구", "구로구", "영등포구", "마포구", "서대문구", "종로구", "은평구", "용산구"];
+        const isSpecialSeoul = specialGus.some(gu => fullAddress.includes(gu));
+        const myGu = fullAddress.split(' ').find(part => part.endsWith('구')) || "";
+
+        const mappedOffices = offices.map(o => {
+            let priority = 0;
+            if (o.covers && o.covers.includes(myGu)) priority = 10;
+            if (isSpecialSeoul && o.name.includes("중구청")) priority = 20;
+            return { ...o, dist: getDistance(lat, lng, o.lat, o.lng), priority: priority };
+        });
+
+        const recTargets = mappedOffices
+            .filter(o => ["부동산원", "대법공", "주택공사", "지자체"].includes(o.type))
+            .sort((a, b) => b.priority - a.priority || a.dist - b.dist)
+            .slice(0, 2);
+
+        const adminResults = mappedOffices
+            .filter(o => ["세무서", "토지정보과"].includes(o.type))
+            .sort((a, b) => a.dist - b.dist)
+            .slice(0, 2);
+
+        displayResults(recTargets, adminResults);
     }
 
     function getDistance(lat1, lon1, lat2, lon2){
@@ -589,56 +629,24 @@ let debounceTimer;
         return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     }
 
-    function findNearest(lat, lng, fullAddress){
-        const specialGus = ["강서구", "양천구", "구로구", "영등포구", "마포구", "서대문구", "종로구", "은평구", "용산구"];
-        const isSpecialSeoul = specialGus.some(gu => fullAddress.includes(gu));
-        const isSeoul = fullAddress.includes("서울");
-        const myGu = fullAddress.split(' ').find(part => part.endsWith('구')) || "";
-
-        const mappedOffices = offices.map(o => {
-            let priority = 0;
-            // 1. 관할 구역 매칭 (covers에 포함된 경우)
-            if (o.covers && o.covers.includes(myGu)) priority = 10;
-            // 2. 서울 특정 9개구 -> 중구청 우선
-            if (isSpecialSeoul && o.name.includes("중구청")) priority = 20;
-            
-            return { ...o, dist: getDistance(lat, lng, o.lat, o.lng), priority: priority };
-        });
-
-        // 관할기관 (우선순위 -> 거리순)
-        const recTargets = mappedOffices
-            .filter(o => ["부동산원", "대법공", "주택공사", "지자체"].includes(o.type))
-            .sort((a, b) => b.priority - a.priority || a.dist - b.dist)
-            .slice(0, 2);
-
-        // 행정기관 (거리순)
-        const adminResults = mappedOffices
-            .filter(o => ["세무서", "토지정보과"].includes(o.type))
-            .sort((a, b) => a.dist - b.dist)
-            .slice(0, 2);
-
-        displayResults(recTargets, adminResults);
-    }
-
     function displayResults(recData, adminData) {
         const officeList = document.getElementById("office-list");
         const adminEl = document.getElementById("admin-section");
-        
         officeList.innerHTML = `<span class="section-title">관할기관 안내</span>`;
         recData.forEach(o => {
-            const distHtml = `<span class="dist-text">${o.dist.toFixed(1)}km</span>`;
-            const zoneHtml = o.region ? `<span class="zone-text">${o.region}</span>` : '';
             officeList.innerHTML += `
                 <div class="office-card recommend">
                     <div class="card-top">
                         <span class="office-name">${o.name}</span>
-                        <div class="meta-info">${zoneHtml}${distHtml}</div>
+                        <div class="meta-info">
+                            <span class="zone-text">${o.region || ''}</span>
+                            <span class="dist-text">${o.dist.toFixed(1)}km</span>
+                        </div>
                     </div>
                     <span class="phone-text">${o.phone}</span>
                     <p class="addr-text">${o.address}</p>
                 </div>`;
         });
-
         adminEl.innerHTML = `<span class="section-title">중개사, 세금관련 문의</span><div class="slim-list">`;
         adminData.forEach(o => {
             adminEl.innerHTML += `<div class="slim-item"><span class="name">${o.name}</span><span class="phone">${o.phone}</span></div>`;
@@ -646,13 +654,32 @@ let debounceTimer;
         adminEl.innerHTML += `</div>`;
     }
 
-    document.getElementById("keyword").addEventListener("input", () => {
+    keywordInput.addEventListener("input", () => {
         clearTimeout(debounceTimer);
-        debounceTimer = setTimeout(() => searchAddress(false), 200);
+        debounceTimer = setTimeout(searchAddress, 200);
     });
-    document.getElementById("keyword").addEventListener("keydown", (e) => {
-        if(e.key === "Enter") { e.preventDefault(); searchAddress(true); }
+
+    keywordInput.addEventListener("keydown", (e) => {
+        const items = addressList.getElementsByClassName("search-item");
+        if (e.key === "ArrowDown") {
+            focusedIndex = (focusedIndex + 1) % items.length;
+            updateHighlight(items);
+        } else if (e.key === "ArrowUp") {
+            focusedIndex = (focusedIndex - 1 + items.length) % items.length;
+            updateHighlight(items);
+        } else if (e.key === "Enter") {
+            e.preventDefault();
+            if (focusedIndex > -1) selectItem(currentAddressResults[focusedIndex]);
+            else if (currentAddressResults.length > 0) selectItem(currentAddressResults[0]);
+        }
     });
+
+    function updateHighlight(items) {
+        for (let i = 0; i < items.length; i++) {
+            items[i].classList.toggle("active", i === focusedIndex);
+        }
+        if(focusedIndex > -1) keywordInput.value = currentAddressResults[focusedIndex].address_name;
+    }
 </script>
 </body>
 </html>

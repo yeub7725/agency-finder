@@ -188,14 +188,12 @@ let currentAddressResults = [];
         const addrParts = fullAddress.split(' ');
         const mySido = addrParts[0].substring(0, 2); 
         const myGu = addrParts.find(p => p.endsWith('구')) || "";
-
-        // 1. 관할 필터링 및 점수화
+        
         let filtered = offices.map(o => {
             const dist = getDistance(lat, lng, o.lat, o.lng);
             const hasSido = o.covers.includes(mySido);
             const hasGu = myGu && o.covers.includes(myGu);
-            
-            // 점수 시스템: 구 일치(100점), 시도 일치(50점), 타지역(0점)
+         
             let score = 0;
             if (hasGu) score = 100;
             else if (hasSido) score = 50;
@@ -205,23 +203,21 @@ let currentAddressResults = [];
             return { ...o, dist, score, displayCover };
         });
 
-        // 2. 검색 로직 적용
         let finalResults = [];
         if (mySido === "서울") {
-            // 서울은 1순위 구 일치, 2순위 가까운 서울 관할
+       
             finalResults = filtered
                 .filter(o => o.score > 0)
                 .sort((a, b) => b.score - a.score || a.dist - b.dist)
                 .slice(0, 2);
         } else {
-            // 지방은 해당 지사 관할(score > 0)만 보여줌 (서울 지사 노출 차단)
+     
             finalResults = filtered
                 .filter(o => o.score > 0)
                 .sort((a, b) => b.score - a.score || a.dist - b.dist);
             
-            // 지방에서 관할이 1개만 있으면 1개만 출력 (불필요한 타지사 제거)
+          
             if (finalResults.length > 1) {
-                // 만약 정확히 '구'가 일치하는 100점짜리가 있다면 그것만 보여줌
                 const topScore = finalResults[0].score;
                 if (topScore === 100) {
                     finalResults = finalResults.filter(o => o.score === 100).slice(0, 1);
@@ -288,6 +284,7 @@ let currentAddressResults = [];
 </script>
 </body>
 </html>
+
 
 
 

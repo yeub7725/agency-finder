@@ -40,14 +40,16 @@
         .section-title { font-size: 13.5px; font-weight: bold; color: var(--gov-gray); margin: 12px 0 5px 0; display: flex; align-items: center; gap: 5px; }
         .section-title::before { content: ''; width: 3px; height: 12px; background: var(--gov-blue); }
 
-        .office-card.recommend { border: 2px solid var(--gov-blue); background: #f8fbff; padding: 8px 12px; border-radius: 6px; margin-bottom: 8px; display: flex; flex-direction: column; }
-        .card-top { display: flex; justify-content: space-between; align-items: center; width: 100%; }
-        .office-name { font-size: 17px; font-weight: 800; color: var(--gov-blue); }
-        .meta-info { display: flex; align-items: center; gap: 4px; color: var(--gov-blue); font-weight: 700; } 
-        .zone-text { font-size: 14px; } 
-        .dist-text { font-size: 12px; } 
+        .office-card.recommend { border: 2px solid var(--gov-blue); background: #f8fbff; padding: 10px 12px; border-radius: 6px; margin-bottom: 8px; display: flex; flex-direction: column; }
+        .card-top { display: flex; justify-content: space-between; align-items: flex-start; width: 100%; }
+        .office-name { font-size: 17px; font-weight: 800; color: var(--gov-blue); flex: 1; }
         
-        .phone-text { font-size: 22px; font-weight: 900; color: var(--gov-red); margin: 0; line-height: 1.1; }
+        /* 관할 구역 및 거리 표시 영역 */
+        .meta-info { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; min-width: 100px; text-align: right; } 
+        .zone-text { font-size: 11px; color: var(--gov-light-gray); font-weight: normal; line-height: 1.2; word-break: keep-all; } 
+        .dist-text { font-size: 12px; color: var(--gov-blue); font-weight: 700; } 
+        
+        .phone-text { font-size: 22px; font-weight: 900; color: var(--gov-red); margin: 2px 0; line-height: 1.1; }
         .addr-text { font-size: 12px; color: var(--gov-light-gray); margin: 6px 0 0 0; border-top: 1px solid #eef2f6; padding-top: 4px; }
         
         .slim-list { background: #fff; border: 1px solid #e2e8f0; border-radius: 6px; padding: 2px 10px; }
@@ -63,11 +65,7 @@
 
         #addressList { position: absolute; top: 100%; left: 0; width: 100%; border: 2px solid var(--gov-blue); background: white; z-index: 1000; display: none; box-sizing: border-box; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
         .search-item { padding: 12px 15px; border-bottom: 1px solid #f1f5f9; cursor: pointer; font-size: 14px; text-align: left; color: #333; }
-        .search-item.active { 
-            background-color: #e2e8f0 !important; 
-            color: #000000 !important;          
-            font-weight: 800; 
-        }
+        .search-item.active { background-color: #e2e8f0 !important; color: #000 !important; font-weight: 800; }
     </style>
 </head>
 <body>
@@ -557,7 +555,7 @@ const offices = [
     {name:"서귀포시청 종합민원실", type:"토지정보과", covers:["서귀포시"], phone:"064-760-2117", address:"제주특별자치도 서귀포시 중앙로 105"}
 
 ];
-  let currentAddressResults = [];
+let currentAddressResults = [];
     let focusedIndex = -1;
     let debounceTimer;
     let lastSearchKeyword = "";
@@ -614,7 +612,6 @@ const offices = [
             const dist = getDistance(lat, lng, o.lat, o.lng);
             let isCovered = false;
 
-            // 관할 구역 매칭 (구, 시, 군 단위 확인)
             if (o.covers && (
                 (myGu && o.covers.includes(myGu)) || 
                 (myCity && o.covers.includes(myCity)) || 
@@ -623,15 +620,29 @@ const offices = [
                 isCovered = true;
             }
 
-            return { ...o, dist, isCovered };
+            // 노출용 관할 텍스트 로직
+            let displayCover = "";
+            if (o.type === "대법공") {
+                // 대법공 전용 광역 노출 텍스트
+                if (o.covers.includes("서울") || o.covers.includes("강원")) displayCover = "서울·강원";
+                else if (o.covers.includes("경기") || o.covers.includes("인천")) displayCover = "경기·인천";
+                else if (o.covers.some(c => ["대전","세종","충남","충북"].some(v => c.includes(v)))) displayCover = "대전·세종·충남북";
+                else if (o.covers.some(c => ["대구","경북"].some(v => c.includes(v)))) displayCover = "대구·경북";
+                else if (o.covers.some(c => ["부산","울산","경남"].some(v => c.includes(v)))) displayCover = "부산·울산·경남";
+                else if (o.covers.some(c => ["광주","전남","전북","제주"].some(v => c.includes(v)))) displayCover = "광주·전남북·제주";
+                else displayCover = o.covers[0]; // 예외 시 첫번째 요소
+            } else {
+                // 일반 기관: 서울이면 "서울", 그 외엔 첫번째 대표 지역
+                displayCover = o.covers.includes("서울") ? "서울" : (o.covers[0] || "");
+            }
+
+            return { ...o, dist, isCovered, displayCover };
         });
 
-        // 1. 관할 구역이 일치하는 기관만 필터링 (부동산원, 대법공 등)
         const recTargets = scoredOffices
             .filter(o => ["부동산원", "대법공", "주택공사", "지자체"].includes(o.type) && o.isCovered)
             .sort((a, b) => a.dist - b.dist);
 
-        // 2. 세무서 등 (관할 상관없이 가까운 순 2개)
         const adminResults = scoredOffices
             .filter(o => ["세무서", "토지정보과"].includes(o.type))
             .sort((a, b) => a.dist - b.dist)
@@ -663,7 +674,8 @@ const offices = [
                     <div class="card-top">
                         <span class="office-name">${o.name}</span>
                         <div class="meta-info">
-                            <span class="dist-text">(${o.dist.toFixed(1)}km)</span>
+                            <span class="zone-text">${o.displayCover}</span>
+                            <span class="dist-text">${o.dist.toFixed(1)}km</span>
                         </div>
                     </div>
                     <span class="phone-text">${o.phone}</span>
@@ -679,6 +691,7 @@ const offices = [
         adminEl.innerHTML += `</div>`;
     }
 
+    // 기본 이벤트들
     keywordInput.addEventListener("keydown", (e) => {
         const items = addressList.getElementsByClassName("search-item");
         if (e.key === "ArrowDown" || e.key === "ArrowUp") {
@@ -725,3 +738,4 @@ const offices = [
 </script>
 </body>
 </html>
+

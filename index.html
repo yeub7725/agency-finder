@@ -25,18 +25,17 @@
         .search-header { padding: 8px 20px; border-bottom: 1px solid #f1f5f9; flex-shrink: 0; }
         h1 { font-size: 1.1rem; margin: 0 0 5px 0; color: var(--gov-blue); font-weight: 900; }
         
-        /* 주소 6 : 날짜 4 비율 설정 */
+        /* 주소 6 : 날짜 4 비율 */
         .search-row { display: flex; gap: 8px; width: 100%; align-items: center; }
-        .search-container { flex: 1.2; position: relative; } /* 6 비율 */
+        .search-container { flex: 1.2; position: relative; }
         input#keyword { width: 100%; padding: 8px; font-size: 14px; border: 2px solid var(--gov-blue); border-radius: 4px; outline: none; box-sizing: border-box; }
         
-        /* 날짜 및 절대값 선 영역 */
-        .date-container { flex: 0.8; display: flex; align-items: center; gap: 5px; } /* 4 비율 */
+        .date-container { flex: 0.8; display: flex; align-items: center; gap: 5px; }
         .date-group { display: flex; align-items: center; border: 2px solid #94a3b8; border-radius: 4px; padding: 0 5px; height: 35px; background: #fff; flex-shrink: 0; }
         .date-group input { width: 22px; border: none !important; text-align: center; font-size: 13px; font-weight: bold; color: var(--gov-blue); outline: none; background: transparent; }
         .date-group span { color: #94a3b8; font-weight: bold; margin: 0 1px; }
 
-        /* 절대값 선 그래픽 (오른쪽 공백) */
+        /* 절대값 선 */
         #date-visual-line { visibility: hidden; display: flex; align-items: center; flex: 1; min-width: 70px; }
         .line-bar { height: 1px; background: #cbd5e1; flex: 1; position: relative; margin: 0 5px; }
         .line-bar::before, .line-bar::after { content: ''; position: absolute; top: -5px; width: 1px; height: 11px; background: #94a3b8; }
@@ -82,9 +81,10 @@
         .sub-desc { font-size: 11px; color: #64748b; margin-left: 3px; font-weight: normal; }
 
         #addressList { position: absolute; top: 100%; left: 0; width: 100%; border: 2px solid var(--gov-blue); background: white; z-index: 1000; display: none; box-sizing: border-box; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        .search-item { padding: 10px 15px; border-bottom: 1px solid #f1f5f9; cursor: pointer; font-size: 14px; text-align: left; }
-        .search-item.active { background-color: #e2e8f0 !important; font-weight: 800; }
-        .highlight { color: var(--gov-blue); font-weight: 900; text-decoration: underline; }
+        .search-item { padding: 10px 15px; border-bottom: 1px solid #f1f5f9; cursor: pointer; font-size: 14px; text-align: left; color: #333; }
+        
+        /* 키보드 선택 시 칸 자체의 배경색만 변경 (글자색 변화 없음) */
+        .search-item.active { background-color: #e2e8f0 !important; }
     </style>
 </head>
 <body>
@@ -174,12 +174,6 @@ const dateInputs = [document.getElementById("yy"), document.getElementById("mm")
 const visualLine = document.getElementById("date-visual-line");
 const afterDateVal = document.getElementById("after-date-val");
 
-function highlightText(text, query) {
-    if (!query) return text;
-    const re = new RegExp(`(${query})`, "gi");
-    return text.replace(re, `<span class="highlight">$1</span>`);
-}
-
 function calculateTwoYears() {
     let y = dateInputs[0].value, m = dateInputs[1].value, d = dateInputs[2].value;
     if (y.length === 2 && m.length === 2 && d.length === 2) {
@@ -216,7 +210,7 @@ function searchAddress() {
             result.forEach((item, idx) => {
                 const div = document.createElement("div");
                 div.className = "search-item";
-                div.innerHTML = highlightText(item.address_name, keyword);
+                div.innerText = item.address_name; // 텍스트 강조 없이 출력
                 div.onmousedown = (e) => { e.preventDefault(); selectItem(item); };
                 addressList.appendChild(div);
             });
@@ -235,6 +229,14 @@ function selectItem(item) {
     findNearest(parseFloat(item.y), parseFloat(item.x), item.address_name);
 }
 
+function getDistance(lat1, lon1, lat2, lon2) {
+    const R = 6371;
+    const dLat = (lat2-lat1)*Math.PI/180;
+    const dLon = (lon2-lon1)*Math.PI/180;
+    const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180) * Math.cos(lat2*Math.PI/180) * Math.sin(dLon/2)**2;
+    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
+
 function findNearest(lat, lng, fullAddress) {
     const addrParts = fullAddress.split(' ');
     const mySido = addrParts[0].substring(0, 2); 
@@ -251,14 +253,6 @@ function findNearest(lat, lng, fullAddress) {
         filtered.filter(o => o.score > 0).sort((a, b) => b.score - a.score || a.dist - b.dist).slice(0, 2) :
         filtered.filter(o => o.score > 0).sort((a, b) => b.score - a.score || a.dist - b.dist).slice(0, 1);
     displayResults(finalResults);
-}
-
-function getDistance(lat1, lon1, lat2, lon2) {
-    const R = 6371;
-    const dLat = (lat2-lat1)*Math.PI/180;
-    const dLon = (lon2-lon1)*Math.PI/180;
-    const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180) * Math.cos(lat2*Math.PI/180) * Math.sin(dLon/2)**2;
-    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }
 
 function displayResults(recData) {
@@ -309,3 +303,4 @@ document.addEventListener("click", (e) => {
 </script>
 </body>
 </html>
+

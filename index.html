@@ -17,57 +17,91 @@
         body, html { margin: 0; padding: 0; height: 100%; font-family: 'Noto Sans KR', sans-serif; overflow: hidden; background: #fff; }
         .main-wrapper { display: flex; height: 100vh; width: 100vw; }
         
-        #sidebar-search { width: 440px; min-width: 440px; display: flex; flex-direction: column; background: #fff; height: 100%; position: relative; }
-        .search-header { padding: 15px 20px; flex-shrink: 0; position: relative; z-index: 1000; }
+        #sidebar-search { width: 460px; min-width: 460px; display: flex; flex-direction: column; background: #fff; height: 100%; position: relative; }
+        .search-header { padding: 15px 20px; flex-shrink: 0; z-index: 1000; }
         h1 { font-size: 1.1rem; margin: 0 0 10px 0; color: var(--gov-blue); font-weight: 900; }
         
-        .search-row { display: flex; align-items: center; width: 100%; border: 2.5px solid var(--gov-blue); border-radius: 6px; background: #fff; box-sizing: border-box; height: 45px; }
-        .search-container { flex: 1.5; position: relative; }
-        input#keyword { width: 100%; padding: 0 15px; font-size: 14px; border: none; outline: none; background: transparent; height: 100%; }
+        /* [중요] 검색바 레이아웃 강제 고정 */
+        .search-row { 
+            display: flex; 
+            align-items: center; 
+            width: 100%; 
+            border: 2.5px solid var(--gov-blue); 
+            border-radius: 6px; 
+            background: #fff; 
+            height: 48px; 
+            box-sizing: border-box;
+            overflow: hidden; /* 내부 요소가 튀어나가지 않게 */
+        }
+
+        /* 1. 주소 입력칸 */
+        .search-container { flex: 1.2; min-width: 0; height: 100%; position: relative; }
+        input#keyword { width: 100%; height: 100%; padding: 0 12px; font-size: 14px; border: none; outline: none; box-sizing: border-box; }
         
-        .date-container { flex: 0.8; display: flex; align-items: center; justify-content: center; height: 100%; }
-        .date-group { display: flex; align-items: center; }
-        .date-group input { width: 25px; border: none !important; text-align: center; font-size: 14px; font-weight: bold; color: var(--gov-blue); outline: none; background: transparent; }
-        .date-group span { color: #cbd5e1; font-weight: bold; }
+        /* 2. 날짜 입력칸 */
+        .date-container { 
+            width: 90px; 
+            flex-shrink: 0; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            height: 100%;
+            background: transparent;
+        }
+        .date-group { display: flex; align-items: center; white-space: nowrap; }
+        .date-group input { width: 22px; border: none !important; text-align: center; font-size: 14px; font-weight: bold; color: var(--gov-blue); outline: none; background: transparent; padding: 0; }
+        .date-group span { color: #cbd5e1; font-weight: bold; margin: 0 1px; }
 
-        .price-container { flex: 1.4; display: flex; align-items: center; gap: 2px; padding: 0 10px; height: 100%; }
-        .price-input-wrap { display: flex; align-items: center; flex: 1; }
-        .price-input-wrap input { width: 100%; border: none; outline: none; font-size: 13px; font-weight: 700; color: var(--gov-gray); text-align: right; background: transparent; }
-        .price-unit { font-size: 12px; color: var(--gov-gray); font-weight: 700; margin-left: 2px; }
-        .price-slash { color: #e2e8f0; margin: 0 5px; }
+        /* 3. 가격 입력칸 */
+        .price-container { 
+            width: 160px; 
+            flex-shrink: 0; 
+            display: flex; 
+            align-items: center; 
+            height: 100%; 
+            padding-right: 10px;
+            box-sizing: border-box;
+        }
+        .price-input-wrap { display: flex; align-items: center; flex: 1; min-width: 0; }
+        .price-input-wrap input { width: 100%; border: none; outline: none; font-size: 13px; font-weight: 700; color: var(--gov-gray); text-align: right; background: transparent; padding: 0; }
+        .price-unit { font-size: 11px; color: var(--gov-gray); font-weight: 700; margin-left: 2px; flex-shrink: 0; }
+        .price-slash { color: #e2e8f0; margin: 0 4px; flex-shrink: 0; }
 
-        #addressList { position: absolute; top: calc(100% + 5px); left: 0; width: 100%; border: 2px solid var(--gov-blue); background: white; z-index: 9999; display: none; border-radius: 6px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+        /* 주소 목록 */
+        #addressList { position: absolute; top: 100%; left: 0; width: 100%; border: 2px solid var(--gov-blue); background: white; z-index: 9999; display: none; border-radius: 0 0 6px 6px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
         .search-item { padding: 12px 15px; border-bottom: 1px solid #f1f5f9; cursor: pointer; font-size: 14px; text-align: left; }
         .search-item.active { background-color: #f0f4f8; }
 
-        #date-visual-line { visibility: hidden; position: absolute; left: 440px; top: 45px; display: flex; align-items: center; width: 500px; }
-        .line-bar { height: 2px; background: var(--gov-blue); flex: 1; position: relative; margin: 0 40px; }
-        .line-bar::before { content: ''; position: absolute; left: 0; top: -5px; width: 2px; height: 12px; background: var(--gov-blue); }
-        .line-bar::after { content: ''; position: absolute; right: 0; top: -5px; width: 2px; height: 12px; background: var(--gov-blue); }
-        .mid-point { position: absolute; left: 50%; top: -5px; width: 2px; height: 12px; background: #cbd5e1; transform: translateX(-50%); }
+        /* [그래픽] 우측 시각화 영역 */
+        #date-visual-line { visibility: hidden; position: absolute; left: 460px; top: 48px; display: flex; align-items: center; width: 550px; }
+        .line-bar { height: 3px; background: var(--gov-blue); flex: 1; position: relative; margin: 0 40px; }
+        .line-bar::before { content: ''; position: absolute; left: 0; top: -6px; width: 3px; height: 15px; background: var(--gov-blue); }
+        .line-bar::after { content: ''; position: absolute; right: 0; top: -6px; width: 3px; height: 15px; background: var(--gov-blue); }
+        .mid-point { position: absolute; left: 50%; top: -6px; width: 2px; height: 15px; background: #cbd5e1; transform: translateX(-50%); }
 
-        .renew-zone { position: absolute; height: 20px; background: var(--renew-bg); border-left: 1px dashed var(--gov-blue); border-right: 1px dashed var(--gov-blue); top: -9px; display: flex; align-items: center; justify-content: center; }
-        .renew-text { font-size: 11px; color: var(--gov-blue); font-weight: 900; white-space: nowrap; position: absolute; top: -22px; }
+        .renew-zone { position: absolute; height: 24px; background: var(--renew-bg); border-left: 1.5px dashed var(--gov-blue); border-right: 1.5px dashed var(--gov-blue); top: -11px; display: flex; align-items: center; justify-content: center; }
+        .renew-text { font-size: 11px; color: var(--gov-blue); font-weight: 900; white-space: nowrap; position: absolute; top: -25px; }
 
-        .date-label { font-size: 12px; font-weight: 900; color: var(--gov-gray); position: absolute; top: 18px; white-space: nowrap; transform: translateX(-50%); text-align: center; }
-        .date-label b { display: block; font-size: 10px; font-weight: 400; color: #64748b; margin-top: 2px; line-height: 1.2; }
+        .date-label { font-size: 12px; font-weight: 900; color: var(--gov-gray); position: absolute; top: 22px; white-space: nowrap; transform: translateX(-50%); text-align: center; }
+        .date-label b { display: block; font-size: 10px; font-weight: 400; color: #64748b; margin-top: 2px; }
         .date-label.start { left: 40px; } 
         .date-label.end { left: calc(100% - 40px); }
-        .date-label.renew-start { font-size: 11px; color: var(--gov-blue); top: 38px; }
-        .date-label.renew-end { font-size: 11px; color: var(--gov-blue); top: 38px; }
+        .date-label.renew-start { font-size: 11px; color: var(--gov-blue); top: 45px; }
+        .date-label.renew-end { font-size: 11px; color: var(--gov-blue); top: 45px; }
 
-        #result-area { flex: 1; overflow-y: auto; padding: 10px 20px; }
+        /* 결과 창 */
+        #result-area { flex: 1; overflow-y: auto; padding: 10px 20px; border-top: 1px solid #f1f5f9; }
         .section-title { font-size: 14px; font-weight: 800; color: var(--gov-gray); margin: 15px 0 8px 0; display: flex; align-items: center; gap: 6px; }
         .section-title::before { content: ''; width: 3px; height: 13px; background: var(--gov-blue); }
-        .office-card.recommend { border: 2px solid var(--gov-blue); background: #f8fbff; padding: 12px; border-radius: 8px; margin-bottom: 10px; }
-        .office-name { font-size: 17px; font-weight: 900; color: var(--gov-blue); }
-        .phone-text { font-size: 28px; font-weight: 900; color: var(--gov-red); letter-spacing: -1px; }
+        .office-card.recommend { border: 2.5px solid var(--gov-blue); background: #f8fbff; padding: 15px; border-radius: 8px; margin-bottom: 12px; }
+        .office-name { font-size: 18px; font-weight: 900; color: var(--gov-blue); }
+        .phone-text { font-size: 30px; font-weight: 900; color: var(--gov-red); letter-spacing: -1px; margin: 5px 0; }
         
-        .info-box { background: #f8fafc; border: 1px solid #e2e8f0; padding: 10px; border-radius: 8px; }
-        .contact-item { display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px dotted #e2e8f0; font-size: 13.5px; align-items: center; }
-        .contact-label { font-size: 14.5px; font-weight: 800; color: #000; }
-        .sub-desc { font-size: 11px; color: #64748b; margin-left: 3px; font-weight: normal; }
-        .contact-item b { color: var(--gov-red); font-weight: 900; font-size: 14px; }
+        .info-box { background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px; border-radius: 8px; margin-bottom: 5px; }
+        .contact-item { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px dotted #e2e8f0; font-size: 13.5px; align-items: center; }
+        .contact-label { font-size: 14px; font-weight: 800; color: #000; }
+        .sub-desc { font-size: 11px; color: #64748b; margin-left: 4px; font-weight: 400; }
+        .contact-item b { color: var(--gov-red); font-weight: 900; font-size: 15px; }
     </style>
 </head>
 <body>
@@ -82,20 +116,20 @@
                 </div>
                 <div class="date-container">
                     <div class="date-group">
-                        <input type="text" id="yy" maxlength="2"><span>.</span>
-                        <input type="text" id="mm" maxlength="2"><span>.</span>
-                        <input type="text" id="dd" maxlength="2">
+                        <input type="text" id="yy" placeholder="YY" maxlength="2"><span>.</span>
+                        <input type="text" id="mm" placeholder="MM" maxlength="2"><span>.</span>
+                        <input type="text" id="dd" placeholder="DD" maxlength="2">
                     </div>
                 </div>
                 <div class="price-container">
                     <div class="price-input-wrap">
                         <input type="text" id="deposit" placeholder="보증금">
-                        <span class="price-unit">만원</span>
+                        <span class="price-unit">만</span>
                     </div>
                     <span class="price-slash">/</span>
                     <div class="price-input-wrap">
                         <input type="text" id="rent" placeholder="월세">
-                        <span class="price-unit">만원</span>
+                        <span class="price-unit">만</span>
                     </div>
                 </div>
             </div>
@@ -104,9 +138,7 @@
                 <div id="before-date-val" class="date-label start"></div>
                 <div class="line-bar">
                     <div class="mid-point"></div>
-                    <div id="renew-block" class="renew-zone">
-                        <span class="renew-text">갱신 의사표시 기간</span>
-                    </div>
+                    <div id="renew-block" class="renew-zone"><span class="renew-text">갱신 의사표시 기간</span></div>
                 </div>
                 <div id="after-date-val" class="date-label end"></div>
                 <div id="renew-start-val" class="date-label renew-start"></div>
@@ -184,16 +216,14 @@ const renewStartVal = document.getElementById("renew-start-val");
 const renewEndVal = document.getElementById("renew-end-val");
 const renewBlock = document.getElementById("renew-block");
 
-// 1. 날짜 계산 및 시각화 (24:00 로직 포함)
+// 1. 날짜 계산 및 시각화
 function calculateDates() {
     let y = dateInputs[0].value, m = dateInputs[1].value, d = dateInputs[2].value;
     if (y.length === 2 && m.length === 2 && d.length === 2) {
         let numY = parseInt(y), numM = parseInt(m), numD = parseInt(d);
         let fullYear = numY > 50 ? 1900 + numY : 2000 + numY;
-        
         let start = new Date(fullYear, numM - 1, numD);
         let end = new Date(fullYear + 2, numM - 1, numD);
-        
         let rStart = new Date(end); rStart.setMonth(rStart.getMonth() - 6);
         let rEnd = new Date(end); rEnd.setMonth(rEnd.getMonth() - 2);
 
@@ -208,23 +238,17 @@ function calculateDates() {
         renewStartVal.innerHTML = `${rsY}.${rsM}.${rsD}<b>(${rspY}.${rspM}.${rspD} 24시부터)</b>`;
         renewEndVal.innerHTML = `${reY}.${reM}.${reD}<b>(24:00까지)</b>`;
 
-        renewBlock.style.left = "75%"; 
-        renewBlock.style.width = "16.66%";
-        renewStartVal.style.left = "calc(40px + 420px * 0.75)";
-        renewEndVal.style.left = "calc(40px + 420px * 0.916)";
+        renewBlock.style.left = "75%"; renewBlock.style.width = "16.6%";
+        renewStartVal.style.left = "calc(40px + 470px * 0.75)";
+        renewEndVal.style.left = "calc(40px + 470px * 0.916)";
         visualLine.style.visibility = "visible";
-    } else {
-        visualLine.style.visibility = "hidden";
     }
 }
 
-// 2. 입력 포커스 및 금액 콤마 제어
+// 2. 포커스 제어
 dateInputs.forEach((input, idx) => {
     input.addEventListener("input", () => {
-        if (input.value.length === 2) {
-            if (idx < 2) dateInputs[idx + 1].focus();
-            else depositInput.focus();
-        }
+        if (input.value.length === 2) { if (idx < 2) dateInputs[idx + 1].focus(); else depositInput.focus(); }
         calculateDates();
     });
 });
@@ -234,28 +258,18 @@ dateInputs.forEach((input, idx) => {
         let val = e.target.value.replace(/[^0-9]/g, "");
         e.target.value = val ? Number(val).toLocaleString() : "";
     });
-    input.addEventListener("keydown", (e) => {
-        if (e.key === "Enter" && input === depositInput) rentInput.focus();
-    });
+    input.addEventListener("keydown", (e) => { if (e.key === "Enter" && input === depositInput) rentInput.focus(); });
 });
 
-// 3. 주소 검색 및 키보드 조작
+// 3. 주소 검색 (Kakao)
 function searchAddress() {
     const keyword = keywordInput.value.trim();
     if (isNavigating || !keyword || keyword === lastSearchKeyword) return;
-    if (keyword.length < 2) { addressList.style.display = "none"; return; }
-
-    const geocoder = new kakao.maps.services.Geocoder();
-    geocoder.addressSearch(keyword, function(result, status) {
+    new kakao.maps.services.Geocoder().addressSearch(keyword, function(result, status) {
         if (status === kakao.maps.services.Status.OK) {
-            currentAddressResults = result;
-            addressList.innerHTML = "";
-            addressList.style.display = "block";
-            focusedIndex = -1;
-            result.forEach((item, idx) => {
-                const div = document.createElement("div");
-                div.className = "search-item";
-                div.innerText = item.address_name;
+            currentAddressResults = result; addressList.innerHTML = ""; addressList.style.display = "block"; focusedIndex = -1;
+            result.forEach((item) => {
+                const div = document.createElement("div"); div.className = "search-item"; div.innerText = item.address_name;
                 div.onmousedown = (e) => { e.preventDefault(); selectItem(item); };
                 addressList.appendChild(div);
             });
@@ -265,11 +279,8 @@ function searchAddress() {
 
 function selectItem(item) {
     if (!item) return;
-    addressList.style.display = "none";
-    keywordInput.value = item.address_name;
-    lastSearchKeyword = item.address_name;
-    document.getElementById("rec-section").style.display = "none";
-    document.getElementById("sub-info-area").style.display = "flex";
+    addressList.style.display = "none"; keywordInput.value = item.address_name; lastSearchKeyword = item.address_name;
+    document.getElementById("rec-section").style.display = "none"; document.getElementById("sub-info-area").style.display = "flex";
     setTimeout(() => dateInputs[0].focus(), 10);
     findNearest(parseFloat(item.y), parseFloat(item.x), item.address_name);
 }
@@ -277,52 +288,32 @@ function selectItem(item) {
 keywordInput.addEventListener("keydown", (e) => {
     const items = addressList.getElementsByClassName("search-item");
     if (e.key === "ArrowDown" || e.key === "ArrowUp") {
-        if (items.length === 0) return;
-        e.preventDefault();
-        isNavigating = true;
+        e.preventDefault(); isNavigating = true;
         if (e.key === "ArrowDown") focusedIndex = (focusedIndex + 1) % items.length;
         else focusedIndex = (focusedIndex - 1 + items.length) % items.length;
-        for (let i = 0; i < items.length; i++) {
-            items[i].classList.toggle("active", i === focusedIndex);
-        }
+        for (let i = 0; i < items.length; i++) items[i].classList.toggle("active", i === focusedIndex);
     }
-    if (e.key === "Enter") {
-        if (focusedIndex > -1) selectItem(currentAddressResults[focusedIndex]);
-        else if (items.length > 0) selectItem(currentAddressResults[0]);
-    }
+    if (e.key === "Enter") { if (focusedIndex > -1) selectItem(currentAddressResults[focusedIndex]); else if (items.length > 0) selectItem(currentAddressResults[0]); }
 });
 
-keywordInput.addEventListener("input", () => {
-    isNavigating = false;
-    clearTimeout(debounceTimer);
-    debounceTimer = setTimeout(searchAddress, 200);
-});
+keywordInput.addEventListener("input", () => { isNavigating = false; clearTimeout(debounceTimer); debounceTimer = setTimeout(searchAddress, 200); });
 
-// 4. 거리 및 관할 매칭 로직
+// 4. 거리 매칭
 function getDistance(lat1, lon1, lat2, lon2) {
-    const R = 6371;
-    const dLat = (lat2-lat1)*Math.PI/180;
-    const dLon = (lon2-lon1)*Math.PI/180;
+    const R = 6371; const dLat = (lat2-lat1)*Math.PI/180; const dLon = (lon2-lon1)*Math.PI/180;
     const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180) * Math.cos(lat2*Math.PI/180) * Math.sin(dLon/2)**2;
     return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }
 
 function findNearest(lat, lng, fullAddress) {
-    const addrParts = fullAddress.split(' ');
-    const mySido = addrParts[0].substring(0, 2);
-    const myGu = addrParts.find(p => p.endsWith('구')) || "";
-    
+    const addrParts = fullAddress.split(' '); const mySido = addrParts[0].substring(0, 2); const myGu = addrParts.find(p => p.endsWith('구')) || "";
     let filtered = offices.map(o => {
         const dist = getDistance(lat, lng, o.lat, o.lng);
-        const hasSido = o.covers.includes(mySido);
-        const hasGu = myGu && o.covers.includes(myGu);
+        const hasSido = o.covers.includes(mySido); const hasGu = myGu && o.covers.includes(myGu);
         let score = hasGu ? 100 : (hasSido ? 50 : 0);
         return { ...o, dist, score, displayCover: o.covers[0] };
     });
-    
-    let final = filtered.filter(o => o.score > 0)
-                        .sort((a, b) => b.score - a.score || a.dist - b.dist)
-                        .slice(0, (mySido === "서울" ? 2 : 1));
+    let final = filtered.filter(o => o.score > 0).sort((a, b) => b.score - a.score || a.dist - b.dist).slice(0, (mySido === "서울" ? 2 : 1));
     displayResults(final);
 }
 
@@ -335,21 +326,18 @@ function displayResults(data) {
                 <span class="office-name">${o.name}</span>
                 <span style="font-size:11px; color:var(--gov-light-gray); font-weight:700;">${o.displayCover} (${o.dist.toFixed(1)}km)</span>
             </div>
-            <div style="display:flex; align-items:baseline; gap:5px;">
-                <span class="phone-text">${o.phone}</span>
-                <span style="font-size:12px; font-weight:800; color:var(--gov-red); opacity:0.5;">${o.type === "지자체" ? "문자 X" : "문자 O"}</span>
-            </div>
-            <p style="font-size:12px; color:var(--gov-gray); margin:5px 0 0 0; border-top:1px solid #eee; padding-top:5px;">${o.address}</p>
+            <div class="phone-text">${o.phone}</div>
+            <div style="font-size:12px; font-weight:800; color:var(--gov-red); opacity:0.6; margin-bottom:5px;">${o.type === "지자체" ? "문자 수신 불가" : "문자 수신 가능"}</div>
+            <p style="font-size:12px; color:var(--gov-gray); margin:0; border-top:1px solid #eee; padding-top:8px;">${o.address}</p>
         </div>`;
     });
 }
 
-document.addEventListener("click", (e) => {
-    if (!e.target.closest('.search-container')) addressList.style.display = "none";
-});
+document.addEventListener("click", (e) => { if (!e.target.closest('.search-container')) addressList.style.display = "none"; });
 </script>
 </body>
 </html>
+
 
 
 

@@ -555,201 +555,210 @@ const offices = [
 
 ];
 let currentAddressResults = [];
-    let focusedIndex = -1;
-    let debounceTimer;
-    let lastSearchKeyword = "";
-    let isNavigating = false; 
+let focusedIndex = -1;
+let debounceTimer;
+let lastSearchKeyword = "";
+let isNavigating = false; 
 
-    const keywordInput = document.getElementById("keyword");
-    const addressList = document.getElementById("addressList");
+const keywordInput = document.getElementById("keyword");
+const addressList = document.getElementById("addressList");
 
-    function searchAddress() {
-        const keyword = keywordInput.value.trim();
-        if (isNavigating || !keyword || keyword === lastSearchKeyword) return;
-        if (keyword.length < 2) { 
-            addressList.style.display = "none"; 
+
+function searchAddress() {
+    const keyword = keywordInput.value.trim();
+    if (isNavigating || !keyword || keyword === lastSearchKeyword) return;
+    if (keyword.length < 2) { 
+        addressList.style.display = "none"; 
+        addressList.innerHTML = "";
+        return; 
+    }
+    const geocoder = new kakao.maps.services.Geocoder();
+    geocoder.addressSearch(keyword, function(result, status) {
+        if (isNavigating) return;
+        if (status === kakao.maps.services.Status.OK) {
+            currentAddressResults = result;
             addressList.innerHTML = "";
-            return; 
+            addressList.style.display = "block";
+            focusedIndex = -1; 
+            result.forEach((item, idx) => {
+                const div = document.createElement("div");
+                div.className = "search-item";
+                div.innerHTML = item.address_name;
+                div.onmousedown = (e) => { e.preventDefault(); selectItem(item); };
+                addressList.appendChild(div);
+            });
+        } else { addressList.style.display = "none"; }
+    });
+}
+
+
+function selectItem(item) {
+    if (!item) return;
+    isNavigating = false; 
+    addressList.style.display = "none";
+    keywordInput.value = item.address_name;
+    lastSearchKeyword = item.address_name;
+    document.getElementById("rec-section").style.display = "none";
+    document.getElementById("sub-info-area").style.display = "flex";
+    findNearest(parseFloat(item.y), parseFloat(item.x), item.address_name);
+}
+
+
+function findNearest(lat, lng, fullAddress) {
+    const addrParts = fullAddress.split(' ');
+    
+
+    const mySido = addrParts[0].substring(0, 2); 
+    const myGu = addrParts.find(p => p.endsWith('구')) || "";
+    const myCity = addrParts.find(p => p.endsWith('시')) || "";
+    const myGun = addrParts.find(p => p.endsWith('군')) || "";
+
+    const scoredOffices = offices.map(o => {
+        const dist = getDistance(lat, lng, o.lat, o.lng);
+        let isInJurisdiction = false; 
+        let isPrimaryZone = false;    
+
+        if (o.covers && (
+            o.covers.includes(mySido) || 
+            (myGu && o.covers.includes(myGu)) || 
+            (myCity && o.covers.includes(myCity)) || 
+            (myGun && o.covers.includes(myGun))
+        )) {
+            isInJurisdiction = true;
         }
-        const geocoder = new kakao.maps.services.Geocoder();
-        geocoder.addressSearch(keyword, function(result, status) {
-            if (isNavigating) return;
-            if (status === kakao.maps.services.Status.OK) {
-                currentAddressResults = result;
-                addressList.innerHTML = "";
-                addressList.style.display = "block";
-                focusedIndex = -1; 
-                result.forEach((item, idx) => {
-                    const div = document.createElement("div");
-                    div.className = "search-item";
-                    div.innerHTML = item.address_name;
-                    div.onmousedown = (e) => { e.preventDefault(); selectItem(item); };
-                    addressList.appendChild(div);
-                });
-            } else { addressList.style.display = "none"; }
-        });
-    }
 
-    function selectItem(item) {
-        if (!item) return;
-        isNavigating = false; 
-        addressList.style.display = "none";
-        keywordInput.value = item.address_name;
-        lastSearchKeyword = item.address_name;
-        document.getElementById("rec-section").style.display = "none";
-        document.getElementById("sub-info-area").style.display = "flex";
-        findNearest(parseFloat(item.y), parseFloat(item.x), item.address_name);
-    }
-
-    function findNearest(lat, lng, fullAddress) {
-        const addrParts = fullAddress.split(' ');
-        const mySido = addrParts[0].substring(0, 2); 
-        const myGu = addrParts.find(p => p.endsWith('구')) || "";
-        const myCity = addrParts.find(p => p.endsWith('시')) || "";
-        const myGun = addrParts.find(p => p.endsWith('군')) || "";
-
-        const scoredOffices = offices.map(o => {
-            const dist = getDistance(lat, lng, o.lat, o.lng);
-            let isInJurisdiction = false; 
-            let isPrimaryZone = false;    
-
-            // 관할권 확인
-            if (o.covers && (
-                o.covers.includes(mySido) || 
-                (myGu && o.covers.includes(myGu)) || 
-                (myCity && o.covers.includes(myCity)) || 
-                (myGun && o.covers.includes(myGun))
-            )) {
-                isInJurisdiction = true;
-            }
-
-            // 특정 동네 담당 확인 (1순위용)
-            if (o.covers && (
-                (myGu && o.covers.includes(myGu)) || 
-                (myCity && o.covers.includes(myCity)) || 
-                (myGun && o.covers.includes(myGun))
-            )) {
-                isPrimaryZone = true;
-            }
-
-            // 노출용 관할 텍스트
-            let displayCover = "";
-            if (o.type === "대법공") {
-                const c = o.covers || [];
-                if (c.includes("서울") || c.includes("강원")) displayCover = "서울·강원";
-                else if (c.includes("경기") || c.includes("인천")) displayCover = "경기·인천";
-                else if (c.some(v => ["대전","세종","충남","충북"].includes(v))) displayCover = "대전·세종·충남북";
-                else if (c.some(v => ["대구","경북"].includes(v))) displayCover = "대구·경북";
-                else if (c.some(v => ["부산","울산","경남"].includes(v))) displayCover = "부산·울산·경남";
-                else if (c.some(v => ["광주","전남","전북","제주"].includes(v))) displayCover = "광주·전남북·제주";
-                else displayCover = c[0] || "";
-            } else {
-                displayCover = o.covers.includes("서울") ? "서울" : (o.covers[0] || "");
-            }
-
-            return { ...o, dist, isInJurisdiction, isPrimaryZone, displayCover };
-        });
-
-        // 결과 필터링 및 정렬
-        const recTargets = scoredOffices
-            .filter(o => ["부동산원", "대법공", "주택공사", "지자체"].includes(o.type) && o.isInJurisdiction)
-            .sort((a, b) => {
-                if (a.isPrimaryZone !== b.isPrimaryZone) return b.isPrimaryZone - a.isPrimaryZone;
-                return a.dist - b.dist;
-            })
-            .slice(0, 2); 
-
-        const adminResults = scoredOffices
-            .filter(o => ["세무서", "토지정보과"].includes(o.type))
-            .sort((a, b) => a.dist - b.dist)
-            .slice(0, 2);
-
-        displayResults(recTargets, adminResults);
-    }
-
-    function getDistance(lat1, lon1, lat2, lon2) {
-        const R = 6371;
-        const dLat = (lat2-lat1)*Math.PI/180;
-        const dLon = (lon2-lon1)*Math.PI/180;
-        const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180) * Math.cos(lat2*Math.PI/180) * Math.sin(dLon/2)**2;
-        return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    }
-
-    function displayResults(recData, adminData) {
-        const officeList = document.getElementById("office-list");
-        const adminEl = document.getElementById("admin-section");
-        officeList.innerHTML = `<span class="section-title">관할기관 안내</span>`;
+        const isCorrectSido = o.covers && o.covers.includes(mySido);
         
-        if (recData.length === 0) {
-            officeList.innerHTML += `<p style="font-size:13px; color:#94a3b8; padding:15px;">해당 지역의 관할 정보를 찾을 수 없습니다.</p>`;
+        if (isCorrectSido && (
+            (myGu && o.covers.includes(myGu)) || 
+            (myCity && o.covers.includes(myCity)) || 
+            (myGun && o.covers.includes(myGun))
+        )) {
+            isPrimaryZone = true;
         }
 
-        recData.forEach(o => {
-            officeList.innerHTML += `
-                <div class="office-card recommend">
-                    <div class="card-top">
-                        <span class="office-name">${o.name}</span>
-                        <div class="meta-info">
-                            <span class="zone-text">${o.displayCover}</span>
-                            <span class="dist-text">${o.dist.toFixed(1)}km</span>
-                        </div>
+     
+        let displayCover = "";
+        if (o.type === "대법공") {
+            const c = o.covers || [];
+            if (c.includes("서울") || c.includes("강원")) displayCover = "서울·강원";
+            else if (c.includes("경기") || c.includes("인천")) displayCover = "경기·인천";
+            else if (c.some(v => ["대전","세종","충남","충북"].includes(v))) displayCover = "대전·세종·충남북";
+            else if (c.some(v => ["대구","경북"].includes(v))) displayCover = "대구·경북";
+            else if (c.some(v => ["부산","울산","경남"].includes(v))) displayCover = "부산·울산·경남";
+            else if (c.some(v => ["광주","전남","전북","제주"].includes(v))) displayCover = "광주·전남북·제주";
+            else displayCover = c[0] || "";
+        } else {
+ 
+            displayCover = o.covers && o.covers.includes("서울") ? "서울" : (o.covers ? o.covers[0] : "");
+        }
+
+        return { ...o, dist, isInJurisdiction, isPrimaryZone, displayCover };
+    });
+
+    const recTargets = scoredOffices
+        .filter(o => ["부동산원", "대법공", "주택공사", "지자체"].includes(o.type) && o.isInJurisdiction)
+        .sort((a, b) => {
+    
+            if (a.isPrimaryZone !== b.isPrimaryZone) return b.isPrimaryZone - a.isPrimaryZone;
+     
+            return a.dist - b.dist;
+        })
+        .slice(0, 2); 
+    const adminResults = scoredOffices
+        .filter(o => ["세무서", "토지정보과"].includes(o.type))
+        .sort((a, b) => a.dist - b.dist)
+        .slice(0, 2);
+
+    displayResults(recTargets, adminResults);
+}
+
+
+function getDistance(lat1, lon1, lat2, lon2) {
+    const R = 6371;
+    const dLat = (lat2-lat1)*Math.PI/180;
+    const dLon = (lon2-lon1)*Math.PI/180;
+    const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180) * Math.cos(lat2*Math.PI/180) * Math.sin(dLon/2)**2;
+    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
+
+
+function displayResults(recData, adminData) {
+    const officeList = document.getElementById("office-list");
+    const adminEl = document.getElementById("admin-section");
+    officeList.innerHTML = `<span class="section-title">관할기관 안내</span>`;
+    
+    if (recData.length === 0) {
+        officeList.innerHTML += `<p style="font-size:13px; color:#94a3b8; padding:15px;">해당 지역의 관할 정보를 찾을 수 없습니다.</p>`;
+    }
+
+    recData.forEach(o => {
+        officeList.innerHTML += `
+            <div class="office-card recommend">
+                <div class="card-top">
+                    <span class="office-name">${o.name}</span>
+                    <div class="meta-info">
+                        <span class="zone-text">${o.displayCover}</span>
+                        <span class="dist-text">${o.dist.toFixed(1)}km</span>
                     </div>
-                    <span class="phone-text">${o.phone}</span>
-                    <p class="addr-text">${o.address}</p>
-                </div>`;
-        });
+                </div>
+                <span class="phone-text">${o.phone}</span>
+                <p class="addr-text">${o.address}</p>
+            </div>`;
+    });
 
-        adminEl.innerHTML = `<span class="section-title">중개사, 세금관련 문의</span><div class="slim-list">`;
-        if (adminData.length === 0) adminEl.innerHTML += `<div class="slim-item">데이터 없음</div>`;
-        adminData.forEach(o => {
-            adminEl.innerHTML += `<div class="slim-item"><span class="name">${o.name}</span><span class="phone">${o.phone}</span></div>`;
-        });
-        adminEl.innerHTML += `</div>`;
+    adminEl.innerHTML = `<span class="section-title">중개사, 세금관련 문의</span><div class="slim-list">`;
+    if (adminData.length === 0) adminEl.innerHTML += `<div class="slim-item">데이터 없음</div>`;
+    adminData.forEach(o => {
+        adminEl.innerHTML += `<div class="slim-item"><span class="name">${o.name}</span><span class="phone">${o.phone}</span></div>`;
+    });
+    adminEl.innerHTML += `</div>`;
+}
+
+keywordInput.addEventListener("keydown", (e) => {
+    const items = addressList.getElementsByClassName("search-item");
+    if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+        if (items.length === 0) return;
+        e.preventDefault();
+        isNavigating = true; 
+        if (e.key === "ArrowDown") focusedIndex = (focusedIndex + 1) % items.length;
+        else focusedIndex = (focusedIndex - 1 + items.length) % items.length;
+        updateHighlight(items);
+        return;
     }
-
-    keywordInput.addEventListener("keydown", (e) => {
-        const items = addressList.getElementsByClassName("search-item");
-        if (e.key === "ArrowDown" || e.key === "ArrowUp") {
-            if (items.length === 0) return;
-            e.preventDefault();
-            isNavigating = true; 
-            if (e.key === "ArrowDown") focusedIndex = (focusedIndex + 1) % items.length;
-            else focusedIndex = (focusedIndex - 1 + items.length) % items.length;
-            updateHighlight(items);
-            return;
-        }
-        if (e.key === "Enter") {
-            e.preventDefault();
-            if (focusedIndex > -1) selectItem(currentAddressResults[focusedIndex]);
-            else if (currentAddressResults.length > 0) selectItem(currentAddressResults[0]);
-        }
-    });
-
-    function updateHighlight(items) {
-        for (let i = 0; i < items.length; i++) {
-            if (i === focusedIndex) {
-                items[i].classList.add("active");
-                items[i].scrollIntoView({ block: "nearest" });
-            } else { items[i].classList.remove("active"); }
-        }
+    if (e.key === "Enter") {
+        e.preventDefault();
+        if (focusedIndex > -1) selectItem(currentAddressResults[focusedIndex]);
+        else if (currentAddressResults.length > 0) selectItem(currentAddressResults[0]);
     }
+});
 
-    keywordInput.addEventListener("input", () => {
-        isNavigating = false; 
-        clearTimeout(debounceTimer);
-        debounceTimer = setTimeout(searchAddress, 200);
-    });
+function updateHighlight(items) {
+    for (let i = 0; i < items.length; i++) {
+        if (i === focusedIndex) {
+            items[i].classList.add("active");
+            items[i].scrollIntoView({ block: "nearest" });
+        } else { items[i].classList.remove("active"); }
+    }
+}
 
-    keywordInput.addEventListener("click", () => {
-        if (addressList.innerHTML !== "") addressList.style.display = "block";
-    });
+keywordInput.addEventListener("input", () => {
+    isNavigating = false; 
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(searchAddress, 200);
+});
 
-    document.addEventListener("click", (e) => {
-        if (e.target !== keywordInput) {
-            addressList.style.display = "none";
-            isNavigating = false;
-        }
-    });
+keywordInput.addEventListener("click", () => {
+    if (addressList.innerHTML !== "") addressList.style.display = "block";
+});
+
+document.addEventListener("click", (e) => {
+    if (e.target !== keywordInput) {
+        addressList.style.display = "none";
+        isNavigating = false;
+    }
+});
 </script>
 </body>
 </html>
+

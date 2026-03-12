@@ -14,20 +14,23 @@
         --gov-gray: rgb(87, 87, 87);
     }
 
-    body, html { margin: 0; padding: 0; height: 100%; font-family: 'Noto Sans KR', sans-serif; overflow: hidden; background: #fff; }
+    body, html { 
+        margin: 0; padding: 0; height: 100%; 
+        font-family: 'Noto Sans KR', sans-serif; 
+        overflow: hidden; background: #fff; 
+    }
+
     .main-wrapper { display: flex; height: 100vh; width: 100vw; }
     
-
     #sidebar-search { 
         width: 440px; min-width: 440px; max-width: 440px; 
         border-right: 1px solid #e2e8f0; display: flex; flex-direction: column; 
         background: #fff; height: 100%; box-sizing: border-box;
     }
     
-    .search-header { padding: 15px 20px; flex-shrink: 0; border-bottom: 1px solid #f1f5f9; box-sizing: border-box; }
+    .search-header { padding: 15px 20px; flex-shrink: 0; border-bottom: 1px solid #f1f5f9; }
     h1 { font-size: 1.3rem; margin: 0 0 10px 0; color: var(--gov-blue); font-weight: 900; }
     
-   
     .search-row { display: flex; gap: 8px; align-items: center; width: 100%; box-sizing: border-box; }
     .search-container { flex: 2.2; position: relative; }
     
@@ -44,12 +47,26 @@
     }
     .date-group input { width: 30px; border: none !important; text-align: center; font-size: 15px; font-weight: bold; color: var(--gov-blue); outline: none; background: transparent; }
 
-    #result-area { flex: 1; overflow-y: auto; padding: 10px 20px; display: flex; flex-direction: column; gap: 10px; box-sizing: border-box; }
+    #result-area { flex: 1; overflow-y: auto; padding: 10px 20px; display: flex; flex-direction: column; gap: 10px; }
+
+  
+    .intro-msg { 
+        text-align: center; 
+        color: #64748b; 
+        opacity: 0.5;
+        margin-top: 150px; 
+        font-size: 17px; 
+        font-weight: 500; 
+        line-height: 1.6;
+        display: block;
+        width: 100%;
+        word-break: keep-all;
+    }
 
     .section-title { font-size: 14.5px; font-weight: bold; color: #1e293b; margin: 10px 0 5px 0; display: flex; align-items: center; gap: 6px; }
     .section-title::before { content: ''; display: inline-block; width: 4px; height: 14px; background: var(--gov-blue); border-radius: 2px; }
 
-
+  
     .office-card { border: 1px solid #e2e8f0; padding: 12px; border-radius: 8px; background: #fff; margin-bottom: 2px; }
     .office-card.recommend { border: 2px solid var(--gov-blue); background: #f8fbff; }
     
@@ -57,14 +74,15 @@
     .office-name { font-size: 18px; font-weight: 800; color: #1e293b; }
     .dist-text { font-size: 15px; font-weight: 700; color: var(--gov-blue); }
     
-
     .phone-text { font-size: 24px; font-weight: 900; color: var(--gov-blue); display: block; margin-bottom: 4px; letter-spacing: -0.5px; }
     .addr-text { font-size: 13px; color: #64748b; margin: 0; line-height: 1.4; }
     
-    .info-box { background: #f8fafc; border: 1px solid #e2e8f0; padding: 6px 12px; border-radius: 6px; font-size: 13.5px; }
+
+    .info-box { background: #f8fafc; border: 1px solid #e2e8f0; padding: 6px 12px; border-radius: 6px; font-size: 13.5px; text-align: left; }
     .info-box p { margin: 3px 0; }
     .contact-item { display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px dotted #e2e8f0; font-size: 14px; }
     .contact-item b { color: var(--gov-red); font-size: 15px; }
+
 
     #addressList { position: absolute; top: calc(100% + 5px); left: 0; width: 100%; border: 2px solid var(--gov-blue); background: white; z-index: 1000; display: none; border-radius: 0; box-sizing: border-box; }
     .search-item { padding: 12px; border-bottom: 1px solid #f1f5f9; cursor: pointer; font-size: 14.5px; text-align: left; }
@@ -708,6 +726,7 @@ document.addEventListener("DOMContentLoaded", function(){
 </script>
 </body>
 </html>
+
 
 
 

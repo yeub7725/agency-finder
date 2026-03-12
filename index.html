@@ -606,8 +606,7 @@ function selectItem(item) {
 
 function findNearest(lat, lng, fullAddress) {
     const addrParts = fullAddress.split(' ');
-    
-    // 1. 현재 검색한 주소의 구성 요소 추출 (시/도 + 구/시/군)
+
     const mySido = addrParts[0].substring(0, 2); 
     const myGu = addrParts.find(p => p.endsWith('구')) || "";
     const myCity = addrParts.find(p => p.endsWith('시')) || "";
@@ -618,17 +617,13 @@ function findNearest(lat, lng, fullAddress) {
         let isInJurisdiction = false; 
         let isPrimaryZone = false;    
 
-        // [광역 단위 일치 확인] 기관의 covers에 내 시/도(부산, 서울 등)가 명확히 적혀있는지 확인
         const isCorrectSido = o.covers && o.covers.includes(mySido);
 
-        // [로직 1] 관할권 필터링 (내 시/도 담당인 경우만 후보군 합격)
-        // 이 로직 덕분에 부산 검색 시 서울/포항 기관은 여기서 바로 걸러집니다.
+  
         if (isCorrectSido) {
             isInJurisdiction = true;
         }
 
-        // [로직 2] 1순위 배정 (해당 시/도 내에서 '특정 구'까지 담당하는 기관)
-        // 서울 강서구 검색 시 '강서구'가 데이터에 포함된 기관이 1순위가 됩니다.
         if (isCorrectSido && (
             (myGu && o.covers.includes(myGu)) || 
             (myCity && o.covers.includes(myCity)) || 
@@ -637,7 +632,7 @@ function findNearest(lat, lng, fullAddress) {
             isPrimaryZone = true;
         }
 
-        // 노출용 관할 텍스트 로직
+    
         let displayCover = "";
         if (o.type === "대법공") {
             const c = o.covers || [];
@@ -655,18 +650,18 @@ function findNearest(lat, lng, fullAddress) {
         return { ...o, dist, isInJurisdiction, isPrimaryZone, displayCover };
     });
 
-    // 2. 최종 리스트업 (철저히 내 '시/도' 관할 내에서만 선정)
+  
     const recTargets = scoredOffices
         .filter(o => ["부동산원", "대법공", "주택공사", "지자체"].includes(o.type) && o.isInJurisdiction)
         .sort((a, b) => {
-            // 1순위: 특정 구 담당(isPrimaryZone)이 무조건 최우선
+        
             if (a.isPrimaryZone !== b.isPrimaryZone) return b.isPrimaryZone - a.isPrimaryZone;
-            // 2순위: 그 외에는 같은 시/도 내에서 거리순
+         
             return a.dist - b.dist;
         })
-        .slice(0, 2); // 최대 2개 (하나뿐이면 하나만 나옴)
+        .slice(0, 2); 
 
-    // 행정기관(세무서 등)도 내 시/도 관할 내에서만 거리순 노출
+
     const adminResults = scoredOffices
         .filter(o => ["세무서", "토지정보과"].includes(o.type) && o.isInJurisdiction)
         .sort((a, b) => a.dist - b.dist)
@@ -763,5 +758,6 @@ document.addEventListener("click", (e) => {
 </script>
 </body>
 </html>
+
 
 

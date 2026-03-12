@@ -662,12 +662,12 @@ function displayResults(recData, adminData) {
     const adminEl = document.getElementById("admin-section");
     const subInfoArea = document.getElementById("sub-info-area");
     
-    // 상단 결과 영역
+   
     recEl.innerHTML = `<span class="section-title">관할기관 안내</span>`;
     recData.forEach(o => {
-        // 거리 및 관할구역 텍스트 생성
+     
         const distHtml = o.dist !== null ? `<span class="dist-text">${o.dist.toFixed(1)}km</span>` : '';
-        // 데이터에 'region' 또는 'zone' 필드가 있다고 가정합니다. (예: "경기·인천")
+       
         const zoneHtml = o.region ? `<span class="zone-text">${o.region}</span>` : '';
 
         recEl.innerHTML += `
@@ -683,7 +683,7 @@ function displayResults(recData, adminData) {
         `;
     });
 
-    // 하단 결과 영역 (토지정보과, 세무서)
+   
     adminEl.innerHTML = `<span class="section-title">중개사, 세금관련 문의</span>`;
     let slimHtml = `<div class="slim-list">`;
     adminData.forEach(o => {
@@ -697,7 +697,7 @@ function displayResults(recData, adminData) {
     slimHtml += `</div>`;
     adminEl.innerHTML += slimHtml;
 
-    // 안내 문구가 사라지고 실제 결과 영역을 보여줌
+   
     subInfoArea.style.display = "flex"; 
 }
 
@@ -755,6 +755,7 @@ document.addEventListener("DOMContentLoaded", function(){
 </script>
 </body>
 </html>
+
 
 
 

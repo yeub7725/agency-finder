@@ -40,7 +40,6 @@
         .section-title { font-size: 13.5px; font-weight: bold; color: var(--gov-gray); margin: 12px 0 5px 0; display: flex; align-items: center; gap: 5px; }
         .section-title::before { content: ''; width: 3px; height: 12px; background: var(--gov-blue); }
 
-        /* 결과 카드 디자인 */
         .office-card.recommend { border: 2px solid var(--gov-blue); background: #f8fbff; padding: 8px 12px; border-radius: 6px; margin-bottom: 8px; display: flex; flex-direction: column; }
         .card-top { display: flex; justify-content: space-between; align-items: center; width: 100%; }
         .office-name { font-size: 17px; font-weight: 800; color: var(--gov-blue); }
@@ -62,14 +61,13 @@
         .contact-item .sub-desc { font-size: 11px; color: #64748b; font-weight: normal; margin-left: 5px; }
         .contact-item b { color: var(--gov-red); }
 
-        /* 미리보기 하이라이트 가독성 고대비 */
         #addressList { position: absolute; top: 100%; left: 0; width: 100%; border: 2px solid var(--gov-blue); background: white; z-index: 1000; display: none; box-sizing: border-box; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
         .search-item { padding: 12px 15px; border-bottom: 1px solid #f1f5f9; cursor: pointer; font-size: 14px; text-align: left; color: #333; }
         .search-item.active { 
-    background-color: #e2e8f0 !important; 
-    color: #000000 !important;         
-    font-weight: 800; 
-}
+            background-color: #e2e8f0 !important; 
+            color: #000000 !important;          
+            font-weight: 800; 
+        }
     </style>
 </head>
 <body>
@@ -95,35 +93,35 @@
             <div id="rec-section">
                 <p class="intro-msg">주소를 입력하시면 관할 정보가 표시됩니다.</p>
             </div>
-           <div id="sub-info-area" style="display:none;">
-    <div id="top-content">
-        <div id="office-list"></div>
-        <div class="section-title">신청 시 필요 서류</div>
-        <div class="info-box">
-            <p>• <b>공통:</b> 신분증, 등기부등본, 건축물대장, 임대차계약서, 주민등록초본</p>
-            <p>• <b>대리:</b> 위임장, 인감증명서, 대리인 신분증</p>
-        </div>
-        <div class="section-title">주요 업무 문의처</div>
-        <div class="info-box">
-            <div class="contact-item">
-                <span>한국부동산원<span class="sub-desc">(1.공시 3.K-아파트 0.기타)</span></span>
-                <b>1600-2828</b>
+            <div id="sub-info-area" style="display:none;">
+                <div id="top-content">
+                    <div id="office-list"></div>
+                    <div class="section-title">신청 시 필요 서류</div>
+                    <div class="info-box">
+                        <p>• <b>공통:</b> 신분증, 등기부등본, 건축물대장, 임대차계약서, 주민등록초본</p>
+                        <p>• <b>대리:</b> 위임장, 인감증명서, 대리인 신분증</p>
+                    </div>
+                    <div class="section-title">주요 업무 문의처</div>
+                    <div class="info-box">
+                        <div class="contact-item">
+                            <span>한국부동산원<span class="sub-desc">(1.공시 3.K-아파트 0.기타)</span></span>
+                            <b>1600-2828</b>
+                        </div>
+                        <div class="contact-item">전자계약<b>1833-4662</b></div>
+                        <div class="contact-item">임대차신고<b>1533-2949</b></div>
+                        <div class="contact-item">LH공사<b>1600-1004</b></div>
+                        <div class="contact-item">렌트홈<b>1670-8004</b></div>
+                        <div class="contact-item">
+                            <span>공동주택 조정위<span class="sub-desc">(장기수선 충당금 · 관리비)</span></span>
+                            <b>031-738-3300</b>
+                        </div>
+                        <div class="contact-item">국토부<b>1599-0001</b></div>
+                        <div class="contact-item">대법공<b>132</b></div>
+                        <div class="contact-item">국세청<b>126</b></div>
+                    </div>
+                </div>
+                <div id="admin-section"></div>
             </div>
-            <div class="contact-item">전자계약<b>1833-4662</b></div>
-            <div class="contact-item">임대차신고<b>1533-2949</b></div>
-            <div class="contact-item">LH공사<b>1600-1004</b></div>
-            <div class="contact-item">렌트홈<b>1670-8004</b></div>
-            <div class="contact-item">
-                <span>공동주택 조정위<span class="sub-desc">(장기수선 충당금 · 관리비)</span></span>
-                <b>031-738-3300</b>
-            </div>
-            <div class="contact-item">국토부<b>1599-0001</b></div>
-            <div class="contact-item">대법공<b>132</b></div>
-            <div class="contact-item">국세청<b>126</b></div>
-        </div>
-    </div>
-    <div id="admin-section"></div>
-</div>
         </div>
     </div>
     <div id="content-area"></div>
@@ -559,7 +557,7 @@ const offices = [
     {name:"서귀포시청 종합민원실", type:"토지정보과", covers:["서귀포시"], phone:"064-760-2117", address:"제주특별자치도 서귀포시 중앙로 105"}
 
 ];
-    let currentAddressResults = [];
+   let currentAddressResults = [];
     let focusedIndex = -1;
     let debounceTimer;
     let lastSearchKeyword = "";
@@ -568,43 +566,30 @@ const offices = [
     const keywordInput = document.getElementById("keyword");
     const addressList = document.getElementById("addressList");
 
-    // [검색 로직]
     function searchAddress() {
         const keyword = keywordInput.value.trim();
-        
-        // 조작 중이거나 키워드가 같거나 비어있으면 중단
         if (isNavigating || !keyword || keyword === lastSearchKeyword) return;
-        
         if (keyword.length < 2) { 
             addressList.style.display = "none"; 
             addressList.innerHTML = "";
             return; 
         }
-        
         const geocoder = new kakao.maps.services.Geocoder();
         geocoder.addressSearch(keyword, function(result, status) {
-            // 키보드 조작 중 뒤늦게 온 응답은 무시 (하이라이트 유지 핵심)
             if (isNavigating) return;
-
             if (status === kakao.maps.services.Status.OK) {
                 currentAddressResults = result;
                 addressList.innerHTML = "";
                 addressList.style.display = "block";
                 focusedIndex = -1; 
-                
                 result.forEach((item, idx) => {
                     const div = document.createElement("div");
                     div.className = "search-item";
                     div.innerHTML = item.address_name;
-                    div.onmousedown = (e) => { 
-                        e.preventDefault(); 
-                        selectItem(item); 
-                    };
+                    div.onmousedown = (e) => { e.preventDefault(); selectItem(item); };
                     addressList.appendChild(div);
                 });
-            } else {
-                addressList.style.display = "none";
-            }
+            } else { addressList.style.display = "none"; }
         });
     }
 
@@ -619,25 +604,45 @@ const offices = [
         findNearest(parseFloat(item.y), parseFloat(item.x), item.address_name);
     }
 
-    // [거리 및 관할 계산 로직]
     function findNearest(lat, lng, fullAddress) {
-        const specialGus = ["강서구", "양천구", "구로구", "영등포구", "마포구", "서대문구", "종로구", "은평구", "용산구"];
-        const isSpecialSeoul = specialGus.some(gu => fullAddress.includes(gu));
-        const myGu = fullAddress.split(' ').find(part => part.endsWith('구')) || "";
+        // 지역명 추출 (구, 시, 군)
+        const addrParts = fullAddress.split(' ');
+        const myGu = addrParts.find(p => p.endsWith('구') || p.endsWith('시') || p.endsWith('군')) || "";
 
-        const mappedOffices = offices.map(o => {
-            let priority = 0;
-            if (o.covers && o.covers.includes(myGu)) priority = 10;
-            if (isSpecialSeoul && o.name.includes("중구청")) priority = 20;
-            return { ...o, dist: getDistance(lat, lng, o.lat, o.lng), priority: priority };
+        // 서울 권역 그룹 정의
+        const seoulGroups = {
+            "중구": ["강서구", "양천구", "영등포구", "구로구", "마포구", "용산구", "서대문구", "종로구", "은평구", "중구"],
+            "광진구": ["성북구", "강북구", "도봉구", "노원구", "동대문구", "중랑구", "성동구", "강동구", "광진구"],
+            "서초구": ["금천구", "관악구", "동작구", "강남구", "송파구", "서초구"]
+        };
+
+        const scoredOffices = offices.map(o => {
+            let score = 0;
+            const dist = getDistance(lat, lng, o.lat, o.lng);
+
+            // 1순위: 관할구역(covers) 직접 매칭
+            if (o.covers && o.covers.includes(myGu)) {
+                score = 100;
+            }
+
+            // 서울 특수 권역 배정 가중치
+            for (const [center, covers] of Object.entries(seoulGroups)) {
+                if (covers.includes(myGu) && o.name.includes(center)) {
+                    score = 110; // 권역 센터 매칭 시 더 높은 점수
+                }
+            }
+
+            return { ...o, dist, score };
         });
 
-        const recTargets = mappedOffices
-            .filter(o => ["부동산원", "대법공", "주택공사", "지자체"].includes(o.type))
-            .sort((a, b) => b.priority - a.priority || a.dist - b.dist)
+        // 상단 관할기관: 관할구역 일치(score > 0)하는 것만 필터링 후 점수->거리순 정렬
+        const recTargets = scoredOffices
+            .filter(o => ["부동산원", "대법공", "주택공사", "지자체"].includes(o.type) && o.score > 0)
+            .sort((a, b) => b.score - a.score || a.dist - b.dist)
             .slice(0, 2);
 
-        const adminResults = mappedOffices
+        // 하단 세무서 등: 관할 상관없이 무조건 거리순 정렬
+        const adminResults = scoredOffices
             .filter(o => ["세무서", "토지정보과"].includes(o.type))
             .sort((a, b) => a.dist - b.dist)
             .slice(0, 2);
@@ -653,7 +658,6 @@ const offices = [
         return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     }
 
-    // [출력 디자인 로직]
     function displayResults(recData, adminData) {
         const officeList = document.getElementById("office-list");
         const adminEl = document.getElementById("admin-section");
@@ -682,31 +686,21 @@ const offices = [
         adminEl.innerHTML += `</div>`;
     }
 
-    // [키보드 및 이벤트 조작]
     keywordInput.addEventListener("keydown", (e) => {
         const items = addressList.getElementsByClassName("search-item");
-        
         if (e.key === "ArrowDown" || e.key === "ArrowUp") {
             if (items.length === 0) return;
             e.preventDefault();
             isNavigating = true; 
-
-            if (e.key === "ArrowDown") {
-                focusedIndex = (focusedIndex + 1) % items.length;
-            } else {
-                focusedIndex = (focusedIndex - 1 + items.length) % items.length;
-            }
+            if (e.key === "ArrowDown") focusedIndex = (focusedIndex + 1) % items.length;
+            else focusedIndex = (focusedIndex - 1 + items.length) % items.length;
             updateHighlight(items);
             return;
         }
-
         if (e.key === "Enter") {
             e.preventDefault();
-            if (focusedIndex > -1) {
-                selectItem(currentAddressResults[focusedIndex]);
-            } else if (currentAddressResults.length > 0) {
-                selectItem(currentAddressResults[0]);
-            }
+            if (focusedIndex > -1) selectItem(currentAddressResults[focusedIndex]);
+            else if (currentAddressResults.length > 0) selectItem(currentAddressResults[0]);
         }
     });
 
@@ -715,9 +709,7 @@ const offices = [
             if (i === focusedIndex) {
                 items[i].classList.add("active");
                 items[i].scrollIntoView({ block: "nearest" });
-            } else {
-                items[i].classList.remove("active");
-            }
+            } else { items[i].classList.remove("active"); }
         }
     }
 
@@ -727,11 +719,8 @@ const offices = [
         debounceTimer = setTimeout(searchAddress, 200);
     });
 
-    // 검색창 클릭 시 리스트가 있으면 다시 보여주기
     keywordInput.addEventListener("click", () => {
-        if (addressList.innerHTML !== "") {
-            addressList.style.display = "block";
-        }
+        if (addressList.innerHTML !== "") addressList.style.display = "block";
     });
 
     document.addEventListener("click", (e) => {
@@ -743,6 +732,3 @@ const offices = [
 </script>
 </body>
 </html>
-
-
-

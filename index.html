@@ -11,86 +11,62 @@
             --gov-red: rgb(228, 3, 45);
             --gov-gray: rgb(30, 41, 59);
             --gov-light-gray: rgb(100, 116, 139);
+            --renew-bg: rgba(0, 55, 100, 0.08);
         }
 
         body, html { margin: 0; padding: 0; height: 100%; font-family: 'Noto Sans KR', sans-serif; overflow: hidden; background: #fff; }
         .main-wrapper { display: flex; height: 100vh; width: 100vw; }
         
-        #sidebar-search { 
-            width: 440px; min-width: 440px; border-right: 1px solid #e2e8f0; 
-            display: flex; flex-direction: column; background: #fff; height: 100%; position: relative;
-        }
+        #sidebar-search { width: 440px; min-width: 440px; display: flex; flex-direction: column; background: #fff; height: 100%; position: relative; }
+        .search-header { padding: 15px 20px; flex-shrink: 0; position: relative; z-index: 1000; }
+        h1 { font-size: 1.1rem; margin: 0 0 10px 0; color: var(--gov-blue); font-weight: 900; }
         
-        .search-header { padding: 8px 20px; border-bottom: 1px solid #f1f5f9; flex-shrink: 0; position: relative; z-index: 1000; }
-        h1 { font-size: 1.1rem; margin: 0 0 5px 0; color: var(--gov-blue); font-weight: 900; }
-        
-        /* 통합 검색바 (overflow 삭제하여 미리보기 보이게 수정) */
-        .search-row { display: flex; align-items: center; width: 100%; border: 2px solid var(--gov-blue); border-radius: 4px; background: #fff; box-sizing: border-box; }
-        
-        .search-container { flex: 1.5; position: relative; border-right: 1px solid #e2e8f0; }
-        input#keyword { width: 100%; padding: 8px 12px; font-size: 14px; border: none; outline: none; box-sizing: border-box; background: transparent; }
-        
-        .date-container { flex: 0.8; display: flex; align-items: center; justify-content: center; border-right: 1px solid #e2e8f0; background: #fff; height: 35px; }
+        /* 통합 검색바 */
+        .search-row { display: flex; align-items: center; width: 100%; border: 2.5px solid var(--gov-blue); border-radius: 6px; background: #fff; box-sizing: border-box; height: 45px; }
+        .search-container { flex: 1.5; position: relative; }
+        input#keyword { width: 100%; padding: 0 15px; font-size: 14px; border: none; outline: none; background: transparent; height: 100%; }
+        .date-container { flex: 0.8; display: flex; align-items: center; justify-content: center; height: 100%; }
         .date-group { display: flex; align-items: center; }
-        .date-group input { width: 22px; border: none !important; text-align: center; font-size: 13px; font-weight: bold; color: var(--gov-blue); outline: none; background: transparent; }
-        .date-group span { color: #94a3b8; font-weight: bold; }
+        .date-group input { width: 25px; border: none !important; text-align: center; font-size: 14px; font-weight: bold; color: var(--gov-blue); outline: none; background: transparent; }
+        .date-group span { color: #cbd5e1; font-weight: bold; }
+        .price-container { flex: 1.4; display: flex; align-items: center; gap: 2px; padding: 0 10px; height: 100%; }
+        .price-input-wrap { display: flex; align-items: center; flex: 1; }
+        .price-input-wrap input { width: 100%; border: none; outline: none; font-size: 13px; font-weight: 700; color: var(--gov-gray); text-align: right; background: transparent; }
+        .price-unit { font-size: 12px; color: var(--gov-gray); font-weight: 700; margin-left: 2px; }
+        .price-slash { color: #e2e8f0; margin: 0 5px; }
 
-        .price-container { flex: 1.4; display: flex; align-items: center; gap: 2px; padding: 0 5px; background: #fff; border-radius: 0 4px 4px 0; }
-        .price-input-wrap { display: flex; align-items: center; gap: 1px; flex: 1; }
-        .price-input-wrap input { width: 100%; border: none; outline: none; font-size: 12px; font-weight: 700; color: var(--gov-gray); text-align: right; background: transparent; }
-        .price-unit { font-size: 12px; color: var(--gov-gray); font-weight: 700; white-space: nowrap; }
-        .price-slash { color: #e2e8f0; margin: 0 1px; }
+        #addressList { position: absolute; top: calc(100% + 5px); left: 0; width: 100%; border: 2px solid var(--gov-blue); background: white; z-index: 9999; display: none; border-radius: 6px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+        .search-item { padding: 12px 15px; border-bottom: 1px solid #f1f5f9; cursor: pointer; font-size: 14px; }
+        .search-item.active { background-color: #f0f4f8; }
 
-        /* 미리보기 목록 레이어 순서 강화 */
-        #addressList { 
-            position: absolute; top: 100%; left: -2px; width: calc(100% + 2px); 
-            border: 2px solid var(--gov-blue); background: white; 
-            z-index: 9999; display: none; box-sizing: border-box; 
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1); 
-        }
-        .search-item { padding: 10px 15px; border-bottom: 1px solid #f1f5f9; cursor: pointer; font-size: 14px; text-align: left; color: #333; }
-        .search-item.active { background-color: #e2e8f0 !important; }
+        /* 시각화 라인 */
+        #date-visual-line { visibility: hidden; position: absolute; left: 440px; top: 45px; display: flex; align-items: center; width: 500px; }
+        .line-bar { height: 2px; background: var(--gov-blue); flex: 1; position: relative; margin: 0 40px; }
+        .line-bar::before { content: ''; position: absolute; left: 0; top: -5px; width: 2px; height: 12px; background: var(--gov-blue); }
+        .line-bar::after { content: ''; position: absolute; right: 0; top: -5px; width: 2px; height: 12px; background: var(--gov-blue); }
+        .mid-point { position: absolute; left: 50%; top: -5px; width: 2px; height: 12px; background: #cbd5e1; transform: translateX(-50%); }
 
-        /* 우측 그래픽 */
-        #date-visual-line { 
-            visibility: hidden; position: absolute; left: 440px; top: 38px;
-            display: flex; align-items: center; width: 320px;
-        }
-        .line-bar { height: 1px; background: #cbd5e1; flex: 1; position: relative; margin: 0 20px; }
-        .line-bar::before, .line-bar::after { content: ''; position: absolute; top: -5px; width: 1px; height: 11px; background: #94a3b8; }
-        .line-bar::before { left: 0; }
-        .line-bar::after { right: 0; }
+        .renew-zone { position: absolute; height: 20px; background: var(--renew-bg); border-left: 1px dashed var(--gov-blue); border-right: 1px dashed var(--gov-blue); top: -9px; display: flex; align-items: center; justify-content: center; }
+        .renew-text { font-size: 11px; color: var(--gov-blue); font-weight: 900; white-space: nowrap; position: absolute; top: -22px; }
 
-        .date-label { font-size: 12px; font-weight: 900; color: var(--gov-gray); position: absolute; top: 12px; white-space: nowrap; transform: translateX(-50%); }
-        .date-label.start { left: 20px; } 
-        .date-label.end { left: calc(100% - 20px); }
+        .date-label { font-size: 12px; font-weight: 900; color: var(--gov-gray); position: absolute; top: 18px; white-space: nowrap; transform: translateX(-50%); text-align: center; }
+        .date-label b { display: block; font-size: 10px; font-weight: 400; color: #64748b; margin-top: 2px; line-height: 1.2; }
+        .date-label.start { left: 40px; } 
+        .date-label.end { left: calc(100% - 40px); }
+        .date-label.renew-start { font-size: 11px; color: var(--gov-blue); top: 35px; }
+        .date-label.renew-end { font-size: 11px; color: var(--gov-blue); top: 35px; }
 
-        #result-area { flex: 1; overflow-y: auto; padding: 5px 15px; display: flex; flex-direction: column; }
-        #sub-info-area { display: flex; flex-direction: column; gap: 10px; } 
-        #office-list { display: flex; flex-direction: column; }
-        .intro-msg { text-align: center; color: #64748b; opacity: 0.5; margin-top: 150px; font-size: 16px; }
-
-        .section-title { font-size: 14px; font-weight: 800; color: var(--gov-gray); margin: 5px 0 2px 0; display: flex; align-items: center; gap: 5px; }
-        .section-title::before { content: ''; width: 3px; height: 12px; background: var(--gov-blue); }
-
-        .office-card.recommend { border: 2px solid var(--gov-blue); background: #f8fbff; padding: 6px 12px; border-radius: 6px; margin-bottom: 5px; display: flex; flex-direction: column; }
-        .card-top { display: flex; justify-content: space-between; align-items: center; width: 100%; }
-        .office-name { font-size: 16.5px; font-weight: 900; color: var(--gov-blue); letter-spacing: -0.5px; }
-        .office-name-sub { font-size: 12.5px; font-weight: 700; color: var(--gov-blue); opacity: 0.8; }
-        .meta-info { text-align: right; white-space: nowrap; }
-        .zone-text { font-size: 11px; color: var(--gov-light-gray); font-weight: 700; margin-right: 3px; }
-        .dist-text { font-size: 9px; color: var(--gov-blue); font-weight: 800; }
-        .phone-row { display: flex; align-items: baseline; gap: 5px; }
-        .phone-text { font-size: 26px; font-weight: 900; color: var(--gov-red); margin: -2px 0 0px 0; line-height: 1; letter-spacing: -1px; }
-        .sms-tag { font-size: 12px; font-weight: 800; color: var(--gov-red); opacity: 0.5; }
-        .addr-text { font-size: 12px; color: var(--gov-gray); margin: 3px 0 0 0; border-top: 1px solid #eef2f6; padding-top: 3px; line-height: 1.2; }
-        
-        .info-box { background: #f8fafc; border: 1px solid #e2e8f0; padding: 5px 10px; border-radius: 6px; }
-        .contact-item { display: flex; justify-content: space-between; padding: 2px 0; border-bottom: 1px dotted #e2e8f0; font-size: 13.5px; align-items: center; white-space: nowrap; }
-        .contact-item:last-child { border-bottom: none; }
-        .contact-label { font-size: 15px; font-weight: 800; color: #000; }
-        .contact-item b { color: var(--gov-red); font-weight: 900; font-size: 14px; }
+        #result-area { flex: 1; overflow-y: auto; padding: 10px 20px; }
+        .section-title { font-size: 14px; font-weight: 800; color: var(--gov-gray); margin: 15px 0 8px 0; display: flex; align-items: center; gap: 6px; }
+        .section-title::before { content: ''; width: 3px; height: 13px; background: var(--gov-blue); }
+        .office-card.recommend { border: 2px solid var(--gov-blue); background: #f8fbff; padding: 12px; border-radius: 8px; margin-bottom: 10px; }
+        .office-name { font-size: 17px; font-weight: 900; color: var(--gov-blue); }
+        .phone-text { font-size: 28px; font-weight: 900; color: var(--gov-red); letter-spacing: -1px; }
+        .info-box { background: #f8fafc; border: 1px solid #e2e8f0; padding: 10px; border-radius: 8px; }
+        .contact-item { display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px dotted #e2e8f0; font-size: 13.5px; align-items: center; }
+        .contact-label { font-size: 14.5px; font-weight: 800; color: #000; }
         .sub-desc { font-size: 11px; color: #64748b; margin-left: 3px; font-weight: normal; }
+        .contact-item b { color: var(--gov-red); font-weight: 900; font-size: 14px; }
     </style>
 </head>
 <body>
@@ -124,29 +100,36 @@
             </div>
             <div id="date-visual-line">
                 <div id="before-date-val" class="date-label start"></div>
-                <div class="line-bar"></div>
+                <div class="line-bar">
+                    <div class="mid-point"></div>
+                    <div id="renew-block" class="renew-zone"><span class="renew-text">갱신 의사표시 기간</span></div>
+                </div>
                 <div id="after-date-val" class="date-label end"></div>
+                <div id="renew-start-val" class="date-label renew-start"></div>
+                <div id="renew-end-val" class="date-label renew-end"></div>
             </div>
         </div>
+
         <div id="result-area">
-            <div id="rec-section"><p class="intro-msg">주소를 입력해주세요.</p></div>
+            <div id="rec-section"><p style="text-align:center; color:#94a3b8; margin-top:100px; opacity:0.5;">주소를 입력해 주세요.</p></div>
             <div id="sub-info-area" style="display:none;">
                 <div id="office-list"></div>
-                <div id="bottom-static-info">
-                    <div class="section-title">신청 시 필요 서류</div>
-                    <div class="info-box">
-                        <div class="contact-item"><span>• <span style="font-weight:800;">공통:</span> 신분증, 주민등록초본, 임대차계약서, 등기부등본, 건축물대장</span></div>
-                        <div class="contact-item"><span>• <span style="font-weight:800;">대리:</span> 위임장, 인감증명서, 대리인 신분증</span></div>
-                    </div>
-                    <div class="section-title">주요 업무 문의처</div>
-                    <div class="info-box">
-                        <div class="contact-item"><span class="contact-label">한국부동산원</span><b>1600-2828</b></div>
-                        <div class="contact-item"><span class="contact-label">전자계약</span><b>1833-4662</b></div>
-                        <div class="contact-item"><span class="contact-label">임대차신고</span><b>1533-2949</b></div>
-                        <div class="contact-item"><span class="contact-label">LH공사</span><b>1600-1004</b></div>
-                        <div class="contact-item"><span class="contact-label">렌트홈</span><b>1670-8004</b></div>
-                        <div class="contact-item"><span class="contact-label">국토부</span><b>1599-0001</b></div>
-                    </div>
+                <div class="section-title">신청 시 필요 서류</div>
+                <div class="info-box">
+                    <div class="contact-item"><span>• <b>공통:</b> 신분증, 주민등록초본, 임대차계약서, 등기부등본, 건축물대장</span></div>
+                    <div class="contact-item"><span>• <b>대리:</b> 위임장, 인감증명서, 대리인 신분증</span></div>
+                </div>
+                <div class="section-title">주요 업무 문의처</div>
+                <div class="info-box">
+                    <div class="contact-item"><span class="contact-label">한국부동산원<span class="sub-desc">(1.공시 3.K-아파트 0.기타)</span></span><b>1600-2828</b></div>
+                    <div class="contact-item"><span class="contact-label">전자계약</span><b>1833-4662</b></div>
+                    <div class="contact-item"><span class="contact-label">임대차신고</span><b>1533-2949</b></div>
+                    <div class="contact-item"><span class="contact-label">LH공사</span><b>1600-1004</b></div>
+                    <div class="contact-item"><span class="contact-label">렌트홈</span><b>1670-8004</b></div>
+                    <div class="contact-item"><span class="contact-label">공동주택 조정위<span class="sub-desc">(장기수선·관리비)</span></span><b>031-738-3300</b></div>
+                    <div class="contact-item"><span class="contact-label">국토부</span><b>1599-0001</b></div>
+                    <div class="contact-item"><span class="contact-label">대법공</span><b>132</b></div>
+                    <div class="contact-item"><span class="contact-label">국세청</span><b>126</b></div>
                 </div>
             </div>
         </div>
@@ -191,28 +174,56 @@ const rentInput = document.getElementById("rent");
 const visualLine = document.getElementById("date-visual-line");
 const beforeDateVal = document.getElementById("before-date-val");
 const afterDateVal = document.getElementById("after-date-val");
+const renewStartVal = document.getElementById("renew-start-val");
+const renewEndVal = document.getElementById("renew-end-val");
+const renewBlock = document.getElementById("renew-block");
 
-function calculateTwoYears() {
+// 1. 날짜 계산 및 시각화 로직 (전날 24:00 기준 정밀 표기)
+function calculateDates() {
     let y = dateInputs[0].value, m = dateInputs[1].value, d = dateInputs[2].value;
     if (y.length === 2 && m.length === 2 && d.length === 2) {
-        let numM = Math.min(Math.max(parseInt(m), 1), 12);
-        let numD = Math.min(Math.max(parseInt(d), 1), 31);
-        let fullYear = parseInt(y) > 50 ? 1900 + parseInt(y) : 2000 + parseInt(y);
-        let dateObj = new Date(fullYear, numM - 1, numD);
-        beforeDateVal.innerText = `${y}.${String(numM).padStart(2, '0')}.${String(numD).padStart(2, '0')}`;
-        dateObj.setFullYear(dateObj.getFullYear() + 2);
-        afterDateVal.innerText = `${String(dateObj.getFullYear()).slice(-2)}.${String(dateObj.getMonth() + 1).padStart(2, '0')}.${String(dateObj.getDate()).padStart(2, '0')}`;
+        let numY = parseInt(y), numM = parseInt(m), numD = parseInt(d);
+        let fullYear = numY > 50 ? 1900 + numY : 2000 + numY;
+        
+        let start = new Date(fullYear, numM - 1, numD);
+        let end = new Date(fullYear + 2, numM - 1, numD);
+        
+        // 갱신구간 계산: 끝지점 기준 6개월 전 ~ 2개월 전
+        let rStart = new Date(end); rStart.setMonth(rStart.getMonth() - 6);
+        let rEnd = new Date(end); rEnd.setMonth(rEnd.getMonth() - 2);
+
+        // 상단 날짜 텍스트 (입력일 00:00 ~ 2년뒤 24:00)
+        beforeDateVal.innerHTML = `${y}.${m}.${d}<b>00:00부터</b>`;
+        afterDateVal.innerHTML = `${String(end.getFullYear()).slice(-2)}.${m}.${d}<b>24:00까지</b>`;
+        
+        // 갱신구간 상세 표기 (전날 24:00부터 로직 적용)
+        let rsPrev = new Date(rStart); rsPrev.setDate(rsPrev.getDate() - 1);
+        let rsY = String(rStart.getFullYear()).slice(-2), rsM = String(rStart.getMonth()+1).padStart(2,'0'), rsD = String(rStart.getDate()).padStart(2,'0');
+        let rspY = String(rsPrev.getFullYear()).slice(-2), rspM = String(rsPrev.getMonth()+1).padStart(2,'0'), rspD = String(rsPrev.getDate()).padStart(2,'0');
+        let reY = String(rEnd.getFullYear()).slice(-2), reM = String(rEnd.getMonth()+1).padStart(2,'0'), reD = String(rEnd.getDate()).padStart(2,'0');
+
+        renewStartVal.innerHTML = `${rsY}.${rsM}.${rsD}<b>(${rspY}.${rspM}.${rspD} 24시부터)</b>`;
+        renewEndVal.innerHTML = `${reY}.${reM}.${reD}<b>(24:00까지)</b>`;
+
+        // 그래픽 블록 및 라벨 위치 세팅
+        renewBlock.style.left = "75%"; 
+        renewBlock.style.width = "16.66%";
+        renewStartVal.style.left = "calc(40px + 420px * 0.75)";
+        renewEndVal.style.left = "calc(40px + 420px * 0.916)";
         visualLine.style.visibility = "visible";
-    } else { visualLine.style.visibility = "hidden"; }
+    } else {
+        visualLine.style.visibility = "hidden";
+    }
 }
 
+// 2. 포커스 제어 및 입력 마스크
 dateInputs.forEach((input, idx) => {
     input.addEventListener("input", () => {
         if (input.value.length === 2) {
             if (idx < 2) dateInputs[idx + 1].focus();
             else depositInput.focus();
         }
-        calculateTwoYears();
+        calculateDates();
     });
 });
 
@@ -226,18 +237,19 @@ dateInputs.forEach((input, idx) => {
     });
 });
 
+// 3. 주소 검색 및 화살표 키 네비게이션
 function searchAddress() {
     const keyword = keywordInput.value.trim();
     if (isNavigating || !keyword || keyword === lastSearchKeyword) return;
     if (keyword.length < 2) { addressList.style.display = "none"; return; }
-    
+
     const geocoder = new kakao.maps.services.Geocoder();
     geocoder.addressSearch(keyword, function(result, status) {
         if (status === kakao.maps.services.Status.OK) {
             currentAddressResults = result;
             addressList.innerHTML = "";
             addressList.style.display = "block";
-            focusedIndex = -1; 
+            focusedIndex = -1;
             result.forEach((item, idx) => {
                 const div = document.createElement("div");
                 div.className = "search-item";
@@ -256,12 +268,33 @@ function selectItem(item) {
     lastSearchKeyword = item.address_name;
     document.getElementById("rec-section").style.display = "none";
     document.getElementById("sub-info-area").style.display = "flex";
-    
-    // 주소 선택 후 날짜창으로 강제 이동
-    setTimeout(() => { document.getElementById("yy").focus(); }, 10);
+    setTimeout(() => dateInputs[0].focus(), 10);
     findNearest(parseFloat(item.y), parseFloat(item.x), item.address_name);
 }
 
+keywordInput.addEventListener("keydown", (e) => {
+    const items = addressList.getElementsByClassName("search-item");
+    if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+        if (items.length === 0) return;
+        e.preventDefault();
+        isNavigating = true;
+        if (e.key === "ArrowDown") focusedIndex = (focusedIndex + 1) % items.length;
+        else focusedIndex = (focusedIndex - 1 + items.length) % items.length;
+        for (let i = 0; i < items.length; i++) items[i].classList.toggle("active", i === focusedIndex);
+    }
+    if (e.key === "Enter") {
+        if (focusedIndex > -1) selectItem(currentAddressResults[focusedIndex]);
+        else if (items.length > 0) selectItem(currentAddressResults[0]);
+    }
+});
+
+keywordInput.addEventListener("input", () => {
+    isNavigating = false;
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(searchAddress, 200);
+});
+
+// 4. 관할기관 매칭 및 거리 계산 로직
 function getDistance(lat1, lon1, lat2, lon2) {
     const R = 6371;
     const dLat = (lat2-lat1)*Math.PI/180;
@@ -272,66 +305,40 @@ function getDistance(lat1, lon1, lat2, lon2) {
 
 function findNearest(lat, lng, fullAddress) {
     const addrParts = fullAddress.split(' ');
-    const mySido = addrParts[0].substring(0, 2); 
+    const mySido = addrParts[0].substring(0, 2);
     const myGu = addrParts.find(p => p.endsWith('구')) || "";
+    
     let filtered = offices.map(o => {
         const dist = getDistance(lat, lng, o.lat, o.lng);
         const hasSido = o.covers.includes(mySido);
         const hasGu = myGu && o.covers.includes(myGu);
         let score = hasGu ? 100 : (hasSido ? 50 : 0);
-        let displayCover = o.covers.includes("서울") ? "서울" : (o.covers[0] || "");
-        return { ...o, dist, score, displayCover };
+        return { ...o, dist, score, displayCover: o.covers[0] };
     });
-    let finalResults = (mySido === "서울") ? 
-        filtered.filter(o => o.score > 0).sort((a, b) => b.score - a.score || a.dist - b.dist).slice(0, 2) :
-        filtered.filter(o => o.score > 0).sort((a, b) => b.score - a.score || a.dist - b.dist).slice(0, 1);
-    displayResults(finalResults);
+    
+    let final = filtered.filter(o => o.score > 0)
+                        .sort((a, b) => b.score - a.score || a.dist - b.dist)
+                        .slice(0, (mySido === "서울" ? 2 : 1));
+    displayResults(final);
 }
 
-function displayResults(recData) {
-    const officeList = document.getElementById("office-list");
-    officeList.innerHTML = `<span class="section-title">관할기관 안내</span>`;
-    recData.forEach((o) => {
-        let displayName = o.name.includes("(지자체)") ? o.name.replace("(지자체)", `<span class="office-name-sub">(지자체)</span>`) : o.name;
-        officeList.innerHTML += `
-            <div class="office-card recommend">
-                <div class="card-top">
-                    <span class="office-name">${displayName}</span>
-                    <div class="meta-info">
-                        <span class="zone-text">${o.displayCover}</span>
-                        <span class="dist-text">(${o.dist.toFixed(1)}km)</span>
-                    </div>
-                </div>
-                <div class="phone-row">
-                    <span class="phone-text">${o.phone}</span>
-                    <span class="sms-tag">${o.type === "지자체" ? "문자 X" : "문자 O"}</span>
-                </div>
-                <p class="addr-text">${o.address}</p>
-            </div>`;
+function displayResults(data) {
+    const list = document.getElementById("office-list");
+    list.innerHTML = `<span class="section-title">관할기관 안내</span>`;
+    data.forEach(o => {
+        list.innerHTML += `<div class="office-card recommend">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <span class="office-name">${o.name}</span>
+                <span style="font-size:11px; color:var(--gov-light-gray); font-weight:700;">${o.displayCover} (${o.dist.toFixed(1)}km)</span>
+            </div>
+            <div style="display:flex; align-items:baseline; gap:5px;">
+                <span class="phone-text">${o.phone}</span>
+                <span style="font-size:12px; font-weight:800; color:var(--gov-red); opacity:0.5;">${o.type === "지자체" ? "문자 X" : "문자 O"}</span>
+            </div>
+            <p style="font-size:12px; color:var(--gov-gray); margin:5px 0 0 0; border-top:1px solid #eee; padding-top:5px;">${o.address}</p>
+        </div>`;
     });
 }
-
-keywordInput.addEventListener("keydown", (e) => {
-    const items = addressList.getElementsByClassName("search-item");
-    if (e.key === "ArrowDown" || e.key === "ArrowUp") {
-        if (items.length === 0) return;
-        e.preventDefault();
-        isNavigating = true; 
-        if (e.key === "ArrowDown") focusedIndex = (focusedIndex + 1) % items.length;
-        else focusedIndex = (focusedIndex - 1 + items.length) % items.length;
-        for (let i = 0; i < items.length; i++) items[i].classList.toggle("active", i === focusedIndex);
-    }
-    if (e.key === "Enter") {
-        if (focusedIndex > -1) selectItem(currentAddressResults[focusedIndex]);
-        else if (items.length > 0) selectItem(currentAddressResults[0]); // 아무것도 선택 안하고 엔터치면 첫번째꺼 선택
-    }
-});
-
-keywordInput.addEventListener("input", () => {
-    isNavigating = false; 
-    clearTimeout(debounceTimer);
-    debounceTimer = setTimeout(searchAddress, 200);
-});
 
 document.addEventListener("click", (e) => {
     if (!e.target.closest('.search-container')) addressList.style.display = "none";
@@ -339,3 +346,4 @@ document.addEventListener("click", (e) => {
 </script>
 </body>
 </html>
+

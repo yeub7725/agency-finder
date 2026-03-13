@@ -13,317 +13,93 @@
             --gov-light-gray: rgb(100, 116, 139);
         }
 
+        /* 1. 전체 화면 스크롤 원천 차단 */
         body, html { margin: 0; padding: 0; height: 100%; font-family: 'Noto Sans KR', sans-serif; overflow: hidden; background: #fff; }
-        
         .main-wrapper { display: flex; height: 100vh; width: 100vw; background: #f8fafc; }
+        #sidebar-search { width: 40vw; min-width: 500px; max-width: 650px; border-right: 1px solid #e2e8f0; display: flex; flex-direction: column; background: #fff; height: 100%; position: relative; overflow: visible; }
         
-        #sidebar-search { 
-            width: 40vw; min-width: 500px; max-width: 650px; 
-            border-right: 1px solid #e2e8f0; 
-            display: flex; flex-direction: column; background: #fff; height: 100%; position: relative;
-        }
+        /* 2. 상단 헤더 및 타이틀 여백 최소화 */
+        .search-header { padding: 10px 15px 5px 15px; border-bottom: none; flex-shrink: 0; position: relative; z-index: 1000; }
+        h1 { font-size: 16px; margin: 0 0 8px 0; color: var(--gov-blue); font-weight: 900; }
         
-        .search-header { padding: 15px 20px 20px 20px; border-bottom: 1px solid #f1f5f9; flex-shrink: 0; position: relative; z-index: 1000; }
-        h1 { font-size: 1.1rem; margin: 0 0 15px 0; color: var(--gov-blue); font-weight: 900; }
-        
-        .search-row { 
-            display: flex; align-items: center; width: 100%; 
-            border: 2px solid var(--gov-blue); border-radius: 4px; 
-            background: #fff; box-sizing: border-box; height: 40px;
-            position: relative; 
-        }
-        
-        .search-container { flex: 1.8; }
-        input#keyword { width: 100%; padding: 0 12px; font-size: 14px; border: none; outline: none; background: transparent; }
-        
-        #addressList { 
-            position: absolute; top: calc(100%); left: -2px; width: calc(100% + 4px); 
-            border: 2px solid var(--gov-blue); border-top: 1px solid #eee; border-radius: 0 0 4px 4px;
-            background: white; z-index: 9999; display: none; box-sizing: border-box; 
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1); 
-        }
-        .search-item { padding: 10px 15px; border-bottom: 1px solid #f1f5f9; cursor: pointer; font-size: 14px; text-align: left; color: #333; }
+        /* 3. 폼 디자인 초압축 (높이 축소 및 정렬) */
+        .compact-form { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 6px; padding: 6px 10px; margin-bottom: 5px; display: flex; flex-direction: column; gap: 4px; }
+        .form-row { display: flex; align-items: center; justify-content: space-between; }
+        .form-label { width: 50px; font-size: 12px; font-weight: 800; color: var(--gov-gray); flex-shrink: 0; }
+        .custom-input { padding: 3px 6px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px; font-family: 'Noto Sans KR', sans-serif; box-sizing: border-box; height: 26px; }
+        .unit-text { position: absolute; right: 6px; top: 4px; color: #64748b; font-size: 11px; font-weight: 800; }
+        .btn { height: 26px !important; font-size: 12px; padding: 0 10px; cursor: pointer; background: var(--gov-blue); color: white; border: none; border-radius: 4px; font-weight: bold; }
+
+        /* 4. 주소 검색 자동완성 리스트 */
+        #addressList { position: absolute; top: 100%; left: 0; width: 100%; border: 2px solid var(--gov-blue); border-top: 1px solid #eee; border-radius: 0 0 4px 4px; background: white; z-index: 9999; display: none; box-sizing: border-box; box-shadow: 0 4px 10px rgba(0,0,0,0.1); margin-top: 2px; }
+        .search-item { padding: 6px 10px; border-bottom: 1px solid #f1f5f9; cursor: pointer; font-size: 12px; text-align: left; color: #333; }
         .search-item:hover, .search-item.active { background-color: #f0f7ff !important; font-weight: 700; color: var(--gov-blue); }
-        .search-item:last-child { border-bottom: none; }
 
-        .date-container { flex: 1; display: flex; align-items: center; justify-content: center; background: #fff; height: 100%; }
-        .date-group { display: flex; align-items: center; gap: 1px; }
-        .date-group input { width: 22px; border: none !important; text-align: center; font-size: 13px; font-weight: bold; color: var(--gov-blue); outline: none; background: transparent; padding: 0; }
-        .date-group span { color: #cbd5e1; font-weight: bold; font-size: 12px; }
-
-        .price-container { 
-            flex: 2; display: flex; align-items: center; justify-content: flex-end;
-            padding: 0 10px; background: #fff; height: 100%; 
-        }
-        .price-input-wrap { display: flex; align-items: center; gap: 2px; flex-shrink: 0; }
-        .price-input-wrap input { width: 55px; border: none; outline: none; font-size: 12px; font-weight: 700; color: var(--gov-gray); text-align: right; background: transparent; }
-        .price-unit { font-size: 12px; color: var(--gov-gray); font-weight: 700; white-space: nowrap; flex-shrink: 0; }
-        .price-slash { color: #e2e8f0; margin: 0 6px; flex-shrink: 0; }
-
-        #timeline-container {
-            visibility: hidden;
-            position: absolute;
-            left: calc(100% + 40px);
-            top: 20px; 
-            width: 700px;
-            z-index: 1000;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .contract-settings {
-            display: flex; align-items: center; gap: 15px; margin-bottom: 25px; font-size: 13px; color: var(--gov-gray); font-weight: 700;
-        }
+        /* 5. 날짜 옆 주택/상가 설정 (우측) */
+        .contract-settings { display: flex; align-items: center; gap: 8px; font-size: 11px; color: var(--gov-gray); font-weight: 700; margin-bottom: 0; }
         .contract-settings input[type="radio"] { margin: 0 4px 0 0; accent-color: var(--gov-blue); cursor: pointer; }
-        .contract-settings label { display: flex; align-items: center; cursor: pointer; }
-        .year-input-wrap { display: flex; align-items: center; background: #f1f5f9; padding: 2px 8px; border-radius: 4px; border: 1px solid #e2e8f0;}
-        .year-input-wrap input { width: 25px; border: none; background: transparent; text-align: right; font-weight: 900; color: var(--gov-blue); outline: none; font-size: 13px; margin-right: 2px;}
+        .contract-settings label { display: flex; align-items: center; cursor: pointer; gap: 2px; }
+        .year-input-wrap { display: flex; align-items: center; background: #f1f5f9; padding: 2px 6px; border-radius: 4px; border: 1px solid #e2e8f0; }
+        .year-input-wrap input { width: 30px; height: 18px; border: none; background: transparent; text-align: center; font-weight: 900; color: var(--gov-blue); outline: none; font-size: 11px; }
 
-        #date-visual-line { 
-            width: 100%; 
-            height: 30px;
-            display: flex;
-            align-items: center;
-            position: relative;
-        }
-        
-        .timeline-node { width: 2px; height: 12px; background: var(--gov-blue); position: relative; flex-shrink: 0; }
+        /* 6. 타임라인 (시각화 선) 압축 */
+        #timeline-container { visibility: hidden; position: relative; width: 100%; z-index: 1000; display: flex; flex-direction: column; padding: 0 5px; margin-bottom: 5px; }
+        #date-visual-line { width: 100%; height: 20px; display: flex; align-items: center; position: relative; }
+        .timeline-node { width: 2px; height: 10px; background: var(--gov-blue); position: relative; flex-shrink: 0; }
         .timeline-segment { height: 2px; background: var(--gov-blue); transition: all 0.3s ease; position: relative; }
-        .timeline-segment.past { flex: 1; opacity: 0.3; }
-        .timeline-segment.future { flex: 1; opacity: 0.3; }
+        .timeline-segment.past, .timeline-segment.future { flex: 1; opacity: 0.3; }
         .timeline-segment.current { flex: 6; opacity: 1; }
+        .timeline-tick-1yr { position: absolute; top: 50%; transform: translateY(-50%); width: 2px; height: 8px; background: var(--gov-blue); opacity: 0.8; z-index: 1; }
+        .timeline-date-label { position: absolute; top: 10px; font-size: 11px; font-weight: 900; color: var(--gov-blue); transform: translateX(-50%); white-space: nowrap; }
+        .timeline-date-label.past-label { font-size: 10px; opacity: 0.6; font-weight: 700; }
+        .timeline-date-label.limit-label { color: var(--gov-red); font-size: 10px; }
+        .notice-box { position: absolute; height: 12px; top: -4px; background: repeating-linear-gradient(45deg, rgba(228,3,45,0.1), rgba(228,3,45,0.1) 3px, transparent 3px, transparent 6px); border: 1px solid rgba(228,3,45,0.4); border-radius: 2px; box-sizing: border-box; z-index: 5; }
+        .notice-label { position: absolute; top: -16px; left: 50%; transform: translateX(-50%); font-size: 10px; color: var(--gov-red); font-weight: 900; white-space: nowrap; }
+        .today-marker { position: absolute; top: -2px; width: 2px; height: 8px; background: var(--gov-red); z-index: 10; }
+        #notice-detail-info { display: none; width: 100%; background: #fff; border: 2px solid #eef2f6; border-radius: 6px; padding: 6px 10px; box-sizing: border-box; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-top: 5px; }
+        .detail-row { display: flex; align-items: center; font-size: 12px; }
+        .detail-badge.red { background: rgba(228,3,45,0.1); color: var(--gov-red); font-weight: 800; padding: 2px 6px; border-radius: 4px; margin-right: 8px; font-size: 11px; }
+        .detail-text { font-weight: 800; display: flex; align-items: baseline; gap: 4px; color: var(--gov-red); }
+        .detail-sub { font-size: 10px; color: var(--gov-light-gray); font-weight: 700; margin-left: 2px; }
 
-      .timeline-tick-1yr {
-    position: absolute;
-    top: 50%; transform: translateY(-50%);
-    width: 2px;       
-    height: 10px;      
-    background: var(--gov-blue);
-    opacity: 0.8;      
-    z-index: 1;
-}
+        /* 7. 결과 및 카드 영역 스크롤 차단용 초압축 */
+        #result-area { flex: 1; overflow: visible; padding: 0 15px 5px 15px; display: flex; flex-direction: column; position: relative; }
+        #rec-section { display: flex; align-items: center; justify-content: center; height: 100%; min-height: 100px; }
+        .intro-msg { font-size: 20px; font-weight: 800; color: var(--gov-light-gray); opacity: 0.4; margin: 0; letter-spacing: -1px; }
+        .section-title { font-size: 13px; font-weight: 800; color: var(--gov-gray); margin: 6px 0 2px 0; display: flex; align-items: center; gap: 5px; }
+        .section-title::before { content: ''; width: 3px; height: 10px; background: var(--gov-blue); }
 
-        .timeline-date-label { position: absolute; top: 14px; font-size: 12px; font-weight: 900; color: var(--gov-blue); transform: translateX(-50%); white-space: nowrap; }
-        .timeline-date-label.past-label { font-size: 11px; opacity: 0.6; font-weight: 700; }
-        .timeline-date-label.limit-label { color: var(--gov-red); font-size: 11px; }
-
-        .notice-box {
-            position: absolute;
-            height: 14px;
-            top: -6px; 
-            background: repeating-linear-gradient(45deg, rgba(228,3,45,0.1), rgba(228,3,45,0.1) 3px, transparent 3px, transparent 6px);
-            border: 1px solid rgba(228,3,45,0.4);
-            border-radius: 2px;
-            box-sizing: border-box;
-            z-index: 5;
-        }
-        
-        .notice-label {
-            position: absolute;
-            top: -18px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 11px;
-            color: var(--gov-red);
-            font-weight: 900;
-            white-space: nowrap;
-        }
-
-        .today-marker {
-            position: absolute;
-            top: -3px;
-            width: 2px;
-            height: 8px;
-            background: var(--gov-red);
-            z-index: 10;
-        }
-
-        #notice-detail-info {
-            display: none;
-            width: 100%;
-            background: #fff;
-            border: 2px solid #eef2f6;
-            border-radius: 6px;
-            padding: 10px 15px;
-            box-sizing: border-box;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-            margin-top: 30px;
-        }
-        .detail-row { display: flex; align-items: center; font-size: 13px; }
-        .detail-badge.red { background: rgba(228,3,45,0.1); color: var(--gov-red); font-weight: 800; padding: 3px 8px; border-radius: 4px; margin-right: 10px; font-size: 12px; }
-        .detail-text { font-weight: 800; display: flex; align-items: baseline; gap: 5px; color: var(--gov-red); }
-        .detail-sub { font-size: 11px; color: var(--gov-light-gray); font-weight: 700; margin-left: 2px; }
-
-#result-area { 
-    flex: 1; 
-    overflow-y: auto; 
-    padding: 5px 15px; 
-    display: flex; 
-    flex-direction: column; 
-    position: relative; 
-}
-
-
-#rec-section {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 100%; 
-    min-height: 400px;
-}
-
-
-.intro-msg {
-    font-size: 24px;
-    font-weight: 800;
-    color: var(--gov-light-gray);
-    opacity: 0.4;
-    margin: 0;
-    letter-spacing: -1px;
-}
-        .section-title { font-size: 14px; font-weight: 800; color: var(--gov-gray); margin: 5px 0 2px 0; display: flex; align-items: center; gap: 5px; }
-        .section-title::before { content: ''; width: 3px; height: 12px; background: var(--gov-blue); }
-
-        .office-card.recommend { border: 2px solid var(--gov-blue); background: #f8fbff; padding: 10px 12px; border-radius: 6px; margin-bottom: 5px; display: flex; flex-direction: column; }
+        #office-list { margin-bottom: 5px; }
+        .office-card.recommend { border: 2px solid var(--gov-blue); background: #f8fbff; padding: 6px 10px; border-radius: 6px; margin-bottom: 4px; display: flex; flex-direction: column; }
         .card-top { display: flex; justify-content: space-between; align-items: center; width: 100%; }
-        .office-name { font-size: 16.5px; font-weight: 900; color: var(--gov-blue); letter-spacing: -0.5px; }
-        .office-name-sub { font-size: 12.5px; font-weight: 700; color: var(--gov-blue); opacity: 0.8; }
+        .office-name { font-size: 14px; font-weight: 900; color: var(--gov-blue); letter-spacing: -0.5px; }
+        .office-name-sub { font-size: 11px; font-weight: 700; color: var(--gov-blue); opacity: 0.8; }
         .meta-info { text-align: right; white-space: nowrap; }
-        .zone-text { font-size: 11px; color: var(--gov-light-gray); font-weight: 700; margin-right: 3px; }
+        .zone-text { font-size: 10px; color: var(--gov-light-gray); font-weight: 700; margin-right: 3px; }
         .dist-text { font-size: 10px; color: var(--gov-blue); font-weight: 800; }
-        .phone-row { display: flex; align-items: baseline; gap: 5px; margin-top: 3px;}
-        .phone-text { font-size: 26px; font-weight: 900; color: var(--gov-red); margin: -2px 0 0px 0; line-height: 1; letter-spacing: -1px; }
-        .sms-tag { font-size: 12px; font-weight: 800; color: var(--gov-red); opacity: 0.5; }
-        .addr-text { font-size: 12px; color: var(--gov-gray); margin: 5px 0 0 0; border-top: 1px solid #eef2f6; padding-top: 5px; line-height: 1.2; }
+        .phone-row { display: flex; align-items: baseline; gap: 5px; margin-top: 1px;}
+        .phone-text { font-size: 18px; font-weight: 900; color: var(--gov-red); margin: 0; line-height: 1; letter-spacing: -1px; }
+        .sms-tag { font-size: 11px; font-weight: 800; color: var(--gov-red); opacity: 0.5; }
+        .addr-text { font-size: 11px; color: var(--gov-gray); margin: 2px 0 0 0; border-top: 1px solid #eef2f6; padding-top: 3px; line-height: 1.2; }
 
-        .info-box { background: #f8fafc; border: 1px solid #e2e8f0; padding: 5px 10px; border-radius: 6px; margin-bottom: 10px; }
-        .contact-item { display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px dotted #e2e8f0; font-size: 13.5px; align-items: center; white-space: nowrap; }
+        /* 8. 하단 고정 정보 영역 (주요업무 전화번호 2단 분할 Grid 핵심!) */
+        .info-box { background: #f8fafc; border: 1px solid #e2e8f0; padding: 4px 8px; border-radius: 6px; margin-bottom: 4px; }
+        .contact-item { display: flex; justify-content: space-between; padding: 1px 0; border-bottom: 1px dotted #e2e8f0; font-size: 11px; align-items: center; white-space: nowrap; }
         .contact-item:last-child { border-bottom: none; }
-        .contact-label { font-size: 14px; font-weight: 800; color: #000; }
-        .contact-item b { color: var(--gov-red); font-weight: 900; font-size: 14px; }
-        .sub-desc { font-size: 11px; color: #64748b; margin-left: 3px; font-weight: normal; }
+        .contact-label { font-size: 12px; font-weight: 800; color: #000; }
+        .contact-item b { color: var(--gov-red); font-weight: 900; font-size: 12px; }
+        .sub-desc { font-size: 10px; color: #64748b; margin-left: 3px; font-weight: normal; }
 
-@keyframes fadeInUp {
-    from { opacity: 0; transform: translateY(15px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-.animate-update {
-    animation: fadeInUp 0.4s ease-out forwards;
-}
-/* 초압축 & 좌측 정렬 폼 디자인 */
-.compact-form {
-    background: #ffffff;
-    border: 1px solid #e2e8f0;
-    border-radius: 6px;
-    padding: 10px 15px;
-    margin-bottom: 15px;
-    display: flex;
-    flex-direction: column;
-    gap: 8px; /* 위아래 간격을 확 줄여서 스크롤 방지 */
-}
-.form-row {
-    display: flex;
-    align-items: center;
-}
-.form-label {
-    width: 60px; /* 라벨 너비를 고정해서 입력칸 시작 위치를 왼쪽에 딱 맞춤 */
-    font-size: 13px;
-    font-weight: 800;
-    color: var(--gov-gray);
-    flex-shrink: 0;
-}
-.custom-input {
-    padding: 5px 8px;
-    border: 1px solid #cbd5e1;
-    border-radius: 4px;
-    font-size: 13px;
-    font-family: 'Noto Sans KR', sans-serif;
-    box-sizing: border-box;
-    height: 32px; /* 입력칸 높이를 줄여서 전체 세로 길이 압축 */
-}
-.unit-text {
-    position: absolute; right: 8px; top: 7px; color: #64748b; font-size: 12px; font-weight: 800;
-}
-        /* 1. 상단 타이틀 여백 최소화 */
-.search-header h1 {
-    font-size: 18px;
-    margin: 5px 0 10px 0;
-}
+        /* 세로 길이를 파격적으로 줄이는 2단 배열 (전화번호부) */
+        #bottom-static-info .info-box:nth-of-type(2) { display: grid; grid-template-columns: 1fr 1fr; column-gap: 15px; border-bottom: none; }
+        #bottom-static-info .info-box:nth-of-type(2) .contact-item { border-bottom: 1px dotted #e2e8f0; }
+        
+        /* 마지막 홈페이지 주소 비율 조정 */
+        #bottom-static-info .info-box:nth-of-type(3) .contact-label { width: 85px; }
+        #bottom-static-info .info-box:nth-of-type(3) .sub-desc { width: 220px; }
 
-/* 2. 폼 영역 상하 여백 및 입력칸 높이 축소 */
-.compact-form {
-    padding: 8px 12px;
-    margin-bottom: 10px;
-    gap: 6px; /* 줄 사이 간격 더 줄임 */
-}
-.custom-input {
-    height: 28px; /* 기존 32px에서 28px로 축소 */
-    padding: 2px 6px;
-    font-size: 12px;
-}
-.btn {
-    height: 28px !important;
-}
-.unit-text {
-    top: 5px; /* 입력칸 높이에 맞춰 '만원' 글자 위치 조정 */
-}
-
-/* 3. 타임라인(주택/상가 라디오 버튼) 영역 여백 축소 */
-#timeline-container {
-    padding: 10px 15px;
-    margin-bottom: 5px;
-}
-.contract-settings {
-    margin-bottom: 10px;
-}
-
-/* 4. 출력 카드 여백 살짝 다듬기 */
-.office-card {
-    padding: 12px 15px;
-    margin-bottom: 10px;
-}
-.office-name {
-    font-size: 15px;
-    margin-bottom: 5px;
-}
-.office-details {
-    gap: 5px;
-}
-        /* 1. 강제 스크롤 차단 */
-#sidebar-search, #result-area {
-    overflow: visible !important; 
-}
-
-/* 2. 상단 헤더 및 폼 여백 초압축 */
-.search-header { padding: 10px 15px 5px 15px !important; }
-.search-header h1 { font-size: 16px; margin: 0 0 8px 0; }
-.compact-form { padding: 6px 10px; margin-bottom: 8px; gap: 4px; }
-.custom-input, .btn { height: 26px !important; font-size: 12px; }
-
-/* 3. 타임라인(라디오 버튼) 영역 초압축 */
-#timeline-container { padding: 5px 10px; margin-bottom: 5px; }
-.contract-settings { margin-bottom: 5px; font-size: 12px; }
-
-/* 4. 출력 카드 여백 최소화 */
-#office-list { margin-bottom: 5px; }
-.office-card { padding: 8px 12px; margin-bottom: 6px; }
-.office-name { font-size: 14px; margin-bottom: 2px; }
-.office-details p { font-size: 12px; margin: 2px 0; }
-
-/* 5. 하단 안내문 폰트 및 여백 축소 */
-.section-title { font-size: 13px; margin: 6px 0 3px 0; }
-.info-box { padding: 6px 10px; margin-bottom: 6px; }
-.contact-item { padding: 2px 0; font-size: 11px; }
-
-/* ⭐️ 6. 핵심: 주요 업무 문의처를 2단(그리드)으로 나눠서 세로 길이 반토막 내기 ⭐️ */
-#bottom-static-info .info-box:nth-of-type(2) {
-    display: grid;
-    grid-template-columns: 1fr 1fr; /* 세로 9줄을 가로 2단으로 분할 */
-    column-gap: 15px;
-}
-/* 마지막 관련 기관 홈페이지 부분 크기 미세조정 */
-#bottom-static-info .info-box:nth-of-type(3) .contact-label { width: 85px; }
-#bottom-static-info .info-box:nth-of-type(3) .sub-desc { width: 220px; }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-update { animation: fadeInUp 0.3s ease-out forwards; }
     </style>
 </head>
 <body>
@@ -332,14 +108,13 @@
         <div class="search-header">
             <h1>관할기관 통합 검색</h1>
             
-           <div class="compact-form">
-                
+            <div class="compact-form">
                 <div class="form-row">
                     <span class="form-label">주소</span>
                     <div style="position: relative; display: flex; gap: 5px; flex: 1;">
                         <input type="text" id="keyword" class="custom-input" style="width: 100%;" placeholder="도로명 또는 지번 주소 입력" autocomplete="off" autofocus>
-                        <button id="search-btn" class="btn" style="width: 60px; height: 26px; padding: 0; font-size: 13px;">검색</button>
-                        <div id="addressList" style="position: absolute; top: 100%; left: 0; width: 100%; z-index: 999; margin-top: 2px;"></div>
+                        <button id="search-btn" class="btn" style="width: 50px;">검색</button>
+                        <div id="addressList"></div>
                     </div>
                 </div>
 
@@ -347,51 +122,47 @@
                     <div style="display: flex; align-items: center;">
                         <span class="form-label">계약일</span>
                         <div style="display: flex; align-items: center; gap: 4px;">
-                            <input type="text" id="yy" class="custom-input" style="width: 45px; text-align: center;" maxlength="2" placeholder="YY">
+                            <input type="text" id="yy" class="custom-input" style="width: 40px; text-align: center;" maxlength="2" placeholder="YY">
                             <span style="color: #cbd5e1; font-weight: bold;">-</span>
-                            <input type="text" id="mm" class="custom-input" style="width: 35px; text-align: center;" maxlength="2" placeholder="MM">
+                            <input type="text" id="mm" class="custom-input" style="width: 30px; text-align: center;" maxlength="2" placeholder="MM">
                             <span style="color: #cbd5e1; font-weight: bold;">-</span>
-                            <input type="text" id="dd" class="custom-input" style="width: 35px; text-align: center;" maxlength="2" placeholder="DD">
+                            <input type="text" id="dd" class="custom-input" style="width: 30px; text-align: center;" maxlength="2" placeholder="DD">
                         </div>
                     </div>
                     
-                    <div class="contract-settings" style="display: flex; align-items: center; gap: 8px; margin-bottom: 0; font-size: 11px;">
-                        <label style="display:flex; align-items:center; gap:2px;"><input type="radio" name="bldgType" value="house" checked style="margin:0;"> 주택</label>
-                        <label style="display:flex; align-items:center; gap:2px;"><input type="radio" name="bldgType" value="com" style="margin:0;"> 상가(10년)</label>
-                        <div class="year-input-wrap" style="display: flex; align-items: center;">
+                    <div class="contract-settings">
+                        <label><input type="radio" name="bldgType" value="house" checked> 주택</label>
+                        <label><input type="radio" name="bldgType" value="com"> 상가(10년)</label>
+                        <div class="year-input-wrap">
                             <span style="color:#64748b; margin-right:2px;">최초</span>
-                            <input type="number" id="initYears" value="2" min="1" max="10" style="width: 30px; height: 22px; text-align: center; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 11px;">
-                            <span style="color:#64748b; margin-left: 2px;">년</span>
+                            <input type="number" id="initYears" value="2" min="1" max="10">
+                            <span style="color:#64748b; margin-left:2px;">년</span>
                         </div>
                     </div>
                 </div>
 
-                <div class="form-row">
+                <div class="form-row" style="justify-content: flex-start;">
                     <span class="form-label">보증금</span>
                     <div style="position: relative; margin-right: 15px;">
-                        <input type="text" id="deposit" class="custom-input" placeholder="5000" style="width: 100px; padding-right: 35px; text-align: right;">
+                        <input type="text" id="deposit" class="custom-input" placeholder="5000" style="width: 90px; padding-right: 30px; text-align: right;">
                         <span class="unit-text">만원</span>
                     </div>
                     
                     <span class="form-label" style="width: auto; margin-right: 10px;">월세</span>
                     <div style="position: relative;">
-                        <input type="text" id="rent" class="custom-input" placeholder="50" style="width: 100px; padding-right: 35px; text-align: right;">
+                        <input type="text" id="rent" class="custom-input" placeholder="50" style="width: 90px; padding-right: 30px; text-align: right;">
                         <span class="unit-text">만원</span>
                     </div>
                 </div>
-
             </div>
-            <div id="timeline-container" style="padding: 0 10px; margin-bottom: 5px;">
+
+            <div id="timeline-container">
                 <div id="date-visual-line"></div>
                 <div id="notice-detail-info"></div>
             </div>
-                </div>
-                
-                <div id="date-visual-line"></div>
-                <div id="notice-detail-info"></div>
-            </div>
+        </div> 
 
-        </div> <div id="result-area">
+        <div id="result-area">
             <div id="rec-section"><p class="intro-msg">주소를 입력해주세요</p></div>
             
             <div id="sub-info-area" style="display:none;">
@@ -400,8 +171,8 @@
                 <div id="bottom-static-info">
                     <div class="section-title">신청 시 필요 서류</div>
                     <div class="info-box">
-                        <div class="contact-item"><span>• <span style="font-weight:800;">공통:</span> 신분증, 주민등록초본, 임대차계약서, 등기부등본, 건축물대장</span></div>
-                        <div class="contact-item"><span>• <span style="font-weight:800;">대리:</span> 위임장, 인감증명서, 대리인 신분증</span></div>
+                        <div class="contact-item" style="border-bottom:none;"><span>• <span style="font-weight:800;">공통:</span> 신분증, 주민등록초본, 임대차계약서, 등기부등본, 건축물대장</span></div>
+                        <div class="contact-item" style="border-bottom:none;"><span>• <span style="font-weight:800;">대리:</span> 위임장, 인감증명서, 대리인 신분증</span></div>
                     </div>
 
                     <div class="section-title">주요 업무 문의처</div>
@@ -411,32 +182,36 @@
                         <div class="contact-item"><span class="contact-label">임대차신고</span><b>1533-2949</b></div>
                         <div class="contact-item"><span class="contact-label">LH공사</span><b>1600-1004</b></div>
                         <div class="contact-item"><span class="contact-label">렌트홈</span><b>1670-8004</b></div>
-                        <div class="contact-item"><span class="contact-label">공동주택 조정위<span class="sub-desc">(장기수선·관리비)</span></span><b>031-738-3300</b></div>
+                        <div class="contact-item"><span class="contact-label">공동주택 조정위<span class="sub-desc">(장기수선)</span></span><b>031-738-3300</b></div>
                         <div class="contact-item"><span class="contact-label">국토부</span><b>1599-0001</b></div>
                         <div class="contact-item"><span class="contact-label">대법공</span><b>132</b></div>
-                        <div class="contact-item"><span class="contact-label">국세청</span><b>126</b></div>
+                        <div class="contact-item" style="border-bottom:none;"><span class="contact-label">국세청</span><b>126</b></div>
                     </div>
 
                     <div class="section-title">관련 기관 홈페이지</div>
-                    <div class="info-box">
+                    <div class="info-box" style="margin-bottom:0;">
                         <div class="contact-item">
                             <div style="display: flex; align-items: center;">
-                                <span class="contact-label" style="width: 100px; flex-shrink: 0;">한국부동산원</span>
-                                <span class="sub-desc" style="width: 260px; flex-shrink: 0; margin-left: 6px;">홈페이지 - 4번째 배너 - 분쟁조정 신청하기</span>
+                                <span class="contact-label" style="width: 85px; flex-shrink: 0;">한국부동산원</span>
+                                <span class="sub-desc" style="width: 220px; flex-shrink: 0; margin-left: 6px;">홈페이지 - 4번째 배너 - 분쟁조정</span>
                             </div>
-                            <a href="https://www.reb.or.kr/" target="_blank" style="color: var(--gov-red); text-decoration: none; font-weight: 900; font-size: 14px;">https://www.reb.or.kr/</a>
+                            <a href="https://www.reb.or.kr/" target="_blank" style="color: var(--gov-red); text-decoration: none; font-weight: 900; font-size: 13px;">https://www.reb.or.kr/</a>
                         </div>
-                        <div class="contact-item">
+                        <div class="contact-item" style="border-bottom:none;">
                             <div style="display: flex; align-items: center;">
-                                <span class="contact-label" style="width: 100px; flex-shrink: 0;">대한법률구조공단</span>
-                                <span class="sub-desc" style="width: 260px; flex-shrink: 0; margin-left: 6px;">공단 소개 - 전국 사무소 이용 안내 - 조정위원회</span>
+                                <span class="contact-label" style="width: 85px; flex-shrink: 0;">법률구조공단</span>
+                                <span class="sub-desc" style="width: 220px; flex-shrink: 0; margin-left: 6px;">공단 소개 - 전국 사무소 안내</span>
                             </div>
-                            <a href="https://www.klac.or.kr/" target="_blank" style="color: var(--gov-red); text-decoration: none; font-weight: 900; font-size: 14px;">https://www.klac.or.kr/</a>
+                            <a href="https://www.klac.or.kr/" target="_blank" style="color: var(--gov-red); text-decoration: none; font-weight: 900; font-size: 13px;">https://www.klac.or.kr/</a>
                         </div>
                     </div>
-                </div> </div> </div> </div> </div> ```
+                </div> 
+            </div> 
+        </div> 
+    </div> 
+</div> 
 
-이 코드를 복사해서 넣어주시면, 끊어졌던 타임라인과 검색 결과 출력창이 모두 제자리를 찾아서 다시 정상적으로 깔끔하게 뜰 것입니다! 적용해보시고 잘 나오는지 확인해주세요!<script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=d791798c38589fc7cdc6bce91d9369be&libraries=services"></script>
+<script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=d791798c38589fc7cdc6bce91d9369be&libraries=services"></script>
 <script>
 const offices = [
     {name:"한국부동산원 서울동부지사", type:"부동산원", covers:["서울", "도봉구", "강북구", "노원구", "성북구", "중랑구", "동대문구", "성동구", "광진구", "강동구"], lat:37.557698, lng:127.079226, phone:"02-3394-9870~3", address:"서울시 광진구 천호대로 549, 지타워 10층"},
@@ -464,7 +239,7 @@ let currentAddressResults = [];
 let focusedIndex = -1;
 let debounceTimer;
 let lastSearchKeyword = "";
-let isNavigating = false; 
+let isNavigating = false;
 
 const keywordInput = document.getElementById("keyword");
 const addressList = document.getElementById("addressList");
@@ -481,321 +256,172 @@ function formatDate(date) {
     let yy = String(date.getFullYear()).slice(-2);
     let mm = String(date.getMonth() + 1).padStart(2, '0');
     let dd = String(date.getDate()).padStart(2, '0');
-    return `${yy}.${mm}.${dd}`;
+    return `${yy}-${mm}-${dd}`;
 }
 
-function formatShortDate(date) {
-    let yy = String(date.getFullYear()).slice(-2);
-    let mm = String(date.getMonth() + 1).padStart(2, '0');
-    return `${yy}.${mm}`;
+const today = new Date();
+dateInputs[0].value = String(today.getFullYear()).slice(-2);
+dateInputs[1].value = String(today.getMonth() + 1).padStart(2, '0');
+dateInputs[2].value = String(today.getDate()).padStart(2, '0');
+
+function getBaseDate() {
+    let y = parseInt(dateInputs[0].value, 10);
+    let m = parseInt(dateInputs[1].value, 10) - 1;
+    let d = parseInt(dateInputs[2].value, 10);
+    if(isNaN(y) || isNaN(m) || isNaN(d)) return today;
+    let fullYear = y < 50 ? 2000 + y : 1900 + y;
+    return new Date(fullYear, m, d);
 }
 
-function formatExactMidnight(date) {
-    let exactDate = new Date(date);
-    exactDate.setDate(exactDate.getDate() - 1);
-    let yy = String(exactDate.getFullYear()).slice(-2);
-    let mm = String(exactDate.getMonth() + 1).padStart(2, '0');
-    let dd = String(exactDate.getDate()).padStart(2, '0');
-    return `${yy}.${mm}.${dd}`;
-}
-
-typeRadios.forEach(r => r.addEventListener('change', () => calculateTimeline()));
-initYearsInput.addEventListener('input', () => calculateTimeline());
-
-function calculateTimeline() {
-    let y = dateInputs[0].value, m = dateInputs[1].value, d = dateInputs[2].value;
-    if (y.length === 2 && m.length === 2 && d.length === 2) {
-        let numM = parseInt(m), numD = parseInt(d);
-        if (numM < 1 || numM > 12 || numD < 1 || numD > 31) { timelineContainer.style.visibility = "hidden"; return; }
-        let fullYear = parseInt(y) > 50 ? 1900 + parseInt(y) : 2000 + parseInt(y);
-        let dateObj = new Date(fullYear, numM - 1, numD);
-        if (dateObj.getMonth() !== numM - 1) { timelineContainer.style.visibility = "hidden"; return; }
-
-        renderAdvancedTimeline(dateObj);
-    } else { 
-        timelineContainer.style.visibility = "hidden"; 
-    }
-}
-
-// ✨ 주택 vs 상가 렌더링 조건을 분리한 핵심 함수
-function renderAdvancedTimeline(startDate) {
+function updateTimeline() {
+    const baseDate = getBaseDate();
+    const bldgType = document.querySelector('input[name="bldgType"]:checked').value;
+    const initYears = parseInt(initYearsInput.value, 10) || 2;
+    
     timelineContainer.style.visibility = "visible";
-    visualLine.innerHTML = '';
-    detailInfoBox.style.display = "none";
     
-    let isCom = document.querySelector('input[name="bldgType"]:checked').value === 'com';
-    let initYears = parseInt(initYearsInput.value) || 1;
-    let noticeEndMonth = isCom ? 1 : 2; 
-
-    const today = new Date();
-    today.setHours(0,0,0,0);
-
-    let dates = [new Date(startDate)];
-    let maxComDate = new Date(startDate);
-    maxComDate.setFullYear(maxComDate.getFullYear() + 10); // 상가 한정 10년 캡
-
-    let current = new Date(startDate);
-    current.setFullYear(current.getFullYear() + initYears);
+    let protectionYears = bldgType === 'com' ? 10 : 2;
+    let maxDate = new Date(baseDate);
+    maxDate.setFullYear(maxDate.getFullYear() + protectionYears);
     
-    if (isCom && current > maxComDate) current = new Date(maxComDate);
-    dates.push(new Date(current));
-
-    // 배열에 2년씩 더해가며 구간 날짜들을 채움
-    while (true) {
-        // ✨ 주택 로직: current(현재 구간의 끝)가 오늘보다 뒤에 있다면, 우리가 렌더링해야 할 '미래 만기 구간'까지 도달한 것이므로 스톱
-        if (!isCom && current.getTime() >= today.getTime()) {
-            break; 
-        }
-        // ✨ 상가 로직: 정확히 10년이 될 때 스톱
-        if (isCom && current.getTime() >= maxComDate.getTime()) {
-            break; 
-        }
-
-        let next = new Date(current);
-        next.setFullYear(next.getFullYear() + 2);
-        
-        if (isCom && next > maxComDate) {
-            next = new Date(maxComDate);
-        }
-        
-        dates.push(new Date(next));
-        current = new Date(next);
+    const maxTotalDays = (maxDate - baseDate) / (1000 * 60 * 60 * 24);
+    const passedDays = (today - baseDate) / (1000 * 60 * 60 * 24);
+    let currentPercent = (passedDays / maxTotalDays) * 100;
+    
+    if(currentPercent < 0) currentPercent = 0;
+    if(currentPercent > 100) currentPercent = 100;
+    
+    let html = `<div class="timeline-node"></div>`;
+    
+    if(passedDays > 0) {
+        html += `<div class="timeline-segment past" style="flex: ${currentPercent};"></div>`;
+        html += `<div class="today-marker" style="left: ${currentPercent}%"></div>`;
+        html += `<div class="timeline-segment future" style="flex: ${100 - currentPercent};"></div>`;
+    } else {
+        html += `<div class="today-marker" style="left: 0%"></div>`;
+        html += `<div class="timeline-segment future" style="flex: 100;"></div>`;
     }
-
-    let activeIndex = dates.length - 2; 
-    for (let i = 0; i < dates.length - 1; i++) {
-        if (today >= dates[i] && today < dates[i+1]) {
-            activeIndex = i;
-            break;
-        }
+    html += `<div class="timeline-node"></div>`;
+    
+    for(let i=1; i<protectionYears; i++) {
+        let tickPercent = (i / protectionYears) * 100;
+        html += `<div class="timeline-tick-1yr" style="left: ${tickPercent}%"></div>`;
     }
-
-    const totalNodes = dates.length;
-
-    for (let i = 0; i < totalNodes; i++) {
-        let node = document.createElement('div');
-        node.className = 'timeline-node';
-        
-        let label = document.createElement('div');
-        label.className = 'timeline-date-label';
-        
-        if (i === activeIndex || i === activeIndex + 1) {
-            label.innerText = formatDate(dates[i]); 
-            label.style.fontWeight = '900';
-            label.style.opacity = '1';
-        } else {
-            label.innerText = formatShortDate(dates[i]);
-            label.classList.add('past-label');
-        }
-
-        if (isCom && dates[i].getTime() === maxComDate.getTime()) {
-            label.innerText = formatShortDate(dates[i]) + '\n(10년)';
-            label.classList.add('limit-label');
-            label.style.textAlign = 'center';
-            label.style.top = '14px';
-        }
-        
-        node.appendChild(label);
-        visualLine.appendChild(node);
-
-        if (i < totalNodes - 1) {
-            let segment = document.createElement('div');
-            segment.className = 'timeline-segment';
-            
-            if (i === activeIndex) {
-                segment.classList.add('current');
-                
-                let periodStart = dates[i];
-                let periodEnd = dates[i+1];
-                
-                let noticeStart = new Date(periodEnd);
-                noticeStart.setMonth(noticeStart.getMonth() - 6);
-                
-                let noticeEnd = new Date(periodEnd);
-                noticeEnd.setMonth(noticeEnd.getMonth() - noticeEndMonth);
-
-                let totalMs = periodEnd.getTime() - periodStart.getTime();
-                let startMs = noticeStart.getTime() - periodStart.getTime();
-                let widthMs = noticeEnd.getTime() - noticeStart.getTime();
-
-                let leftPct = (startMs / totalMs) * 100;
-                let widthPct = (widthMs / totalMs) * 100;
-
-                let noticeBox = document.createElement('div');
-                noticeBox.className = 'notice-box';
-                noticeBox.style.left = `${leftPct}%`;
-                noticeBox.style.width = `${widthPct}%`;
-                
-                let noticeLabel = document.createElement('div');
-                noticeLabel.className = 'notice-label';
-                noticeLabel.innerText = '갱신의사 표시기간';
-                noticeBox.appendChild(noticeLabel);
-                segment.appendChild(noticeBox);
-
-                detailInfoBox.style.display = "block";
-                detailInfoBox.innerHTML = `
-                    <div class="detail-row">
-                        <span class="detail-badge red">갱신의사 표시기간</span>
-                        <span class="detail-text">
-                            ${formatDate(noticeStart)} <span class="detail-sub" style="margin-right:8px;">(${formatExactMidnight(noticeStart)} 24:00부터)</span> ~ 
-                            ${formatDate(noticeEnd)} <span class="detail-sub">(${formatExactMidnight(noticeEnd)} 24:00까지)</span>
-                        </span>
-                    </div>
-                `;
-
-                let todayTime = today.getTime();
-                if (todayTime >= periodStart.getTime() && todayTime <= periodEnd.getTime()) {
-                    let progressPercent = ((todayTime - periodStart.getTime()) / totalMs) * 100;
-                    let todayMarker = document.createElement('div');
-                    todayMarker.className = 'today-marker';
-                    todayMarker.style.left = `${progressPercent}%`;
-                    segment.appendChild(todayMarker);
-                }
-
-            } else if (i < activeIndex) {
-                segment.classList.add('past');
-            } else {
-                segment.classList.add('future');
-            }
-            
-            let durationYears = (dates[i+1].getTime() - dates[i].getTime()) / (365.25 * 24 * 60 * 60 * 1000);
-            if (durationYears > 1.5) {
-                let totalMs = dates[i+1].getTime() - dates[i].getTime();
-                let oneYearMs = 365.25 * 24 * 60 * 60 * 1000;
-                let tickPct = (oneYearMs / totalMs) * 100;
-
-                let tick = document.createElement('div');
-                tick.className = 'timeline-tick-1yr';
-                tick.style.left = `${tickPct}%`;
-                segment.appendChild(tick);
-            }
-
-            visualLine.appendChild(segment);
-        }
+    
+    html += `<div class="timeline-date-label past-label" style="left: 0%">${formatDate(baseDate)}</div>`;
+    
+    let typeName = bldgType === 'com' ? '상가' : '주택';
+    let noticeLabel = bldgType === 'com' ? '계약갱신요구권 행사 가능 (최대 10년)' : '계약갱신요구권 행사 가능 (1회, 2년)';
+    
+    let claimStart = new Date(maxDate);
+    let claimEnd = new Date(maxDate);
+    
+    if(bldgType === 'com') {
+        claimStart.setMonth(claimStart.getMonth() - 6);
+        claimEnd.setMonth(claimEnd.getMonth() - 1);
+    } else {
+        claimStart.setMonth(claimStart.getMonth() - 6);
+        claimEnd.setMonth(claimEnd.getMonth() - 2);
     }
+    
+    let startPercent = ((claimStart - baseDate) / (1000 * 60 * 60 * 24) / maxTotalDays) * 100;
+    let endPercent = ((claimEnd - baseDate) / (1000 * 60 * 60 * 24) / maxTotalDays) * 100;
+    
+    startPercent = Math.max(0, startPercent);
+    endPercent = Math.min(100, endPercent);
+    
+    if(startPercent < 100) {
+        html += `
+            <div class="notice-box" style="left: ${startPercent}%; width: ${endPercent - startPercent}%;">
+                <div class="notice-label">${noticeLabel}</div>
+            </div>
+        `;
+    }
+    
+    html += `<div class="timeline-date-label limit-label" style="left: 100%">${formatDate(maxDate)}</div>`;
+    
+    visualLine.innerHTML = html;
+
+    detailInfoBox.style.display = "block";
+    detailInfoBox.innerHTML = `
+        <div class="detail-row">
+            <span class="detail-badge red">갱신요구권 행사기간</span>
+            <span class="detail-text">${formatDate(claimStart)} ~ ${formatDate(claimEnd)}<span class="detail-sub">까지</span></span>
+        </div>
+    `;
 }
 
-dateInputs.forEach((input, idx) => {
-    input.addEventListener("input", () => {
-        let val = input.value.replace(/[^0-9]/g, "");
-        input.value = val;
-        if (val.length === 2) {
-            if (idx === 1) { if (parseInt(val) > 12) input.value = "12"; if (parseInt(val) === 0) input.value = "01"; }
-            if (idx === 2) { if (parseInt(val) > 31) input.value = "31"; if (parseInt(val) === 0) input.value = "01"; }
-            if (idx < 2) dateInputs[idx + 1].focus();
-            else depositInput.focus();
+dateInputs.forEach(input => {
+    input.addEventListener('input', () => {
+        if(dateInputs[0].value.length===2 && dateInputs[1].value.length===2 && dateInputs[2].value.length===2) {
+            updateTimeline();
         }
-        calculateTimeline();
     });
 });
+typeRadios.forEach(radio => radio.addEventListener('change', updateTimeline));
+initYearsInput.addEventListener('input', updateTimeline);
 
-[depositInput, rentInput].forEach(input => {
-    input.addEventListener("input", (e) => {
-        let val = e.target.value.replace(/[^0-9]/g, "");
-        e.target.value = val ? Number(val).toLocaleString() : "";
-    });
-    input.addEventListener("keydown", (e) => {
-        if (e.key === "Enter" && input === depositInput) rentInput.focus();
-    });
-});
+const ps = new kakao.maps.services.Places();
+const geocoder = new kakao.maps.services.Geocoder();
 
-function searchAddress() {
-    const keyword = keywordInput.value.trim();
-    if (isNavigating || !keyword || keyword === lastSearchKeyword) return;
-    if (keyword.length < 2) { addressList.style.display = "none"; return; }
-    const geocoder = new kakao.maps.services.Geocoder();
-    geocoder.addressSearch(keyword, function(result, status) {
+function formatNumberInput(e) {
+    let val = e.target.value.replace(/[^0-9]/g, "");
+    if(val) {
+        e.target.value = Number(val).toLocaleString('ko-KR');
+    } else {
+        e.target.value = "";
+    }
+}
+depositInput.addEventListener('input', formatNumberInput);
+rentInput.addEventListener('input', formatNumberInput);
+
+function searchAddress(query) {
+    if (!query.trim()) {
+        addressList.style.display = "none";
+        return;
+    }
+    ps.keywordSearch(query, (data, status) => {
         if (status === kakao.maps.services.Status.OK) {
-            currentAddressResults = result;
-            addressList.innerHTML = "";
-            addressList.style.display = "block";
+            currentAddressResults = data.slice(0, 5);
             focusedIndex = -1;
-            result.forEach((item, idx) => {
-                const div = document.createElement("div");
-                div.className = "search-item";
-                div.innerText = item.address_name;
-                
-                div.onmouseenter = () => {
-                    focusedIndex = idx;
-                    Array.from(addressList.children).forEach((child, i) => {
-                        child.classList.toggle("active", i === focusedIndex);
-                    });
-                };
-
-                div.onmousedown = (e) => { e.preventDefault(); selectItem(item); };
-                addressList.appendChild(div);
-            });
+            renderAddressList(currentAddressResults);
+        } else {
+            addressList.style.display = "none";
         }
     });
 }
-function selectItem(item) {
-    if (!item) return;
+
+function renderAddressList(places) {
+    addressList.innerHTML = "";
+    if (places.length === 0) {
+        addressList.style.display = "none";
+        return;
+    }
+    addressList.style.display = "block";
+    
+    places.forEach((place, index) => {
+        const div = document.createElement("div");
+        div.className = "search-item";
+        div.innerHTML = `<strong>${place.place_name}</strong><br><span style="color:#666;font-size:11px;">${place.address_name}</span>`;
+        
+        div.addEventListener("click", () => selectItem(place));
+        div.addEventListener("mouseenter", () => {
+            focusedIndex = index;
+            Array.from(addressList.children).forEach((c, i) => c.classList.toggle("active", i === index));
+        });
+        addressList.appendChild(div);
+    });
+}
+
+function selectItem(place) {
+    keywordInput.value = place.address_name;
     addressList.style.display = "none";
-    keywordInput.value = item.address_name;
-    lastSearchKeyword = item.address_name;
-    
-  
-    document.getElementById("rec-section").style.display = "none";
-    
-    const subInfoArea = document.getElementById("sub-info-area");
-    subInfoArea.style.display = "block";
-    
-  
-    subInfoArea.classList.remove("animate-update");
-    void subInfoArea.offsetWidth;
-    subInfoArea.classList.add("animate-update");
-    
-   
-    findNearest(parseFloat(item.y), parseFloat(item.x), item.address_name);
+    findOffices(place.address_name);
 }
 
-function getDistance(lat1, lon1, lat2, lon2) {
-    const R = 6371;
-    const dLat = (lat2-lat1)*Math.PI/180;
-    const dLon = (lon2-lon1)*Math.PI/180;
-    const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180) * Math.cos(lat2*Math.PI/180) * Math.sin(dLon/2)**2;
-    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-}
-
-function findNearest(lat, lng, fullAddress) {
-    const addrParts = fullAddress.split(' ');
-    const mySido = addrParts[0].substring(0, 2);
-    const myGu = addrParts.find(p => p.endsWith('구')) || "";
-    let filtered = offices.map(o => {
-        const dist = getDistance(lat, lng, o.lat, o.lng);
-        const hasSido = o.covers.includes(mySido);
-        const hasGu = myGu && o.covers.includes(myGu);
-        let score = hasGu ? 100 : (hasSido ? 50 : 0);
-        let displayCover = o.covers.includes("서울") ? "서울" : (o.covers[0] || "");
-        return { ...o, dist, score, displayCover };
-    });
-    let finalResults = (mySido === "서울") ? 
-        filtered.filter(o => o.score > 0).sort((a, b) => b.score - a.score || a.dist - b.dist).slice(0, 2) :
-        filtered.filter(o => o.score > 0).sort((a, b) => b.score - a.score || a.dist - b.dist).slice(0, 1);
-    displayResults(finalResults);
-}
-
-function displayResults(recData) {
-    const officeList = document.getElementById("office-list");
-    officeList.innerHTML = `<span class="section-title">관할기관 안내</span>`;
-    recData.forEach((o) => {
-        let displayName = o.name.includes("(지자체)") ? o.name.replace("(지자체)", `<span class="office-name-sub">(지자체)</span>`) : o.name;
-        officeList.innerHTML += `
-            <div class="office-card recommend">
-                <div class="card-top">
-                    <span class="office-name">${displayName}</span>
-                    <div class="meta-info">
-                        <span class="zone-text">${o.displayCover}</span> <span class="dist-text">(${o.dist.toFixed(1)}km)</span>
-                    </div>
-                </div>
-                <div class="phone-row">
-                    <span class="phone-text">${o.phone}</span>
-                    <span class="sms-tag">${o.type === "지자체" ? "문자 X" : "문자 O"}</span>
-                </div>
-                <p class="addr-text">${o.address}</p>
-            </div>`;
-    });
-}
+document.getElementById("search-btn").addEventListener("click", () => {
+    if (keywordInput.value.trim()) findOffices(keywordInput.value.trim());
+});
 
 keywordInput.addEventListener("keydown", (e) => {
     const items = addressList.getElementsByClassName("search-item");
@@ -803,49 +429,96 @@ keywordInput.addEventListener("keydown", (e) => {
         if (items.length === 0) return;
         e.preventDefault();
         isNavigating = true; 
-        
-        if (e.key === "ArrowDown") {
-            focusedIndex = (focusedIndex + 1) % items.length;
-        } else {
-            focusedIndex = (focusedIndex - 1 + items.length) % items.length;
-        }
+        if (e.key === "ArrowDown") focusedIndex = (focusedIndex + 1) % items.length;
+        else focusedIndex = (focusedIndex - 1 + items.length) % items.length;
 
-        Array.from(items).forEach((item, i) => {
-            item.classList.toggle("active", i === focusedIndex);
-        });
-        
-        if(focusedIndex > -1) {
-            keywordInput.value = currentAddressResults[focusedIndex].address_name;
-        }
+        Array.from(items).forEach((item, i) => item.classList.toggle("active", i === focusedIndex));
+        if(focusedIndex > -1) keywordInput.value = currentAddressResults[focusedIndex].address_name;
     }
     if (e.key === "Enter") {
         e.preventDefault();
-        if (focusedIndex > -1 && currentAddressResults[focusedIndex]) {
-            selectItem(currentAddressResults[focusedIndex]);
-        } else if (items.length > 0) {
-            selectItem(currentAddressResults[0]);
-        }
+        if (focusedIndex > -1 && currentAddressResults[focusedIndex]) selectItem(currentAddressResults[focusedIndex]);
+        else if (items.length > 0) selectItem(currentAddressResults[0]);
+        else if (keywordInput.value.trim()) findOffices(keywordInput.value.trim());
     }
 });
 
 keywordInput.addEventListener("input", () => {
     isNavigating = false; 
     clearTimeout(debounceTimer);
-    debounceTimer = setTimeout(searchAddress, 200);
+    debounceTimer = setTimeout(() => {
+        if(!isNavigating) searchAddress(keywordInput.value);
+    }, 200);
 });
 
 document.addEventListener("click", (e) => {
-    if (!e.target.closest('.search-row')) addressList.style.display = "none";
+    if (e.target !== keywordInput && e.target !== addressList) addressList.style.display = "none";
 });
+
+function findOffices(addressStr) {
+    geocoder.addressSearch(addressStr, (result, status) => {
+        if (status === kakao.maps.services.Status.OK) {
+            updateTimeline(); 
+            
+            const lat = result[0].y;
+            const lng = result[0].x;
+            const addressWords = addressStr.split(" ");
+            
+            let matched = offices.filter(o => 
+                o.covers.some(cover => addressWords.some(word => word.includes(cover)))
+            );
+            
+            if(matched.length === 0) {
+                document.getElementById('rec-section').innerHTML = `<p class="intro-msg">해당 지역의 관할기관 정보를 찾을 수 없습니다.</p>`;
+                document.getElementById('sub-info-area').style.display = 'none';
+                return;
+            }
+
+            matched.forEach(o => {
+                o.dist = Math.sqrt(Math.pow(o.lat - lat, 2) + Math.pow(o.lng - lng, 2));
+            });
+            matched.sort((a,b) => a.dist - b.dist);
+
+            renderOffices(matched);
+            document.getElementById('rec-section').style.display = 'none';
+            document.getElementById('sub-info-area').style.display = 'block';
+            
+            document.getElementById('result-area').classList.remove('animate-update');
+            void document.getElementById('result-area').offsetWidth; 
+            document.getElementById('result-area').classList.add('animate-update');
+        } else {
+            document.getElementById('rec-section').innerHTML = `<p class="intro-msg" style="color:var(--gov-red);">정확한 주소를 입력해주세요.</p>`;
+            document.getElementById('sub-info-area').style.display = 'none';
+        }
+    });
+}
+
+function renderOffices(list) {
+    const listDiv = document.getElementById("office-list");
+    listDiv.innerHTML = "";
+
+    list.forEach((o, index) => {
+        let isRec = index === 0;
+        let distKm = (o.dist * 111).toFixed(1);
+        listDiv.innerHTML += `
+            <div class="office-card ${isRec ? 'recommend' : ''}">
+                <div class="card-top">
+                    <div>
+                        <div class="office-name">${o.name} <span class="office-name-sub">${isRec ? '(가장 가까움)' : ''}</span></div>
+                    </div>
+                    <div class="meta-info">
+                        <span class="zone-text">관할: ${o.covers.slice(0,2).join(', ')}${o.covers.length>2?' 외':''}</span>
+                        <span class="dist-text">약 ${distKm}km</span>
+                    </div>
+                </div>
+                <div class="phone-row">
+                    <p class="phone-text">${o.phone}</p>
+                    <span class="sms-tag">문자상담 가능</span>
+                </div>
+                <p class="addr-text">${o.address}</p>
+            </div>`;
+    });
+}
 </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-

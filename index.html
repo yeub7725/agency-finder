@@ -60,7 +60,6 @@
         .price-unit { font-size: 12px; color: var(--gov-gray); font-weight: 700; white-space: nowrap; flex-shrink: 0; }
         .price-slash { color: #e2e8f0; margin: 0 6px; flex-shrink: 0; }
 
-        /* ✨ 타임라인 관련 전체 요소를 감싸는 래퍼 (검색창 우측에 통째로 배치) */
         #timeline-container {
             visibility: hidden;
             position: absolute;
@@ -72,7 +71,6 @@
             flex-direction: column;
         }
 
-        /* ✨ 주택/상가 및 계약기간 설정 영역 (그래프 바로 위로 이동) */
         .contract-settings {
             display: flex; align-items: center; gap: 15px; margin-bottom: 25px; font-size: 13px; color: var(--gov-gray); font-weight: 700;
         }
@@ -81,7 +79,6 @@
         .year-input-wrap { display: flex; align-items: center; background: #f1f5f9; padding: 2px 8px; border-radius: 4px; border: 1px solid #e2e8f0;}
         .year-input-wrap input { width: 25px; border: none; background: transparent; text-align: right; font-weight: 900; color: var(--gov-blue); outline: none; font-size: 13px; margin-right: 2px;}
 
-        /* ✨ 타임라인 가로줄 */
         #date-visual-line { 
             width: 100%; 
             height: 30px;
@@ -94,9 +91,8 @@
         .timeline-segment { height: 2px; background: var(--gov-blue); transition: all 0.3s ease; position: relative; }
         .timeline-segment.past { flex: 1; opacity: 0.3; }
         .timeline-segment.future { flex: 1; opacity: 0.3; }
-        .timeline-segment.current { flex: 6; opacity: 1; } /* 현재 구간만 압도적으로 넓게 */
+        .timeline-segment.current { flex: 6; opacity: 1; }
 
-        /* ✨ 1년 단위 보조 눈금표시 (작게) */
         .timeline-tick-1yr {
             position: absolute;
             top: 50%; transform: translateY(-50%);
@@ -141,7 +137,6 @@
             z-index: 10;
         }
 
-        /* ✨ 텍스트 상세 정보 박스 */
         #notice-detail-info {
             display: none;
             width: 100%;
@@ -259,7 +254,6 @@
 
 <script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=d791798c38589fc7cdc6bce91d9369be&libraries=services"></script>
 <script>
-// 기존 offices 배열 동일 유지
 const offices = [
     {name:"한국부동산원 서울동부지사", type:"부동산원", covers:["서울", "도봉구", "강북구", "노원구", "성북구", "중랑구", "동대문구", "성동구", "광진구", "강동구"], lat:37.557698, lng:127.079226, phone:"02-3394-9870~3", address:"서울시 광진구 천호대로 549, 지타워 10층"},
     {name:"한국부동산원 고양지사", type:"부동산원", covers:["경기"], lat:37.652619, lng:126.776883, phone:"031-902-3573~5", address:"경기도 고양시 일산동구 중앙로 1187, 흥국생명빌딩 8층"},
@@ -340,6 +334,7 @@ function calculateTimeline() {
     }
 }
 
+// ✨ 주택 vs 상가 렌더링 조건을 분리한 핵심 함수
 function renderAdvancedTimeline(startDate) {
     timelineContainer.style.visibility = "visible";
     visualLine.innerHTML = '';
@@ -353,31 +348,37 @@ function renderAdvancedTimeline(startDate) {
     today.setHours(0,0,0,0);
 
     let dates = [new Date(startDate)];
-    
-    // 최대 기간 설정 (상가 10년, 주택은 임의로 미래 여유분)
-    let maxDate = new Date(startDate);
-    maxDate.setFullYear(maxDate.getFullYear() + (isCom ? 10 : 20)); 
+    let maxComDate = new Date(startDate);
+    maxComDate.setFullYear(maxComDate.getFullYear() + 10); // 상가 한정 10년 캡
 
     let current = new Date(startDate);
     current.setFullYear(current.getFullYear() + initYears);
-    if (current > maxDate) current = new Date(maxDate);
+    
+    if (isCom && current > maxComDate) current = new Date(maxComDate);
     dates.push(new Date(current));
 
-    // 기본 2년 단위로 전체 배열 완성 (상가는 10년 꽉 채우기)
-    while (current < maxDate) {
-        // 주택의 경우 너무 먼 미래까지 렌더링 할 필요 없이 오늘 기준 4년 후까지만 생성
-        if (!isCom && current.getFullYear() > today.getFullYear() + 4) break;
+    // 배열에 2년씩 더해가며 구간 날짜들을 채움
+    while (true) {
+        // ✨ 주택 로직: current(현재 구간의 끝)가 오늘보다 뒤에 있다면, 우리가 렌더링해야 할 '미래 만기 구간'까지 도달한 것이므로 스톱
+        if (!isCom && current.getTime() >= today.getTime()) {
+            break; 
+        }
+        // ✨ 상가 로직: 정확히 10년이 될 때 스톱
+        if (isCom && current.getTime() >= maxComDate.getTime()) {
+            break; 
+        }
 
         let next = new Date(current);
         next.setFullYear(next.getFullYear() + 2);
-        if (next > maxDate) next = new Date(maxDate);
-        dates.push(next);
-        current = next;
         
-        if (isCom && current.getTime() === maxDate.getTime()) break;
+        if (isCom && next > maxComDate) {
+            next = new Date(maxComDate);
+        }
+        
+        dates.push(new Date(next));
+        current = new Date(next);
     }
 
-    // 현재 구간(Active Index) 찾기
     let activeIndex = dates.length - 2; 
     for (let i = 0; i < dates.length - 1; i++) {
         if (today >= dates[i] && today < dates[i+1]) {
@@ -395,7 +396,6 @@ function renderAdvancedTimeline(startDate) {
         let label = document.createElement('div');
         label.className = 'timeline-date-label';
         
-        // ✨ 라벨 포맷 (현재 속한 구간은 전체 표기, 과거/미래는 YY.MM 축약 표기)
         if (i === activeIndex || i === activeIndex + 1) {
             label.innerText = formatDate(dates[i]); 
             label.style.fontWeight = '900';
@@ -405,8 +405,7 @@ function renderAdvancedTimeline(startDate) {
             label.classList.add('past-label');
         }
 
-        // 상가 10년 만기 도달 시 표기
-        if (isCom && dates[i].getTime() === maxDate.getTime()) {
+        if (isCom && dates[i].getTime() === maxComDate.getTime()) {
             label.innerText = formatShortDate(dates[i]) + '\n(10년)';
             label.classList.add('limit-label');
             label.style.textAlign = 'center';
@@ -421,7 +420,6 @@ function renderAdvancedTimeline(startDate) {
             segment.className = 'timeline-segment';
             
             if (i === activeIndex) {
-                // 현재 진행 중인 구간 (가장 넓게 표시)
                 segment.classList.add('current');
                 
                 let periodStart = dates[i];
@@ -451,7 +449,6 @@ function renderAdvancedTimeline(startDate) {
                 noticeBox.appendChild(noticeLabel);
                 segment.appendChild(noticeBox);
 
-                // ✨ 심플해진 하단 상세 정보 박스
                 detailInfoBox.style.display = "block";
                 detailInfoBox.innerHTML = `
                     <div class="detail-row">
@@ -473,12 +470,11 @@ function renderAdvancedTimeline(startDate) {
                 }
 
             } else if (i < activeIndex) {
-                segment.classList.add('past'); // 지나간 구간 좁게
+                segment.classList.add('past');
             } else {
-                segment.classList.add('future'); // 미래 구간 좁게
+                segment.classList.add('future');
             }
             
-            // ✨ 1년 단위 보조 눈금 추가 (구간 길이가 1.5년 이상일 때만 표시)
             let durationYears = (dates[i+1].getTime() - dates[i].getTime()) / (365.25 * 24 * 60 * 60 * 1000);
             if (durationYears > 1.5) {
                 let totalMs = dates[i+1].getTime() - dates[i].getTime();
@@ -496,7 +492,6 @@ function renderAdvancedTimeline(startDate) {
     }
 }
 
-// 기존 날짜 포커스 및 검색 로직 동일
 dateInputs.forEach((input, idx) => {
     input.addEventListener("input", () => {
         let val = input.value.replace(/[^0-9]/g, "");

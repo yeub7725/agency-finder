@@ -251,7 +251,8 @@
     <div id="sidebar-search">
         <div class="search-header">
             <h1>관할기관 통합 검색</h1>
-<div class="compact-form">
+            
+            <div class="compact-form">
                 
                 <div class="form-row">
                     <span class="form-label">주소</span>
@@ -288,9 +289,6 @@
                 </div>
 
             </div>
-            </div>
-            </div>
-            
             <div id="timeline-container">
                 <div class="contract-settings">
                     <label><input type="radio" name="bldgType" value="house" checked> 주택</label>
@@ -306,8 +304,7 @@
                 <div id="notice-detail-info"></div>
             </div>
 
-        </div>
-        <div id="result-area">
+        </div> <div id="result-area">
             <div id="rec-section"><p class="intro-msg">주소를 입력해주세요</p></div>
             
             <div id="sub-info-area" style="display:none;">
@@ -333,7 +330,7 @@
                         <div class="contact-item"><span class="contact-label">국세청</span><b>126</b></div>
                     </div>
 
-                 <div class="section-title">관련 기관 홈페이지</div>
+                    <div class="section-title">관련 기관 홈페이지</div>
                     <div class="info-box">
                         <div class="contact-item">
                             <div style="display: flex; align-items: center;">
@@ -350,7 +347,9 @@
                             <a href="https://www.klac.or.kr/" target="_blank" style="color: var(--gov-red); text-decoration: none; font-weight: 900; font-size: 14px;">https://www.klac.or.kr/</a>
                         </div>
                     </div>
-                </div> </div> </div> </div> </div> <script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=d791798c38589fc7cdc6bce91d9369be&libraries=services"></script>
+                </div> </div> </div> </div> </div> ```
+
+이 코드를 복사해서 넣어주시면, 끊어졌던 타임라인과 검색 결과 출력창이 모두 제자리를 찾아서 다시 정상적으로 깔끔하게 뜰 것입니다! 적용해보시고 잘 나오는지 확인해주세요!<script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=d791798c38589fc7cdc6bce91d9369be&libraries=services"></script>
 <script>
 const offices = [
     {name:"한국부동산원 서울동부지사", type:"부동산원", covers:["서울", "도봉구", "강북구", "노원구", "성북구", "중랑구", "동대문구", "성동구", "광진구", "강동구"], lat:37.557698, lng:127.079226, phone:"02-3394-9870~3", address:"서울시 광진구 천호대로 549, 지타워 10층"},
@@ -754,6 +753,7 @@ document.addEventListener("click", (e) => {
 </script>
 </body>
 </html>
+
 
 
 

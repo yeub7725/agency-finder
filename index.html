@@ -266,7 +266,7 @@ function selectItem(item) {
     keywordInput.value = item.address_name;
     lastSearchKeyword = item.address_name;
     document.getElementById("rec-section").style.display = "none";
-    document.getElementById("sub-info-area").style.display = "flex";
+    document.getElementById("sub-info-area").style.display = "block";
     setTimeout(() => { dateInputs[0].focus(); }, 10);
     findNearest(parseFloat(item.y), parseFloat(item.x), item.address_name);
 }
@@ -346,3 +346,4 @@ document.addEventListener("click", (e) => {
 </script>
 </body>
 </html>
+

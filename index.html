@@ -16,7 +16,6 @@
         body, html { margin: 0; padding: 0; height: 100%; font-family: 'Noto Sans KR', sans-serif; overflow: hidden; background: #fff; }
         .main-wrapper { display: flex; height: 100vh; width: 100vw; }
         
-        /* 사이드바 너비 확장 */
         #sidebar-search { 
             width: 550px; min-width: 550px; border-right: 1px solid #e2e8f0; 
             display: flex; flex-direction: column; background: #fff; height: 100%; position: relative;
@@ -48,20 +47,21 @@
         .price-unit { font-size: 12px; color: var(--gov-gray); font-weight: 700; white-space: nowrap; flex-shrink: 0; }
         .price-slash { color: #e2e8f0; margin: 0 6px; flex-shrink: 0; }
         
-        /* 주소 미리보기: 한 줄 표시 및 너비 확장 */
         #addressList { 
             position: absolute; top: 100%; left: -2px; 
-            width: 508px; /* 입력창 전체 길이에 맞춤 */
+            width: 508px; 
             border: 2px solid var(--gov-blue); border-top: 1px solid #eee;
             background: white; z-index: 9999; display: none; box-sizing: border-box; 
             box-shadow: 0 4px 10px rgba(0,0,0,0.1); 
+            max-height: 300px; overflow-y: auto;
         }
         .search-item { 
             padding: 10px 15px; border-bottom: 1px solid #f1f5f9; cursor: pointer; font-size: 14px; text-align: left; color: #333;
             white-space: nowrap; overflow: hidden; text-overflow: ellipsis; 
         }
-        /* 하이라이트 기능 */
-        .search-item.active { background-color: #f0f7ff !important; color: var(--gov-blue); font-weight: bold; }
+        
+        /* 하이라이트 스타일: 배경색을 좀 더 명확하게 블루 톤으로 설정 */
+        .search-item.active { background-color: #e6f0ff !important; color: var(--gov-blue); font-weight: bold; }
 
         #date-visual-line { 
             visibility: hidden; position: absolute; left: 50%; top: 48px;
@@ -208,7 +208,7 @@ function searchAddress() {
             currentAddressResults = result;
             addressList.innerHTML = "";
             addressList.style.display = "block";
-            focusedIndex = -1;
+            focusedIndex = -1; 
             
             result.forEach((item, idx) => {
                 const div = document.createElement("div");
@@ -224,8 +224,14 @@ function searchAddress() {
 
 function updateHighlight() {
     const items = addressList.getElementsByClassName("search-item");
+    if (!items.length) return;
     for (let i = 0; i < items.length; i++) {
-        items[i].classList.toggle("active", i === focusedIndex);
+        if (i === focusedIndex) {
+            items[i].classList.add("active");
+            items[i].scrollIntoView({ block: 'nearest' });
+        } else {
+            items[i].classList.remove("active");
+        }
     }
 }
 
@@ -294,6 +300,8 @@ keywordInput.addEventListener("input", () => {
 
 keywordInput.addEventListener("keydown", (e) => {
     const items = addressList.getElementsByClassName("search-item");
+    if (items.length === 0) return;
+
     if (e.key === "ArrowDown") {
         e.preventDefault();
         focusedIndex = (focusedIndex + 1) % items.length;
@@ -303,7 +311,9 @@ keywordInput.addEventListener("keydown", (e) => {
         focusedIndex = (focusedIndex - 1 + items.length) % items.length;
         updateHighlight();
     } else if (e.key === "Enter") {
+        e.preventDefault();
         if (focusedIndex > -1) selectItem(currentAddressResults[focusedIndex]);
+        else if (items.length > 0) selectItem(currentAddressResults[0]);
     }
 });
 </script>

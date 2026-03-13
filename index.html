@@ -15,7 +15,6 @@
 
         body, html { margin: 0; padding: 0; height: 100%; font-family: 'Noto Sans KR', sans-serif; overflow: hidden; background: #fff; }
         
-        /* 오른쪽 맵/여백 공간 확인을 위해 배경색 살짝 추가 */
         .main-wrapper { display: flex; height: 100vh; width: 100vw; background: #f8fafc; }
         
         #sidebar-search { 
@@ -24,7 +23,6 @@
             display: flex; flex-direction: column; background: #fff; height: 100%; position: relative;
         }
         
-        /* 헤더 아래 여백을 원래대로 깔끔하게 복구 */
         .search-header { padding: 15px 20px 20px 20px; border-bottom: 1px solid #f1f5f9; flex-shrink: 0; position: relative; z-index: 1000; }
         h1 { font-size: 1.1rem; margin: 0 0 12px 0; color: var(--gov-blue); font-weight: 900; }
         
@@ -62,12 +60,11 @@
         .price-unit { font-size: 12px; color: var(--gov-gray); font-weight: 700; white-space: nowrap; flex-shrink: 0; }
         .price-slash { color: #e2e8f0; margin: 0 6px; flex-shrink: 0; }
 
-        /* ✨ 수정: 우측 밖으로 위치 이동, 진한 굵은 선, 텍스트 아래쪽 중앙 정렬 */
         #date-visual-line { 
             visibility: hidden; 
             position: absolute; 
-            left: calc(100% + 40px); /* 검색창 오른쪽 밖으로 40px 떨어트림 */
-            top: 65px; /* 검색바 세로 중앙과 얼추 맞춤 */
+            left: calc(100% + 40px); 
+            top: 65px;
             width: 250px; 
             height: 30px;
             z-index: 1000;
@@ -75,8 +72,8 @@
         .line-bar { 
             position: absolute;
             top: 0; left: 0; right: 0;
-            height: 2px; /* 선 굵기 증가 */
-            background: var(--gov-blue); /* 아주 진한 색상으로 눈에 띄게 */
+            height: 2px; 
+            background: var(--gov-blue);
         }
         .line-bar::before, .line-bar::after { 
             content: ''; position: absolute; top: -5px; width: 2px; height: 12px; background: var(--gov-blue); 
@@ -86,14 +83,14 @@
 
         .date-label { 
             position: absolute; 
-            top: 14px; /* 선의 아래쪽에 배치 */
+            top: 14px; 
             font-size: 13px; 
             font-weight: 900; 
             color: var(--gov-blue); 
-            transform: translateX(-50%); /* 정확한 중앙 정렬을 위한 이동 */
+            transform: translateX(-50%); 
             white-space: nowrap;
         }
-        /* 각 텍스트를 선의 시작점(0)과 끝점(100%)에 위치 */
+       
         #before-date-val { left: 0; } 
         #after-date-val { left: 100%; }
 
@@ -157,7 +154,7 @@
             </div>
         </div>
         <div id="result-area">
-            <div id="rec-section"><p class="intro-msg">주소를 입력해주세요.</p></div>
+            <div id="rec-section"><p class="intro-msg">주소 입력 시 결과가 나타납니다.</p></div>
             <div id="sub-info-area" style="display:none;">
                 <div id="office-list"></div>
                 <div id="bottom-static-info">
@@ -205,8 +202,7 @@ const offices = [
     {name:"대한법률구조공단 대구지부", type:"대법공", covers:["대구", "경북"], lat:35.859195, lng:128.631891, phone:"053-710-3430", address:"대구시 수성구 달구벌대로 2461, 디에스라이프빌딩 3층"},
     {name:"대한법률구조공단 부산지부", type:"대법공", covers:["부산", "울산", "경남"], lat:35.190787, lng:129.074010, phone:"051-711-3430", address:"부산시 연제구 법원남로 15번길 4, 성신프라이어빌딩 5층"},
     {name:"대한법률구조공단 광주지부", type:"대법공", covers:["광주", "전남", "전북", "제주"], lat:35.149140, lng:126.848917, phone:"062-710-3430", address:"광주시 서구 상무중앙로 28번길 4, 세진빌딩 4층 401호"},
-    {name:"서울시청 (지자체)", type:"지자체", covers:["서울", "강서구", "은평구", "종로구", "서대문구", "마포구", "영등포구", "양천구", "구로구"], lat:37.564554, lng:126.975613, phone:"02-2133-1200~8", address:"서울시 중구 덕수궁길 15, 서울시청 서소문별관"},
-    {name:"경기도청 (지자체)", type:"지자체", covers:["경기"], lat:37.274666, lng:127.009619, phone:"031-8008-2868", address:"경기도 수원시 팔달구 효원로 1"}
+    {name:"서울시청 (지자체)", type:"지자체", covers:["서울", "강서구", "은평구", "종로구", "서대문구", "마포구", "영등포구", "양천구", "구로구"], lat:37.564554, lng:126.975613, phone:"02-2133-1200~8", address:"서울시 중구 덕수궁길 15, 서울시청 서소문별관"}
 ];
 
 let currentAddressResults = [];
@@ -398,3 +394,4 @@ document.addEventListener("click", (e) => {
 </script>
 </body>
 </html>
+

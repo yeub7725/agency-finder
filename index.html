@@ -21,7 +21,7 @@
             display: flex; flex-direction: column; background: #fff; height: 100%; position: relative;
         }
         
-        .search-header { padding: 8px 20px 45px 20px; border-bottom: 1px solid #f1f5f9; flex-shrink: 0; position: relative; z-index: 1000; }
+        .search-header { padding: 8px 20px 50px 20px; border-bottom: 1px solid #f1f5f9; flex-shrink: 0; position: relative; z-index: 1000; }
         h1 { font-size: 1.1rem; margin: 0 0 8px 0; color: var(--gov-blue); font-weight: 900; }
         
         .search-row { 
@@ -30,27 +30,15 @@
             background: #fff; box-sizing: border-box; height: 40px;
         }
         
-        .search-container { flex: 2; position: relative; }
+        .search-container { flex: 2; position: relative; height: 100%; display: flex; align-items: center; }
         input#keyword { width: 100%; padding: 0 12px; font-size: 14px; border: none; outline: none; background: transparent; }
         
-        .date-container { flex: 1.2; display: flex; align-items: center; justify-content: center; background: #fff; height: 100%; border-left: 1px solid #eee; border-right: 1px solid #eee; }
-        .date-group { display: flex; align-items: center; gap: 1px; }
-        .date-group input { width: 25px; border: none !important; text-align: center; font-size: 13px; font-weight: bold; color: var(--gov-blue); outline: none; background: transparent; padding: 0; }
-        .date-group span { color: #cbd5e1; font-weight: bold; font-size: 12px; }
-
-        .price-container { 
-            flex: 2.5; display: flex; align-items: center; justify-content: flex-end;
-            padding: 0 10px; background: #fff; height: 100%; 
-        }
-        .price-input-wrap { display: flex; align-items: center; gap: 2px; flex-shrink: 0; }
-        .price-input-wrap input { width: 65px; border: none; outline: none; font-size: 12px; font-weight: 700; color: var(--gov-gray); text-align: right; background: transparent; }
-        .price-unit { font-size: 12px; color: var(--gov-gray); font-weight: 700; white-space: nowrap; flex-shrink: 0; }
-        .price-slash { color: #e2e8f0; margin: 0 6px; flex-shrink: 0; }
-        
         #addressList { 
-            position: absolute; top: 100%; left: -2px; 
+            position: absolute; 
+            top: calc(100% + 5px); 
+            left: -2px; 
             width: 508px; 
-            border: 2px solid var(--gov-blue); border-top: 1px solid #eee;
+            border: 2px solid var(--gov-blue); 
             background: white; z-index: 9999; display: none; box-sizing: border-box; 
             box-shadow: 0 4px 10px rgba(0,0,0,0.1); 
             max-height: 300px; overflow-y: auto;
@@ -61,32 +49,31 @@
         }
         .search-item.active { background-color: #e6f0ff !important; color: var(--gov-blue); font-weight: bold; }
 
-        /* 날짜 막대바 스타일 */
+        .date-container { flex: 1.2; display: flex; align-items: center; justify-content: center; background: #fff; height: 100%; border-left: 1px solid #eee; border-right: 1px solid #eee; }
+        .date-group { display: flex; align-items: center; gap: 1px; }
+        .date-group input { width: 25px; border: none !important; text-align: center; font-size: 13px; font-weight: bold; color: var(--gov-blue); outline: none; background: transparent; padding: 0; }
+        .date-group span { color: #cbd5e1; font-weight: bold; font-size: 12px; }
+
+        .price-container { flex: 2.5; display: flex; align-items: center; justify-content: flex-end; padding: 0 10px; background: #fff; height: 100%; }
+        .price-input-wrap { display: flex; align-items: center; gap: 2px; }
+        .price-input-wrap input { width: 65px; border: none; outline: none; font-size: 12px; font-weight: 700; color: var(--gov-gray); text-align: right; background: transparent; }
+        .price-unit { font-size: 12px; color: var(--gov-gray); font-weight: 700; }
+        .price-slash { color: #e2e8f0; margin: 0 6px; }
+        
+        /* 날짜 막대바 */
         #date-visual-line { 
-            visibility: hidden; position: absolute; left: 50%; bottom: 10px;
+            visibility: hidden; position: absolute; left: 50%; bottom: 12px;
             transform: translateX(-50%); display: flex; align-items: center; width: 90%;
         }
         .line-bar { height: 2px; background: var(--gov-blue); flex: 1; position: relative; margin: 0 20px; }
         .line-bar::before, .line-bar::after { content: ''; position: absolute; top: -5px; width: 2px; height: 12px; background: var(--gov-blue); }
-        .line-bar::before { left: 0; }
-        .line-bar::after { right: 0; }
+        .line-bar::before { left: 0; } .line-bar::after { right: 0; }
 
         .date-label { font-size: 11px; font-weight: 900; color: var(--gov-blue); position: absolute; top: 12px; white-space: nowrap; transform: translateX(-50%); }
-        .date-label.start { left: 20px; } 
-        .date-label.end { left: calc(100% - 20px); }
+        .date-label.start { left: 20px; } .date-label.end { left: calc(100% - 20px); }
 
         #result-area { flex: 1; overflow-y: auto; padding: 5px 15px; display: flex; flex-direction: column; }
-        #sub-info-area { display: flex; flex-direction: column; gap: 10px; } 
         .intro-msg { text-align: center; color: #64748b; opacity: 0.5; margin-top: 150px; font-size: 16px; }
-        .section-title { font-size: 14px; font-weight: 800; color: var(--gov-gray); margin: 5px 0 2px 0; display: flex; align-items: center; gap: 5px; }
-        .section-title::before { content: ''; width: 3px; height: 12px; background: var(--gov-blue); }
-        .office-card.recommend { border: 2px solid var(--gov-blue); background: #f8fbff; padding: 10px 15px; border-radius: 6px; margin-bottom: 5px; display: flex; flex-direction: column; }
-        .card-top { display: flex; justify-content: space-between; align-items: center; width: 100%; }
-        .office-name { font-size: 17px; font-weight: 900; color: var(--gov-blue); letter-spacing: -0.5px; }
-        .phone-text { font-size: 28px; font-weight: 900; color: var(--gov-red); margin: 0; line-height: 1; letter-spacing: -1px; }
-        .info-box { background: #f8fafc; border: 1px solid #e2e8f0; padding: 8px 12px; border-radius: 6px; }
-        .contact-item { display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px dotted #e2e8f0; font-size: 14px; align-items: center; white-space: nowrap; }
-        .contact-item b { color: var(--gov-red); font-weight: 900; font-size: 15px; }
     </style>
 </head>
 <body>
@@ -154,7 +141,7 @@
 
 <script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=d791798c38589fc7cdc6bce91d9369be&libraries=services"></script>
 <script>
-// 데이터 및 기본 변수
+
 const offices = [
     {name:"한국부동산원 서울동부지사", type:"부동산원", covers:["서울", "도봉구", "강북구", "노원구", "성북구", "중랑구", "동대문구", "성동구", "광진구", "강동구"], lat:37.557698, lng:127.079226, phone:"02-3394-9870~3", address:"서울시 광진구 천호대로 549, 지타워 10층"},
     {name:"한국부동산원 고양지사", type:"부동산원", covers:["경기"], lat:37.652619, lng:126.776883, phone:"031-902-3573~5", address:"경기도 고양시 일산동구 중앙로 1187, 흥국생명빌딩 8층"},
@@ -180,10 +167,10 @@ const offices = [
 
 let currentAddressResults = [];
 let focusedIndex = -1;
+let isKeyboardNavigating = false;
 const keywordInput = document.getElementById("keyword");
 const addressList = document.getElementById("addressList");
 
-// 날짜 바 업데이트 함수 복구
 function updateDateVisual() {
     const yy = document.getElementById("yy").value;
     const mm = document.getElementById("mm").value;
@@ -193,7 +180,7 @@ function updateDateVisual() {
     if (yy.length === 2 && mm.length === 2 && dd.length === 2) {
         const fullYear = "20" + yy;
         const inputDate = new Date(`${fullYear}-${mm}-${dd}`);
-        if (!isNaN(inputDate)) {
+        if (!isNaN(inputDate.getTime())) {
             visualLine.style.visibility = "visible";
             document.getElementById("before-date-val").innerText = `오늘 (${new Date().toLocaleDateString()})`;
             document.getElementById("after-date-val").innerText = `계약일 (${inputDate.toLocaleDateString()})`;
@@ -203,30 +190,41 @@ function updateDateVisual() {
     }
 }
 
-// 날짜 입력 이벤트 연결
 document.querySelectorAll(".date-group input").forEach(input => {
     input.addEventListener("input", updateDateVisual);
 });
 
-// 주소 검색 및 하이라이트 로직
+
 function searchAddress() {
     const keyword = keywordInput.value.trim();
     if (keyword.length < 2) { addressList.style.display = "none"; return; }
+    
     const geocoder = new kakao.maps.services.Geocoder();
     geocoder.addressSearch(keyword, (result, status) => {
         if (status === kakao.maps.services.Status.OK) {
             currentAddressResults = result;
             addressList.innerHTML = "";
             addressList.style.display = "block";
-            focusedIndex = -1;
+            
+            // 키보드 조작 중이 아닐 때만 인덱스 초기화
+            if (!isKeyboardNavigating) focusedIndex = -1;
+
             result.forEach((item, idx) => {
                 const div = document.createElement("div");
                 div.className = "search-item";
                 div.innerText = item.address_name;
-                div.onmouseover = () => { focusedIndex = idx; updateHighlight(); };
-                div.onmousedown = () => selectItem(item);
+                div.onmouseover = () => { 
+                    focusedIndex = idx; 
+                    isKeyboardNavigating = false;
+                    updateHighlight(); 
+                };
+                div.onmousedown = (e) => {
+                    e.preventDefault();
+                    selectItem(item);
+                };
                 addressList.appendChild(div);
             });
+            if (isKeyboardNavigating) updateHighlight();
         }
     });
 }
@@ -235,7 +233,9 @@ function updateHighlight() {
     const items = addressList.getElementsByClassName("search-item");
     Array.from(items).forEach((item, i) => {
         item.classList.toggle("active", i === focusedIndex);
-        if (i === focusedIndex) item.scrollIntoView({ block: 'nearest' });
+        if (i === focusedIndex) {
+            item.scrollIntoView({ block: 'nearest' });
+        }
     });
 }
 
@@ -244,25 +244,42 @@ function selectItem(item) {
     addressList.style.display = "none";
     document.getElementById("rec-section").style.display = "none";
     document.getElementById("sub-info-area").style.display = "flex";
-    // 여기에 거리 계산 로직(findNearest) 추가 실행
+
 }
 
-keywordInput.addEventListener("input", searchAddress);
+keywordInput.addEventListener("input", () => {
+    isKeyboardNavigating = false;
+    searchAddress();
+});
+
 keywordInput.addEventListener("keydown", (e) => {
     const items = addressList.getElementsByClassName("search-item");
-    if (!items.length) return;
+    if (!items.length || addressList.style.display === "none") return;
+
     if (e.key === "ArrowDown") {
         e.preventDefault();
+        isKeyboardNavigating = true;
         focusedIndex = (focusedIndex + 1) % items.length;
         updateHighlight();
     } else if (e.key === "ArrowUp") {
         e.preventDefault();
+        isKeyboardNavigating = true;
         focusedIndex = (focusedIndex - 1 + items.length) % items.length;
         updateHighlight();
     } else if (e.key === "Enter") {
-        if (focusedIndex > -1) selectItem(currentAddressResults[focusedIndex]);
+        if (focusedIndex > -1) {
+            e.preventDefault();
+            selectItem(currentAddressResults[focusedIndex]);
+        }
+    }
+});
+
+document.addEventListener("click", (e) => {
+    if (!e.target.closest(".search-container")) {
+        addressList.style.display = "none";
     }
 });
 </script>
 </body>
 </html>
+

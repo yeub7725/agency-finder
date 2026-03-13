@@ -210,27 +210,39 @@
 .animate-update {
     animation: fadeInUp 0.4s ease-out forwards;
 }
-/* 슬림형 폼 디자인 CSS */
-.form-section {
+/* 초압축 & 좌측 정렬 폼 디자인 */
+.compact-form {
     background: #ffffff;
     border: 1px solid #e2e8f0;
-    border-radius: 8px;
-    padding: 12px 15px; /* 여백 대폭 감소 */
+    border-radius: 6px;
+    padding: 10px 15px;
     margin-bottom: 15px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
     display: flex;
     flex-direction: column;
-    gap: 12px; /* 줄 사이 간격 줄임 */
+    gap: 8px; /* 위아래 간격을 확 줄여서 스크롤 방지 */
 }
-.input-label {
-    display: block; font-size: 13px; font-weight: 800; color: var(--gov-gray); margin-bottom: 5px;
+.form-row {
+    display: flex;
+    align-items: center;
+}
+.form-label {
+    width: 60px; /* 라벨 너비를 고정해서 입력칸 시작 위치를 왼쪽에 딱 맞춤 */
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--gov-gray);
+    flex-shrink: 0;
 }
 .custom-input {
-    width: 100%; padding: 7px 10px; border: 1px solid #cbd5e1; border-radius: 6px;
-    font-size: 14px; font-family: 'Noto Sans KR', sans-serif; box-sizing: border-box; transition: 0.2s;
+    padding: 5px 8px;
+    border: 1px solid #cbd5e1;
+    border-radius: 4px;
+    font-size: 13px;
+    font-family: 'Noto Sans KR', sans-serif;
+    box-sizing: border-box;
+    height: 32px; /* 입력칸 높이를 줄여서 전체 세로 길이 압축 */
 }
-.custom-input:focus {
-    outline: none; border-color: var(--gov-blue); box-shadow: 0 0 0 2px rgba(0, 55, 100, 0.1);
+.unit-text {
+    position: absolute; right: 8px; top: 7px; color: #64748b; font-size: 12px; font-weight: 800;
 }
     </style>
 </head>
@@ -239,47 +251,43 @@
     <div id="sidebar-search">
         <div class="search-header">
             <h1>관할기관 통합 검색</h1>
-<div class="form-section">
+<div class="compact-form">
                 
-                <div>
-                    <label class="input-label">주소 검색</label>
-                    <div style="position: relative; display: flex; gap: 8px;">
-                        <input type="text" id="keyword" class="custom-input" placeholder="도로명 또는 지번 주소 입력" autocomplete="off" autofocus>
-                        <button id="search-btn" class="btn" style="width: 70px; padding: 7px 0; font-size: 14px;">검색</button>
-                        <div id="addressList" style="position: absolute; top: 100%; left: 0; width: 100%; margin-top: 4px; border-radius: 6px; z-index: 10;"></div>
+                <div class="form-row">
+                    <span class="form-label">주소</span>
+                    <div style="position: relative; display: flex; gap: 5px; flex: 1;">
+                        <input type="text" id="keyword" class="custom-input" style="width: 100%;" placeholder="도로명 또는 지번 주소 입력" autocomplete="off" autofocus>
+                        <button id="search-btn" class="btn" style="width: 60px; height: 32px; padding: 0; font-size: 13px;">검색</button>
+                        <div id="addressList" style="position: absolute; top: 100%; left: 0; width: 100%; z-index: 10; margin-top: 2px;"></div>
                     </div>
                 </div>
 
-                <div style="display: flex; gap: 15px;">
+                <div class="form-row">
+                    <span class="form-label">계약일</span>
+                    <div style="display: flex; align-items: center; gap: 4px;">
+                        <input type="text" id="yy" class="custom-input" style="width: 50px; text-align: center;" maxlength="2" placeholder="YY">
+                        <span style="color: #cbd5e1; font-weight: bold;">-</span>
+                        <input type="text" id="mm" class="custom-input" style="width: 40px; text-align: center;" maxlength="2" placeholder="MM">
+                        <span style="color: #cbd5e1; font-weight: bold;">-</span>
+                        <input type="text" id="dd" class="custom-input" style="width: 40px; text-align: center;" maxlength="2" placeholder="DD">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <span class="form-label">보증금</span>
+                    <div style="position: relative; margin-right: 15px;">
+                        <input type="text" id="deposit" class="custom-input" placeholder="5000" style="width: 100px; padding-right: 35px; text-align: right;">
+                        <span class="unit-text">만원</span>
+                    </div>
                     
-                    <div style="flex: 1.2;">
-                        <label class="input-label">계약일</label>
-                        <div style="display: flex; align-items: center; gap: 4px;">
-                            <input type="text" id="yy" class="custom-input" style="text-align: center; padding: 7px 0;" maxlength="2" placeholder="YY">
-                            <span style="color: #cbd5e1; font-weight: bold;">-</span>
-                            <input type="text" id="mm" class="custom-input" style="text-align: center; padding: 7px 0;" maxlength="2" placeholder="MM">
-                            <span style="color: #cbd5e1; font-weight: bold;">-</span>
-                            <input type="text" id="dd" class="custom-input" style="text-align: center; padding: 7px 0;" maxlength="2" placeholder="DD">
-                        </div>
+                    <span class="form-label" style="width: auto; margin-right: 10px;">월세</span>
+                    <div style="position: relative;">
+                        <input type="text" id="rent" class="custom-input" placeholder="50" style="width: 100px; padding-right: 35px; text-align: right;">
+                        <span class="unit-text">만원</span>
                     </div>
-
-                    <div style="flex: 1;">
-                        <label class="input-label">보증금</label>
-                        <div style="position: relative;">
-                            <input type="text" id="deposit" class="custom-input" placeholder="5000" style="padding-right: 35px; text-align: right;">
-                            <span style="position: absolute; right: 10px; top: 7px; color: #64748b; font-size: 13px; font-weight: 800;">만원</span>
-                        </div>
-                    </div>
-
-                    <div style="flex: 1;">
-                        <label class="input-label">월세</label>
-                        <div style="position: relative;">
-                            <input type="text" id="rent" class="custom-input" placeholder="50" style="padding-right: 35px; text-align: right;">
-                            <span style="position: absolute; right: 10px; top: 7px; color: #64748b; font-size: 13px; font-weight: 800;">만원</span>
-                        </div>
-                    </div>
-
                 </div>
+
+            </div>
             </div>
             </div>
             
@@ -746,6 +754,7 @@ document.addEventListener("click", (e) => {
 </script>
 </body>
 </html>
+
 
 
 

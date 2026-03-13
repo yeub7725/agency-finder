@@ -210,6 +210,39 @@
 .animate-update {
     animation: fadeInUp 0.4s ease-out forwards;
 }
+        /* 새로 추가되는 폼 디자인 CSS */
+.form-section {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+.input-group {
+    padding-bottom: 15px;
+    margin-bottom: 15px;
+    border-bottom: 1px dashed #cbd5e1;
+}
+.input-group:last-child {
+    padding-bottom: 0; margin-bottom: 0; border-bottom: none;
+}
+.input-label {
+    display: block; font-size: 14px; font-weight: 800; color: var(--gov-gray); margin-bottom: 8px;
+}
+.flex-row {
+    display: flex; gap: 15px;
+}
+.flex-row > div {
+    flex: 1;
+}
+.custom-input {
+    width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 6px;
+    font-size: 15px; font-family: 'Noto Sans KR', sans-serif; box-sizing: border-box; transition: 0.2s;
+}
+.custom-input:focus {
+    outline: none; border-color: var(--gov-blue); box-shadow: 0 0 0 2px rgba(0, 55, 100, 0.1);
+}
     </style>
 </head>
 <body>
@@ -217,30 +250,46 @@
     <div id="sidebar-search">
         <div class="search-header">
             <h1>관할기관 통합 검색</h1>
+<div class="form-section">
+                
+                <div class="input-group">
+                    <label class="input-label">주소 검색</label>
+                    <div style="position: relative;">
+                        <input type="text" id="keyword" class="custom-input" placeholder="도로명 또는 지번 주소 입력" autocomplete="off" autofocus>
+                        <div id="addressList" style="top: 100%; left: 0; width: 100%; margin-top: 4px; border-radius: 6px;"></div>
+                    </div>
+                </div>
 
-            <div class="search-row">
-                <div class="search-container">
-                    <input id="keyword" placeholder="주소 입력" autocomplete="off" autofocus>
-                </div>
-                <div class="date-container">
-                    <div class="date-group">
-                        <input type="text" id="yy" maxlength="2" placeholder=""><span>.</span>
-                        <input type="text" id="mm" maxlength="2" placeholder=""><span>.</span>
-                        <input type="text" id="dd" maxlength="2" placeholder="">
+                <div class="input-group">
+                    <label class="input-label">계약일 (또는 확정일자)</label>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <input type="text" id="yy" class="custom-input" style="width: 80px; text-align: center;" maxlength="2" placeholder="YY">
+                        <span style="color: #cbd5e1; font-weight: bold;">-</span>
+                        <input type="text" id="mm" class="custom-input" style="width: 80px; text-align: center;" maxlength="2" placeholder="MM">
+                        <span style="color: #cbd5e1; font-weight: bold;">-</span>
+                        <input type="text" id="dd" class="custom-input" style="width: 80px; text-align: center;" maxlength="2" placeholder="DD">
                     </div>
                 </div>
-                <div class="price-container">
-                    <div class="price-input-wrap">
-                        <input type="text" id="deposit" placeholder="보증금">
-                        <span class="price-unit">만원</span>
-                    </div>
-                    <span class="price-slash">/</span>
-                    <div class="price-input-wrap">
-                        <input type="text" id="rent" placeholder="월세">
-                        <span class="price-unit">만원</span>
+
+                <div class="input-group">
+                    <div class="flex-row">
+                        <div>
+                            <label class="input-label">보증금</label>
+                            <div style="position: relative;">
+                                <input type="text" id="deposit" class="custom-input" placeholder="예: 5000" style="padding-right: 45px; text-align: right;">
+                                <span style="position: absolute; right: 12px; top: 10px; color: #64748b; font-size: 14px; font-weight: 800;">만원</span>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="input-label">월세</label>
+                            <div style="position: relative;">
+                                <input type="text" id="rent" class="custom-input" placeholder="예: 50" style="padding-right: 45px; text-align: right;">
+                                <span style="position: absolute; right: 12px; top: 10px; color: #64748b; font-size: 14px; font-weight: 800;">만원</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div id="addressList"></div>
+
             </div>
             
             <div id="timeline-container">
@@ -706,5 +755,6 @@ document.addEventListener("click", (e) => {
 </script>
 </body>
 </html>
+
 
 

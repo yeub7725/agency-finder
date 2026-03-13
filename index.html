@@ -291,7 +291,7 @@
 }
         /* 1. 강제 스크롤 차단 */
 #sidebar-search, #result-area {
-    overflow: hidden !important; 
+    overflow: visible !important; 
 }
 
 /* 2. 상단 헤더 및 폼 여백 초압축 */
@@ -332,25 +332,37 @@
         <div class="search-header">
             <h1>관할기관 통합 검색</h1>
             
-            <div class="compact-form">
+           <div class="compact-form">
                 
                 <div class="form-row">
                     <span class="form-label">주소</span>
                     <div style="position: relative; display: flex; gap: 5px; flex: 1;">
                         <input type="text" id="keyword" class="custom-input" style="width: 100%;" placeholder="도로명 또는 지번 주소 입력" autocomplete="off" autofocus>
-                        <button id="search-btn" class="btn" style="width: 60px; height: 32px; padding: 0; font-size: 13px;">검색</button>
-                        <div id="addressList" style="position: absolute; top: 100%; left: 0; width: 100%; z-index: 10; margin-top: 2px;"></div>
+                        <button id="search-btn" class="btn" style="width: 60px; height: 26px; padding: 0; font-size: 13px;">검색</button>
+                        <div id="addressList" style="position: absolute; top: 100%; left: 0; width: 100%; z-index: 999; margin-top: 2px;"></div>
                     </div>
                 </div>
 
-                <div class="form-row">
-                    <span class="form-label">계약일</span>
-                    <div style="display: flex; align-items: center; gap: 4px;">
-                        <input type="text" id="yy" class="custom-input" style="width: 50px; text-align: center;" maxlength="2" placeholder="YY">
-                        <span style="color: #cbd5e1; font-weight: bold;">-</span>
-                        <input type="text" id="mm" class="custom-input" style="width: 40px; text-align: center;" maxlength="2" placeholder="MM">
-                        <span style="color: #cbd5e1; font-weight: bold;">-</span>
-                        <input type="text" id="dd" class="custom-input" style="width: 40px; text-align: center;" maxlength="2" placeholder="DD">
+                <div class="form-row" style="justify-content: space-between;">
+                    <div style="display: flex; align-items: center;">
+                        <span class="form-label">계약일</span>
+                        <div style="display: flex; align-items: center; gap: 4px;">
+                            <input type="text" id="yy" class="custom-input" style="width: 45px; text-align: center;" maxlength="2" placeholder="YY">
+                            <span style="color: #cbd5e1; font-weight: bold;">-</span>
+                            <input type="text" id="mm" class="custom-input" style="width: 35px; text-align: center;" maxlength="2" placeholder="MM">
+                            <span style="color: #cbd5e1; font-weight: bold;">-</span>
+                            <input type="text" id="dd" class="custom-input" style="width: 35px; text-align: center;" maxlength="2" placeholder="DD">
+                        </div>
+                    </div>
+                    
+                    <div class="contract-settings" style="display: flex; align-items: center; gap: 8px; margin-bottom: 0; font-size: 11px;">
+                        <label style="display:flex; align-items:center; gap:2px;"><input type="radio" name="bldgType" value="house" checked style="margin:0;"> 주택</label>
+                        <label style="display:flex; align-items:center; gap:2px;"><input type="radio" name="bldgType" value="com" style="margin:0;"> 상가(10년)</label>
+                        <div class="year-input-wrap" style="display: flex; align-items: center;">
+                            <span style="color:#64748b; margin-right:2px;">최초</span>
+                            <input type="number" id="initYears" value="2" min="1" max="10" style="width: 30px; height: 22px; text-align: center; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 11px;">
+                            <span style="color:#64748b; margin-left: 2px;">년</span>
+                        </div>
                     </div>
                 </div>
 
@@ -369,15 +381,10 @@
                 </div>
 
             </div>
-            <div id="timeline-container">
-                <div class="contract-settings">
-                    <label><input type="radio" name="bldgType" value="house" checked> 주택</label>
-                    <label><input type="radio" name="bldgType" value="com"> 상가 (최대 10년)</label>
-                    <div class="year-input-wrap">
-                        <span style="font-size:12px; color:#64748b; margin-right:4px;">최초계약</span>
-                        <input type="number" id="initYears" value="2" min="1" max="10">
-                        <span style="font-size:12px; color:#64748b;">년</span>
-                    </div>
+            <div id="timeline-container" style="padding: 0 10px; margin-bottom: 5px;">
+                <div id="date-visual-line"></div>
+                <div id="notice-detail-info"></div>
+            </div>
                 </div>
                 
                 <div id="date-visual-line"></div>
@@ -833,6 +840,7 @@ document.addEventListener("click", (e) => {
 </script>
 </body>
 </html>
+
 
 
 

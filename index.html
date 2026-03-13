@@ -289,6 +289,41 @@
 .office-details {
     gap: 5px;
 }
+        /* 1. 강제 스크롤 차단 */
+#sidebar-search, #result-area {
+    overflow: hidden !important; 
+}
+
+/* 2. 상단 헤더 및 폼 여백 초압축 */
+.search-header { padding: 10px 15px 5px 15px !important; }
+.search-header h1 { font-size: 16px; margin: 0 0 8px 0; }
+.compact-form { padding: 6px 10px; margin-bottom: 8px; gap: 4px; }
+.custom-input, .btn { height: 26px !important; font-size: 12px; }
+
+/* 3. 타임라인(라디오 버튼) 영역 초압축 */
+#timeline-container { padding: 5px 10px; margin-bottom: 5px; }
+.contract-settings { margin-bottom: 5px; font-size: 12px; }
+
+/* 4. 출력 카드 여백 최소화 */
+#office-list { margin-bottom: 5px; }
+.office-card { padding: 8px 12px; margin-bottom: 6px; }
+.office-name { font-size: 14px; margin-bottom: 2px; }
+.office-details p { font-size: 12px; margin: 2px 0; }
+
+/* 5. 하단 안내문 폰트 및 여백 축소 */
+.section-title { font-size: 13px; margin: 6px 0 3px 0; }
+.info-box { padding: 6px 10px; margin-bottom: 6px; }
+.contact-item { padding: 2px 0; font-size: 11px; }
+
+/* ⭐️ 6. 핵심: 주요 업무 문의처를 2단(그리드)으로 나눠서 세로 길이 반토막 내기 ⭐️ */
+#bottom-static-info .info-box:nth-of-type(2) {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* 세로 9줄을 가로 2단으로 분할 */
+    column-gap: 15px;
+}
+/* 마지막 관련 기관 홈페이지 부분 크기 미세조정 */
+#bottom-static-info .info-box:nth-of-type(3) .contact-label { width: 85px; }
+#bottom-static-info .info-box:nth-of-type(3) .sub-desc { width: 220px; }
     </style>
 </head>
 <body>
@@ -798,6 +833,7 @@ document.addEventListener("click", (e) => {
 </script>
 </body>
 </html>
+
 
 
 

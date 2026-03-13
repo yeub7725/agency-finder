@@ -244,6 +244,51 @@
 .unit-text {
     position: absolute; right: 8px; top: 7px; color: #64748b; font-size: 12px; font-weight: 800;
 }
+        /* 1. 상단 타이틀 여백 최소화 */
+.search-header h1 {
+    font-size: 18px;
+    margin: 5px 0 10px 0;
+}
+
+/* 2. 폼 영역 상하 여백 및 입력칸 높이 축소 */
+.compact-form {
+    padding: 8px 12px;
+    margin-bottom: 10px;
+    gap: 6px; /* 줄 사이 간격 더 줄임 */
+}
+.custom-input {
+    height: 28px; /* 기존 32px에서 28px로 축소 */
+    padding: 2px 6px;
+    font-size: 12px;
+}
+.btn {
+    height: 28px !important;
+}
+.unit-text {
+    top: 5px; /* 입력칸 높이에 맞춰 '만원' 글자 위치 조정 */
+}
+
+/* 3. 타임라인(주택/상가 라디오 버튼) 영역 여백 축소 */
+#timeline-container {
+    padding: 10px 15px;
+    margin-bottom: 5px;
+}
+.contract-settings {
+    margin-bottom: 10px;
+}
+
+/* 4. 출력 카드 여백 살짝 다듬기 */
+.office-card {
+    padding: 12px 15px;
+    margin-bottom: 10px;
+}
+.office-name {
+    font-size: 15px;
+    margin-bottom: 5px;
+}
+.office-details {
+    gap: 5px;
+}
     </style>
 </head>
 <body>
@@ -753,6 +798,7 @@ document.addEventListener("click", (e) => {
 </script>
 </body>
 </html>
+
 
 
 

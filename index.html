@@ -93,14 +93,15 @@
         .timeline-segment.future { flex: 1; opacity: 0.3; }
         .timeline-segment.current { flex: 6; opacity: 1; }
 
-        .timeline-tick-1yr {
-            position: absolute;
-            top: 50%; transform: translateY(-50%);
-            width: 1px; height: 6px;
-            background: var(--gov-blue);
-            opacity: 0.4;
-            z-index: 1;
-        }
+      .timeline-tick-1yr {
+    position: absolute;
+    top: 50%; transform: translateY(-50%);
+    width: 2px;       
+    height: 10px;      
+    background: var(--gov-blue);
+    opacity: 0.8;      
+    z-index: 1;
+}
 
         .timeline-date-label { position: absolute; top: 14px; font-size: 12px; font-weight: 900; color: var(--gov-blue); transform: translateX(-50%); white-space: nowrap; }
         .timeline-date-label.past-label { font-size: 11px; opacity: 0.6; font-weight: 700; }
@@ -647,4 +648,5 @@ document.addEventListener("click", (e) => {
 </script>
 </body>
 </html>
+
 

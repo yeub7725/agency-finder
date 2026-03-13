@@ -16,7 +16,7 @@
         body, html { margin: 0; padding: 0; height: 100%; font-family: 'Noto Sans KR', sans-serif; overflow: hidden; background: #fff; }
         .main-wrapper { display: flex; height: 100vh; width: 100vw; }
         
-        /* 사이드바 너비: 580px (화면의 약 2/5) */
+        /* 1. 사이드바 너비 고정 (580px) */
         #sidebar-search { 
             width: 580px; min-width: 580px; border-right: 1px solid #e2e8f0; 
             display: flex; flex-direction: column; background: #fff; height: 100%; position: relative;
@@ -48,6 +48,7 @@
         .price-unit { font-size: 12px; color: var(--gov-gray); font-weight: 700; white-space: nowrap; flex-shrink: 0; }
         .price-slash { color: #e2e8f0; margin: 0 8px; flex-shrink: 0; }
         
+        /* 검색 하이라이트 스타일 */
         #addressList { 
             position: absolute; top: 100%; left: -2px; width: calc(100% + 4px); 
             border: 2px solid var(--gov-blue); border-top: 1px solid #eee;
@@ -55,33 +56,45 @@
             box-shadow: 0 4px 10px rgba(0,0,0,0.1); 
         }
         .search-item { padding: 12px 15px; border-bottom: 1px solid #f1f5f9; cursor: pointer; font-size: 14px; text-align: left; color: #333; }
-        .search-item.active { background-color: #f0f7ff !important; }
+        .search-item.active { background-color: #f0f7ff !important; font-weight: bold; }
 
-        /* 날짜 비주얼 그래프 영역 (오른쪽 이동) */
+        /* 날짜 비주얼 그래프 스타일 */
         #date-visual-line { 
-            visibility: hidden; position: absolute; left: 600px; top: 42px;
-            display: flex; align-items: center; width: 450px; height: 50px;
+            visibility: hidden; position: absolute; left: 604px; top: 42px;
+            display: flex; align-items: center; width: 420px; height: 50px;
         }
-        .line-bar { height: 2px; background: #cbd5e1; flex: 1; position: relative; margin: 0 10px; }
-        
+        .line-bar { height: 2px; background: #cbd5e1; flex: 1; position: relative; margin: 0 20px; }
         .date-node { position: absolute; top: 50%; transform: translate(-50%, -50%); width: 8px; height: 8px; background: #94a3b8; border-radius: 50%; }
         .node-label { position: absolute; top: 15px; left: 50%; transform: translateX(-50%); font-size: 11px; font-weight: 800; color: var(--gov-gray); white-space: nowrap; }
-        .node-label.first { color: var(--gov-blue); }
+        .node-label.first { color: var(--gov-blue); font-weight: 900; }
         .node-label.future { color: #94a3b8; font-weight: 400; }
 
-        .current-marker { position: absolute; top: -25px; transform: translateX(-50%); padding: 2px 6px; background: var(--gov-red); color: white; font-size: 10px; font-weight: 900; border-radius: 3px; }
+        .current-marker { position: absolute; top: -25px; transform: translateX(-50%); padding: 2px 6px; background: var(--gov-red); color: white; font-size: 10px; font-weight: 900; border-radius: 3px; white-space: nowrap; }
         .current-marker::after { content: ''; position: absolute; bottom: -4px; left: 50%; transform: translateX(-50%); border-left: 4px solid transparent; border-right: 4px solid transparent; border-top: 4px solid var(--gov-red); }
 
+        /* 결과 출력 구역 디자인 (복구) */
         #result-area { flex: 1; overflow-y: auto; padding: 5px 20px; display: flex; flex-direction: column; }
         .section-title { font-size: 14px; font-weight: 800; color: var(--gov-gray); margin: 15px 0 5px 0; display: flex; align-items: center; gap: 5px; }
         .section-title::before { content: ''; width: 3px; height: 12px; background: var(--gov-blue); }
-        .office-card.recommend { border: 2px solid var(--gov-blue); background: #f8fbff; padding: 12px 15px; border-radius: 6px; margin-bottom: 8px; }
-        .card-top { display: flex; justify-content: space-between; align-items: center; }
-        .office-name { font-size: 17px; font-weight: 900; color: var(--gov-blue); }
-        .phone-text { font-size: 28px; font-weight: 900; color: var(--gov-red); letter-spacing: -1px; }
-        .info-box { background: #f8fafc; border: 1px solid #e2e8f0; padding: 10px; border-radius: 6px; }
-        .contact-item { display: flex; justify-content: space-between; font-size: 14px; padding: 3px 0; border-bottom: 1px dotted #e2e8f0; }
-        .intro-msg { text-align: center; color: #64748b; opacity: 0.5; margin-top: 150px; }
+        
+        .office-card.recommend { border: 2px solid var(--gov-blue); background: #f8fbff; padding: 10px 15px; border-radius: 6px; margin-bottom: 8px; display: flex; flex-direction: column; }
+        .card-top { display: flex; justify-content: space-between; align-items: center; width: 100%; }
+        .office-name { font-size: 17px; font-weight: 900; color: var(--gov-blue); letter-spacing: -0.5px; }
+        .office-name-sub { font-size: 12.5px; font-weight: 700; color: var(--gov-blue); opacity: 0.8; }
+        .dist-text { font-size: 10px; color: var(--gov-blue); font-weight: 800; }
+        
+        .phone-row { display: flex; align-items: baseline; gap: 5px; margin: 2px 0; }
+        .phone-text { font-size: 28px; font-weight: 900; color: var(--gov-red); line-height: 1; letter-spacing: -1px; }
+        .sms-tag { font-size: 12px; font-weight: 800; color: var(--gov-red); opacity: 0.5; }
+        .addr-text { font-size: 13px; color: var(--gov-gray); margin: 5px 0 0 0; border-top: 1px solid #eef2f6; padding-top: 5px; line-height: 1.3; }
+
+        .info-box { background: #f8fafc; border: 1px solid #e2e8f0; padding: 8px 12px; border-radius: 6px; }
+        .contact-item { display: flex; justify-content: space-between; padding: 3px 0; border-bottom: 1px dotted #e2e8f0; font-size: 14px; align-items: center; }
+        .contact-item:last-child { border-bottom: none; }
+        .contact-label { font-size: 15px; font-weight: 800; color: #000; }
+        .contact-item b { color: var(--gov-red); font-weight: 900; font-size: 15px; }
+        .sub-desc { font-size: 11px; color: #64748b; margin-left: 3px; font-weight: normal; }
+        .intro-msg { text-align: center; color: #64748b; opacity: 0.5; margin-top: 150px; font-size: 16px; }
     </style>
 </head>
 <body>
@@ -96,9 +109,9 @@
                 </div>
                 <div class="date-container">
                     <div class="date-group">
-                        <input type="text" id="yy" maxlength="2" placeholder="YY"><span>.</span>
-                        <input type="text" id="mm" maxlength="2" placeholder="MM"><span>.</span>
-                        <input type="text" id="dd" maxlength="2" placeholder="DD">
+                        <input type="text" id="yy" maxlength="2" placeholder=" "><span>.</span>
+                        <input type="text" id="mm" maxlength="2" placeholder=" "><span>.</span>
+                        <input type="text" id="dd" maxlength="2" placeholder=" ">
                     </div>
                 </div>
                 <div class="price-container">
@@ -115,10 +128,10 @@
             <div id="rec-section"><p class="intro-msg">주소를 입력해주세요.</p></div>
             <div id="sub-info-area" style="display:none;">
                 <div id="office-list"></div>
-                <div class="section-title">신청 시 필요 서류</div>
-                <div class="info-box">
-                    <div class="contact-item"><span>• <b>공통:</b> 신분증, 주민등록초본, 임대차계약서, 등기부등본</span></div>
-                </div>
+                     <div class="section-title">신청 시 필요 서류</div>
+                    <div class="info-box">
+                        <div class="contact-item"><span>• <span style="font-weight:800;">공통:</span> 신분증, 주민등록초본, 임대차계약서, 등기부등본, 건축물대장</span></div>
+                        <div class="contact-item"><span>• <span style="font-weight:800;">대리:</span> 위임장, 인감증명서, 대리인 신분증</span></div>
                 <div class="section-title">주요 업무 문의처</div>
                 <div id="static-contacts" class="info-box"></div>
             </div>
@@ -133,31 +146,44 @@ const offices = [
     {name:"한국부동산원 고양지사", type:"부동산원", covers:["경기"], lat:37.652619, lng:126.776883, phone:"031-902-3573~5", address:"경기도 고양시 일산동구 중앙로 1187, 흥국생명빌딩 8층"},
     {name:"한국부동산원 성남지사", type:"부동산원", covers:["경기"], lat:37.411158, lng:127.128242, phone:"031-8017-8488~90", address:"경기도 성남시 분당구 야탑로 81번길 16"},
     {name:"한국부동산원 인천지사", type:"부동산원", covers:["인천"], lat:37.401035, lng:126.712020, phone:"032-429-7041~6", address:"인천시 남동구 논현로 46번길 23, 7층"},
-    {name:"한국부동산원 대전지사", type:"부동산원", covers:["세종", "대전"], lat:36.508069, lng:127.261123, phone:"044-868-8341", address:"세종시 한누리대로 499, 세종포스트빌딩 302호"},
+    {name:"한국부동산원 춘천지사", type:"부동산원", covers:["강원"], lat:37.883425, lng:127.729908, phone:"033-244-9793~4", address:"강원도 춘천시 중앙로 16, 무림빌딩 7층"},
+    {name:"한국부동산원 대전지사", type:"부동산원", covers:["세종"], lat:36.508069, lng:127.261123, phone:"044-868-8341", address:"세종시 한누리대로 499, 세종포스트빌딩 302호"},
+    {name:"한국부동산원 전주지사", type:"부동산원", covers:["전북"], lat:35.837688, lng:127.131437, phone:"063-276-8022~3", address:"전북 전주시 덕진구 기린대로 405, 한화생명빌딩 3층"},
+    {name:"한국부동산원 포항지사", type:"부동산원", covers:["경북"], lat:36.030918, lng:129.366140, phone:"054-275-9771~2", address:"경북 포항시 북구 중앙로 201, 한화생명빌딩 8층"},
+    {name:"한국부동산원 울산지사", type:"부동산원", covers:["울산"], lat:35.53823, lng:129.31132, phone:"052-224-8872~4", address:"울산시 남구 북부순환대로 17, 남운프라자 906호"},
+    {name:"한국부동산원 창원지사", type:"부동산원", covers:["경남"], lat:35.218066, lng:128.675982, phone:"055-289-0136~8", address:"창원시 성산구 중앙대로 32, 2층"},
+    {name:"한국토지주택공사 충북본부", type:"주택공사", covers:["충북"], lat:36.614249, lng:127.450780, phone:"043-905-1784", address:"충북 청주시 서원구 구룡산로 52번길 2, 303호"},
+    {name:"한국토지주택공사 제주본부", type:"주택공사", covers:["제주"], lat:33.505062, lng:126.525532, phone:"064-901-3802", address:"제주시 중앙로 150, 대한항공제주사옥 3층"},
     {name:"대한법률구조공단 서울중앙지부", type:"대법공", covers:["서울", "금천구", "관악구", "동작구", "서초구", "강남구", "송파구"], lat:37.494383, lng:127.013104, phone:"02-6941-3430", address:"서울시 서초구 법원로 2길 21, 칠보빌딩 1층"},
+    {name:"대한법률구조공단 수원지부", type:"대법공", covers:["경기", "인천"], lat:37.277533, lng:127.049515, phone:"031-8007-3430", address:"경기도 수원시 영통구 월드컵로 150번길 10, YM빌딩 3층"},
+    {name:"대한법률구조공단 대전지부", type:"대법공", covers:["대전", "세종", "충남", "충북"], lat:36.356309, lng:127.387871, phone:"042-721-3430", address:"대전시 서구 둔산북로 121, 1층 117~121호"},
+    {name:"대한법률구조공단 대구지부", type:"대법공", covers:["대구", "경북"], lat:35.859195, lng:128.631891, phone:"053-710-3430", address:"대구시 수성구 달구벌대로 2461, 디에스라이프빌딩 3층"},
+    {name:"대한법률구조공단 부산지부", type:"대법공", covers:["부산", "울산", "경남"], lat:35.190787, lng:129.074010, phone:"051-711-3430", address:"부산시 연제구 법원남로 15번길 4, 성신프라이어빌딩 5층"},
+    {name:"대한법률구조공단 광주지부", type:"대법공", covers:["광주", "전남", "전북", "제주"], lat:35.149140, lng:126.848917, phone:"062-710-3430", address:"광주시 서구 상무중앙로 28번길 4, 세진빌딩 4층 401호"},
     {name:"서울시청 (지자체)", type:"지자체", covers:["서울", "강서구", "은평구", "종로구", "서대문구", "마포구", "영등포구", "양천구", "구로구"], lat:37.564554, lng:126.975613, phone:"02-2133-1200~8", address:"서울시 중구 덕수궁길 15, 서울시청 서소문별관"}
 ];
+
 
 let currentAddressResults = [];
 let focusedIndex = -1;
 let debounceTimer;
+let isNavigating = false;
+
 const keywordInput = document.getElementById("keyword");
 const addressList = document.getElementById("addressList");
 const dateInputs = [document.getElementById("yy"), document.getElementById("mm"), document.getElementById("dd")];
-const timelineBody = document.getElementById("timeline-body");
 const visualLine = document.getElementById("date-visual-line");
+const timelineBody = document.getElementById("timeline-body");
 
-// 날짜 계산 및 비주얼 그래프 렌더링 (복구된 핵심 로직)
+// 날짜 그래프 로직
 function calculateTimeline() {
     let y = dateInputs[0].value, m = dateInputs[1].value, d = dateInputs[2].value;
     if (y.length === 2 && m.length === 2 && d.length === 2) {
         let numM = parseInt(m), numD = parseInt(d);
         if (numM < 1 || numM > 12 || numD < 1 || numD > 31) { visualLine.style.visibility = "hidden"; return; }
-
         let fullYear = parseInt(y) > 50 ? 1900 + parseInt(y) : 2000 + parseInt(y);
         let startDate = new Date(fullYear, numM - 1, numD);
-        const now = new Date(2026, 2, 12); // 기준일
-
+        const now = new Date(2026, 2, 12);
         let dates = [new Date(startDate)];
         let temp = new Date(startDate);
         while (temp <= now || dates.length < 2) {
@@ -172,19 +198,17 @@ function calculateTimeline() {
 
 function renderTimelineNodes(dates, now) {
     timelineBody.innerHTML = "";
-    const width = 430; 
+    const width = 380; 
     dates.forEach((date, i) => {
         const xPos = (i * (width / (dates.length - 1)));
         const node = document.createElement("div");
         node.className = "date-node";
         node.style.left = `${xPos}px`;
-        
         const label = document.createElement("span");
         label.className = `node-label ${i===0?'first':(date>now?'future':'')}`;
         label.innerText = `${String(date.getFullYear()).slice(-2)}.${String(date.getMonth()+1).padStart(2,'0')}.${String(date.getDate()).padStart(2,'0')}`;
         node.appendChild(label);
         timelineBody.appendChild(node);
-
         if (i < dates.length - 1 && now >= dates[i] && now < dates[i+1]) {
             const ratio = (now - dates[i]) / (dates[i+1] - dates[i]);
             const markerX = xPos + ((width / (dates.length - 1)) * ratio);
@@ -197,10 +221,10 @@ function renderTimelineNodes(dates, now) {
     });
 }
 
-// 주소 검색 및 리스트 하이라이트 기능
+// 주소 검색 및 하이라이트 (복구 완료)
 function searchAddress() {
     const keyword = keywordInput.value.trim();
-    if (!keyword || keyword.length < 2) { addressList.style.display = "none"; return; }
+    if (isNavigating || !keyword || keyword.length < 2) { addressList.style.display = "none"; return; }
     const geocoder = new kakao.maps.services.Geocoder();
     geocoder.addressSearch(keyword, (result, status) => {
         if (status === kakao.maps.services.Status.OK) {
@@ -212,14 +236,22 @@ function searchAddress() {
                 const div = document.createElement("div");
                 div.className = "search-item";
                 div.innerText = item.address_name;
-                div.onmousedown = () => selectItem(item);
+                div.onmousedown = (e) => { e.preventDefault(); selectItem(item); };
                 addressList.appendChild(div);
             });
         }
     });
 }
 
+function updateHighlight() {
+    const items = addressList.getElementsByClassName("search-item");
+    Array.from(items).forEach((item, i) => {
+        item.classList.toggle("active", i === focusedIndex);
+    });
+}
+
 function selectItem(item) {
+    if (!item) return;
     addressList.style.display = "none";
     keywordInput.value = item.address_name;
     document.getElementById("rec-section").style.display = "none";
@@ -228,55 +260,61 @@ function selectItem(item) {
     setTimeout(() => dateInputs[0].focus(), 10);
 }
 
-// 거리 계산 및 결과 표시
 function findNearest(lat, lng, fullAddress) {
     const addrParts = fullAddress.split(' ');
     const mySido = addrParts[0].substring(0, 2);
     const myGu = addrParts.find(p => p.endsWith('구')) || "";
-    
     let filtered = offices.map(o => {
         const d = Math.sqrt(Math.pow(lat-o.lat, 2) + Math.pow(lng-o.lng, 2)) * 111;
         let score = (myGu && o.covers.includes(myGu)) ? 100 : (o.covers.includes(mySido) ? 50 : 0);
-        return { ...o, dist: d, score };
+        let displayCover = o.covers.includes("서울") ? "서울" : (o.covers[0] || "");
+        return { ...o, dist: d, score, displayCover };
     }).filter(o => o.score > 0).sort((a,b) => b.score - a.score || a.dist - b.dist);
 
     const listDiv = document.getElementById("office-list");
     listDiv.innerHTML = '<span class="section-title">관할기관 안내</span>';
     filtered.slice(0, 2).forEach(o => {
+        const displayName = o.name.includes("(지자체)") ? o.name.replace("(지자체)", `<span class="office-name-sub">(지자체)</span>`) : o.name;
         listDiv.innerHTML += `
             <div class="office-card recommend">
                 <div class="card-top">
-                    <span class="office-name">${o.name}</span>
-                    <span style="font-size:12px; color:var(--gov-light-gray)">${o.dist.toFixed(1)}km</span>
+                    <span class="office-name">${displayName}</span>
+                    <div class="meta-info"><span class="dist-text">${o.displayCover} (${o.dist.toFixed(1)}km)</span></div>
                 </div>
-                <div class="phone-text">${o.phone}</div>
-                <div style="font-size:13px; color:var(--gov-gray); margin-top:5px;">${o.address}</div>
+                <div class="phone-row">
+                    <span class="phone-text">${o.phone}</span>
+                    <span class="sms-tag">${o.type === "지자체" ? "문자 X" : "문자 O"}</span>
+                </div>
+                <p class="addr-text">${o.address}</p>
             </div>`;
     });
 }
 
-// 이벤트 리스너
+// 이벤트 핸들러
 keywordInput.addEventListener("input", () => {
+    isNavigating = false;
     clearTimeout(debounceTimer);
     debounceTimer = setTimeout(searchAddress, 200);
 });
 
 keywordInput.addEventListener("keydown", (e) => {
     const items = addressList.getElementsByClassName("search-item");
+    if (items.length === 0) return;
     if (e.key === "ArrowDown") {
+        e.preventDefault();
+        isNavigating = true;
         focusedIndex = (focusedIndex + 1) % items.length;
-        updateHighlight(items);
+        updateHighlight();
     } else if (e.key === "ArrowUp") {
+        e.preventDefault();
+        isNavigating = true;
         focusedIndex = (focusedIndex - 1 + items.length) % items.length;
-        updateHighlight(items);
-    } else if (e.key === "Enter" && focusedIndex > -1) {
-        selectItem(currentAddressResults[focusedIndex]);
+        updateHighlight();
+    } else if (e.key === "Enter") {
+        if (focusedIndex > -1) selectItem(currentAddressResults[focusedIndex]);
+        else if (items.length > 0) selectItem(currentAddressResults[0]);
     }
 });
-
-function updateHighlight(items) {
-    Array.from(items).forEach((item, i) => item.classList.toggle("active", i === focusedIndex));
-}
 
 dateInputs.forEach((input, idx) => {
     input.addEventListener("input", () => {
@@ -289,20 +327,17 @@ dateInputs.forEach((input, idx) => {
     });
 });
 
+[document.getElementById("deposit"), document.getElementById("rent")].forEach(input => {
+    input.addEventListener("input", (e) => {
+        let val = e.target.value.replace(/[^0-9]/g, "");
+        e.target.value = val ? Number(val).toLocaleString() : "";
+    });
+});
+
 document.addEventListener("click", (e) => {
     if (!e.target.closest('.search-container')) addressList.style.display = "none";
 });
-
-// 초기 실행
-(function init() {
-    const contacts = [
-        {l:"한국부동산원", v:"1600-2828"}, {l:"전자계약", v:"1833-4662"}, {l:"임대차신고", v:"1533-2949"}
-    ];
-    const staticBox = document.getElementById("static-contacts");
-    contacts.forEach(c => {
-        staticBox.innerHTML += `<div class="contact-item"><span>${c.l}</span><b>${c.v}</b></div>`;
-    });
-})();
 </script>
 </body>
 </html>
+

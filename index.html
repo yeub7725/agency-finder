@@ -24,8 +24,17 @@
         }
         
         .search-header { padding: 15px 20px 20px 20px; border-bottom: 1px solid #f1f5f9; flex-shrink: 0; position: relative; z-index: 1000; }
-        h1 { font-size: 1.1rem; margin: 0 0 12px 0; color: var(--gov-blue); font-weight: 900; }
+        h1 { font-size: 1.1rem; margin: 0 0 10px 0; color: var(--gov-blue); font-weight: 900; }
         
+        /* ✨ 주택/상가 및 계약기간 설정 영역 */
+        .contract-settings {
+            display: flex; align-items: center; gap: 15px; margin-bottom: 8px; font-size: 13px; color: var(--gov-gray); font-weight: 700;
+        }
+        .contract-settings input[type="radio"] { margin: 0 4px 0 0; accent-color: var(--gov-blue); cursor: pointer; }
+        .contract-settings label { display: flex; align-items: center; cursor: pointer; }
+        .year-input-wrap { display: flex; align-items: center; background: #f1f5f9; padding: 2px 8px; border-radius: 4px; border: 1px solid #e2e8f0;}
+        .year-input-wrap input { width: 25px; border: none; background: transparent; text-align: right; font-weight: 900; color: var(--gov-blue); outline: none; font-size: 13px; margin-right: 2px;}
+
         .search-row { 
             display: flex; align-items: center; width: 100%; 
             border: 2px solid var(--gov-blue); border-radius: 4px; 
@@ -60,13 +69,13 @@
         .price-unit { font-size: 12px; color: var(--gov-gray); font-weight: 700; white-space: nowrap; flex-shrink: 0; }
         .price-slash { color: #e2e8f0; margin: 0 6px; flex-shrink: 0; }
 
-        /* 타임라인 컨테이너 */
+        /* ✨ 타임라인 컨테이너 (폭을 늘리고 깔끔하게) */
         #date-visual-line { 
             visibility: hidden; 
             position: absolute; 
             left: calc(100% + 40px);
-            top: 65px; 
-            width: 650px; 
+            top: 40px; 
+            width: 700px; 
             height: 30px;
             z-index: 1000;
             display: flex;
@@ -80,8 +89,8 @@
 
         .timeline-date-label { position: absolute; top: 14px; font-size: 12px; font-weight: 900; color: var(--gov-blue); transform: translateX(-50%); white-space: nowrap; }
         .timeline-date-label.past-label { font-size: 11px; opacity: 0.5; font-weight: 700; }
+        .timeline-date-label.limit-label { color: var(--gov-red); font-size: 11px; }
 
-        /* ✨ 갱신 의사표시 구간 빗금 박스 */
         .notice-box {
             position: absolute;
             height: 14px;
@@ -95,7 +104,7 @@
         
         .notice-label {
             position: absolute;
-            top: -20px;
+            top: -18px;
             left: 50%;
             transform: translateX(-50%);
             font-size: 11px;
@@ -104,45 +113,36 @@
             white-space: nowrap;
         }
 
-        /* ✨ 디테일 날짜 렌더링 영역 (메인 날짜 & 서브 24:00 날짜) */
-        .notice-date-container {
-            position: absolute;
-            top: 18px; /* 빗금 박스 아래에 위치 */
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            line-height: 1.2;
-            white-space: nowrap;
-        }
-        .notice-date-container.start {
-            left: 0;
-            transform: translateX(-50%);
-        }
-        .notice-date-container.end {
-            right: 0;
-            transform: translateX(50%);
-        }
-        .notice-date-main {
-            font-size: 11px; /* 메인 폰트 */
-            font-weight: 800;
-            color: var(--gov-blue);
-        }
-        .notice-date-sub {
-            font-size: 9px; /* -2pt 작은 서브 폰트 */
-            font-weight: 700;
-            color: var(--gov-light-gray);
-            letter-spacing: -0.3px;
-        }
-
-        /* ✨ 오늘 마커 (방해되지 않게 텍스트 제거하고 크기 대폭 축소) */
         .today-marker {
             position: absolute;
             top: -3px;
             width: 2px;
-            height: 8px; /* 작고 얇게 */
+            height: 8px;
             background: var(--gov-red);
             z-index: 10;
         }
+
+        /* ✨ 텍스트 겹침을 해결하는 하단 상세 정보 박스 */
+        #notice-detail-info {
+            display: none;
+            position: absolute;
+            top: 85px; 
+            left: calc(100% + 40px);
+            width: 700px;
+            background: #fff;
+            border: 2px solid #eef2f6;
+            border-radius: 6px;
+            padding: 12px 15px;
+            box-sizing: border-box;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            z-index: 1000;
+        }
+        .detail-row { display: flex; align-items: center; margin-bottom: 6px; font-size: 13px; }
+        .detail-row:last-child { margin-bottom: 0; }
+        .detail-badge { background: #f1f5f9; color: var(--gov-gray); font-weight: 800; padding: 3px 8px; border-radius: 4px; margin-right: 10px; font-size: 12px; }
+        .detail-badge.red { background: rgba(228,3,45,0.1); color: var(--gov-red); }
+        .detail-text { font-weight: 800; color: var(--gov-blue); display: flex; align-items: baseline; gap: 5px; }
+        .detail-sub { font-size: 11px; color: var(--gov-light-gray); font-weight: 700; }
 
         #result-area { flex: 1; overflow-y: auto; padding: 5px 15px; display: flex; flex-direction: column; }
         .section-title { font-size: 14px; font-weight: 800; color: var(--gov-gray); margin: 5px 0 2px 0; display: flex; align-items: center; gap: 5px; }
@@ -173,6 +173,17 @@
     <div id="sidebar-search">
         <div class="search-header">
             <h1>관할기관 통합 검색</h1>
+            
+            <div class="contract-settings">
+                <label><input type="radio" name="bldgType" value="house" checked> 주택</label>
+                <label><input type="radio" name="bldgType" value="com"> 상가 (최대 10년)</label>
+                <div class="year-input-wrap">
+                    <span style="font-size:12px; color:#64748b; margin-right:4px;">최초계약</span>
+                    <input type="number" id="initYears" value="2" min="1" max="10">
+                    <span style="font-size:12px; color:#64748b;">년</span>
+                </div>
+            </div>
+
             <div class="search-row">
                 <div class="search-container">
                     <input id="keyword" placeholder="주소 입력" autocomplete="off" autofocus>
@@ -197,7 +208,10 @@
                 </div>
                 <div id="addressList"></div>
             </div>
+            
             <div id="date-visual-line"></div>
+            <div id="notice-detail-info"></div>
+
         </div>
         <div id="result-area">
             <div id="rec-section"><p class="intro-msg">주소를 입력해주세요.</p></div>
@@ -229,6 +243,7 @@
 
 <script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=d791798c38589fc7cdc6bce91d9369be&libraries=services"></script>
 <script>
+// ... (offices 데이터 배열은 기존과 동일하므로 생략 없이 유지)
 const offices = [
     {name:"한국부동산원 서울동부지사", type:"부동산원", covers:["서울", "도봉구", "강북구", "노원구", "성북구", "중랑구", "동대문구", "성동구", "광진구", "강동구"], lat:37.557698, lng:127.079226, phone:"02-3394-9870~3", address:"서울시 광진구 천호대로 549, 지타워 10층"},
     {name:"한국부동산원 고양지사", type:"부동산원", covers:["경기"], lat:37.652619, lng:126.776883, phone:"031-902-3573~5", address:"경기도 고양시 일산동구 중앙로 1187, 흥국생명빌딩 8층"},
@@ -264,6 +279,9 @@ const dateInputs = [document.getElementById("yy"), document.getElementById("mm")
 const depositInput = document.getElementById("deposit");
 const rentInput = document.getElementById("rent");
 const visualLine = document.getElementById("date-visual-line");
+const detailInfoBox = document.getElementById("notice-detail-info");
+const typeRadios = document.querySelectorAll('input[name="bldgType"]');
+const initYearsInput = document.getElementById("initYears");
 
 function formatDate(date) {
     let yy = String(date.getFullYear()).slice(-2);
@@ -272,59 +290,97 @@ function formatDate(date) {
     return `${yy}.${mm}.${dd}`;
 }
 
-// 갱신의사표시 전날 자정(24:00)을 계산하는 포맷 함수
 function formatExactMidnight(date) {
     let exactDate = new Date(date);
-    exactDate.setDate(exactDate.getDate() - 1); // 하루 전
+    exactDate.setDate(exactDate.getDate() - 1);
     let yy = String(exactDate.getFullYear()).slice(-2);
     let mm = String(exactDate.getMonth() + 1).padStart(2, '0');
     let dd = String(exactDate.getDate()).padStart(2, '0');
     return `${yy}.${mm}.${dd}`;
 }
 
-function calculateTwoYears() {
+// 이벤트 리스너 추가 (타입, 기간 변경 시 즉각 반영)
+typeRadios.forEach(r => r.addEventListener('change', () => calculateTimeline()));
+initYearsInput.addEventListener('input', () => calculateTimeline());
+
+function calculateTimeline() {
     let y = dateInputs[0].value, m = dateInputs[1].value, d = dateInputs[2].value;
     if (y.length === 2 && m.length === 2 && d.length === 2) {
         let numM = parseInt(m), numD = parseInt(d);
-        if (numM < 1 || numM > 12 || numD < 1 || numD > 31) { visualLine.style.visibility = "hidden"; return; }
+        if (numM < 1 || numM > 12 || numD < 1 || numD > 31) { visualLine.style.visibility = "hidden"; detailInfoBox.style.display = "none"; return; }
         let fullYear = parseInt(y) > 50 ? 1900 + parseInt(y) : 2000 + parseInt(y);
         let dateObj = new Date(fullYear, numM - 1, numD);
-        if (dateObj.getMonth() !== numM - 1) { visualLine.style.visibility = "hidden"; return; }
+        if (dateObj.getMonth() !== numM - 1) { visualLine.style.visibility = "hidden"; detailInfoBox.style.display = "none"; return; }
 
         renderAdvancedTimeline(dateObj);
     } else { 
         visualLine.style.visibility = "hidden"; 
+        detailInfoBox.style.display = "none";
     }
 }
 
 function renderAdvancedTimeline(startDate) {
     visualLine.innerHTML = '';
     visualLine.style.visibility = "visible";
+    
+    let isCom = document.querySelector('input[name="bldgType"]:checked').value === 'com';
+    let initYears = parseInt(initYearsInput.value) || 1;
+    let renewYears = isCom ? 1 : 2; // 상가는 묵시적 갱신 1년, 주택은 2년
+    let noticeEndMonth = isCom ? 1 : 2; // 상가는 만기 1개월 전, 주택은 2개월 전
 
     const today = new Date();
     today.setHours(0,0,0,0);
 
     let dates = [new Date(startDate)];
-    let nextDate = new Date(startDate);
+    let currentEnd = new Date(startDate);
+    currentEnd.setFullYear(currentEnd.getFullYear() + initYears);
     
-    while (nextDate <= today) {
-        nextDate = new Date(nextDate);
-        nextDate.setFullYear(nextDate.getFullYear() + 2);
-        dates.push(nextDate);
+    let maxDate = new Date(startDate);
+    maxDate.setFullYear(maxDate.getFullYear() + 10); // 상가 10년 한도
+
+    if (isCom && currentEnd > maxDate) currentEnd = new Date(maxDate);
+    dates.push(new Date(currentEnd));
+
+    // 오늘 날짜까지 배열 생성 (상가는 10년까지만)
+    while (currentEnd <= today) {
+        if (isCom && currentEnd.getTime() >= maxDate.getTime()) break;
+        
+        let nextPeriod = new Date(currentEnd);
+        nextPeriod.setFullYear(nextPeriod.getFullYear() + renewYears);
+        
+        if (isCom && nextPeriod > maxDate) nextPeriod = new Date(maxDate);
+        
+        dates.push(new Date(nextPeriod));
+        currentEnd = nextPeriod;
     }
-    
+
+    // 미래 날짜 대비 최소 구간 보장
     if (dates.length === 1) {
         let future = new Date(startDate);
-        future.setFullYear(future.getFullYear() + 2);
+        future.setFullYear(future.getFullYear() + initYears);
         dates.push(future);
+    }
+
+    // 현재 어느 구간에 속해있는지 확인
+    let activeIndex = -1;
+    for (let i = 0; i < dates.length - 1; i++) {
+        if (today >= dates[i] && today < dates[i+1]) {
+            activeIndex = i;
+            break;
+        }
+    }
+    // 10년 만기를 넘었거나, 가장 마지막 구간에 걸쳐있는 경우
+    if (activeIndex === -1 && today >= dates[dates.length-1]) {
+        activeIndex = dates.length - 2;
     }
 
     const totalNodes = dates.length;
 
+    // UI 그리기
     for (let i = 0; i < totalNodes; i++) {
         let isFirst = (i === 0);
-        let isCurrentPeriodStart = (i === totalNodes - 2);
         let isEnd = (i === totalNodes - 1);
+        let isActiveStart = (i === activeIndex);
 
         let node = document.createElement('div');
         node.className = 'timeline-node';
@@ -332,11 +388,20 @@ function renderAdvancedTimeline(startDate) {
         let label = document.createElement('div');
         label.className = 'timeline-date-label';
         
-        if (isFirst || isCurrentPeriodStart || isEnd) {
+        // 라벨 표기 로직 (시작, 현재 활성구간 양끝, 전체 마지막)
+        if (isFirst || i === activeIndex || i === activeIndex + 1 || isEnd) {
             label.innerText = formatDate(dates[i]); 
         } else {
             label.innerText = String(dates[i].getFullYear()).slice(-2) + '년';
             label.classList.add('past-label');
+        }
+
+        // 상가 10년 만기 표시
+        if (isCom && dates[i].getTime() === maxDate.getTime()) {
+            label.innerText = formatDate(dates[i]) + '\n(10년 만기)';
+            label.classList.add('limit-label');
+            label.style.textAlign = 'center';
+            label.style.top = '14px';
         }
         
         node.appendChild(label);
@@ -346,60 +411,60 @@ function renderAdvancedTimeline(startDate) {
             let segment = document.createElement('div');
             segment.className = 'timeline-segment';
             
-            if (isCurrentPeriodStart) {
+            if (isActiveStart) {
                 segment.classList.add('current');
                 
-                // 갱신의사표시 기간 (6개월 전 ~ 2개월 전)
+                let periodStart = dates[i];
                 let periodEnd = dates[i+1];
                 
                 let noticeStart = new Date(periodEnd);
                 noticeStart.setMonth(noticeStart.getMonth() - 6);
                 
                 let noticeEnd = new Date(periodEnd);
-                noticeEnd.setMonth(noticeEnd.getMonth() - 2);
+                noticeEnd.setMonth(noticeEnd.getMonth() - noticeEndMonth);
+
+                // 동적 퍼센트 계산 (구간 길이에 상관없이 완벽하게 빗금 위치 잡기)
+                let totalMs = periodEnd.getTime() - periodStart.getTime();
+                let startMs = noticeStart.getTime() - periodStart.getTime();
+                let widthMs = noticeEnd.getTime() - noticeStart.getTime();
+
+                let leftPct = (startMs / totalMs) * 100;
+                let widthPct = (widthMs / totalMs) * 100;
 
                 let noticeBox = document.createElement('div');
                 noticeBox.className = 'notice-box';
-                noticeBox.style.left = '75%'; // 24개월 중 6개월 전 위치
-                noticeBox.style.width = '16.66%'; // 폭 4개월치
+                noticeBox.style.left = `${leftPct}%`;
+                noticeBox.style.width = `${widthPct}%`;
                 
                 let noticeLabel = document.createElement('div');
                 noticeLabel.className = 'notice-label';
                 noticeLabel.innerText = '갱신의사표시';
                 noticeBox.appendChild(noticeLabel);
-                
-                // 디테일 날짜 (시작일)
-                let dateStartDiv = document.createElement('div');
-                dateStartDiv.className = 'notice-date-container start';
-                dateStartDiv.innerHTML = `
-                    <div class="notice-date-main">${formatDate(noticeStart)}</div>
-                    <div class="notice-date-sub">(${formatExactMidnight(noticeStart)} 24:00부터)</div>
-                `;
-                noticeBox.appendChild(dateStartDiv);
-
-                // 디테일 날짜 (종료일)
-                let dateEndDiv = document.createElement('div');
-                dateEndDiv.className = 'notice-date-container end';
-                dateEndDiv.innerHTML = `
-                    <div class="notice-date-main">${formatDate(noticeEnd)}</div>
-                    <div class="notice-date-sub">(${formatExactMidnight(noticeEnd)} 24:00까지)</div>
-                `;
-                noticeBox.appendChild(dateEndDiv);
-
                 segment.appendChild(noticeBox);
 
-                // 오늘 마커 (방해 안되게 아주 얇은 점선으로 텍스트 없이)
-                let periodStartTime = dates[i].getTime();
-                let periodEndTime = periodEnd.getTime();
+                // 상세 박스 업데이트 (그래픽과 분리하여 깔끔하게 텍스트 표시)
+                detailInfoBox.style.display = "block";
+                detailInfoBox.innerHTML = `
+                    <div class="detail-row">
+                        <span class="detail-badge">현재 진행구간</span>
+                        <span class="detail-text">${formatDate(periodStart)} ~ ${formatDate(periodEnd)} <span class="detail-sub">(${isCom && periodEnd.getTime() === maxDate.getTime() ? '10년 만기' : '다음 만기일'})</span></span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-badge red">의사표시 기간</span>
+                        <span class="detail-text" style="color:var(--gov-red);">
+                            ${formatDate(noticeStart)} <span class="detail-sub" style="margin-right:8px;">(${formatExactMidnight(noticeStart)} 24:00부터)</span> ~ 
+                            ${formatDate(noticeEnd)} <span class="detail-sub">(${formatExactMidnight(noticeEnd)} 24:00까지)</span>
+                        </span>
+                    </div>
+                `;
+
+                // 오늘 마커
                 let todayTime = today.getTime();
-                
-                if (todayTime >= periodStartTime && todayTime <= periodEndTime) {
-                    let progressPercent = ((todayTime - periodStartTime) / (periodEndTime - periodStartTime)) * 100;
-                    
+                if (todayTime >= periodStart.getTime() && todayTime <= periodEnd.getTime()) {
+                    let progressPercent = ((todayTime - periodStart.getTime()) / totalMs) * 100;
                     let todayMarker = document.createElement('div');
                     todayMarker.className = 'today-marker';
                     todayMarker.style.left = `${progressPercent}%`;
-                    
                     segment.appendChild(todayMarker);
                 }
 
@@ -422,7 +487,7 @@ dateInputs.forEach((input, idx) => {
             if (idx < 2) dateInputs[idx + 1].focus();
             else depositInput.focus();
         }
-        calculateTwoYears();
+        calculateTimeline();
     });
 });
 
@@ -436,6 +501,7 @@ dateInputs.forEach((input, idx) => {
     });
 });
 
+// ... (카카오맵 API 주소 검색 함수들은 동일)
 function searchAddress() {
     const keyword = keywordInput.value.trim();
     if (isNavigating || !keyword || keyword === lastSearchKeyword) return;

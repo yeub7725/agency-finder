@@ -60,17 +60,17 @@
         .price-unit { font-size: 12px; color: var(--gov-gray); font-weight: 700; white-space: nowrap; flex-shrink: 0; }
         .price-slash { color: #e2e8f0; margin: 0 6px; flex-shrink: 0; }
 
-        /* ✨ 다중 날짜 렌더링을 위한 스타일 업그레이드 */
+        /* ✨ 타임라인 시각화 컨테이너 및 요소 스타일 정교화 */
         #date-visual-line { 
             visibility: hidden; 
             position: absolute; 
             left: calc(100% + 40px);
             top: 65px; 
-            width: 600px; /* 여러 날짜를 넉넉하게 담기 위해 가로 폭 확장 */
+            width: 650px; /* 전체 가로 폭 */
             height: 30px;
             z-index: 1000;
             display: flex;
-            align-items: center; /* 점과 선을 수직 중앙 정렬 */
+            align-items: center;
         }
         
         .timeline-node {
@@ -85,17 +85,78 @@
             height: 2px;
             background: var(--gov-blue);
             transition: all 0.3s ease;
-            /* 기본적으로 flex를 통해 자리가 배분됨 (JS에서 동적 제어) */
+        }
+        
+        .timeline-segment.past {
+            flex: 1; /* 과거 구간은 좁게 */
+            opacity: 0.2;
+        }
+        
+        .timeline-segment.current {
+            flex: 5; /* 현재 진행 구간은 아주 넓게 */
+            position: relative; /* 내부 절대위치 요소를 위함 */
         }
 
         .timeline-date-label { 
             position: absolute; 
             top: 14px; 
-            font-size: 13px; 
+            font-size: 12px; 
             font-weight: 900; 
             color: var(--gov-blue); 
             transform: translateX(-50%); 
             white-space: nowrap;
+        }
+        
+        .timeline-date-label.past-label {
+            font-size: 11px;
+            opacity: 0.5;
+            font-weight: 700;
+        }
+
+        /* ✨ 갱신 의사표시 구간 (6~2개월 전) 빗금 박스 */
+        .notice-box {
+            position: absolute;
+            height: 14px;
+            top: -6px; /* 선을 감싸도록 수직 중앙 정렬 */
+            background: repeating-linear-gradient(45deg, rgba(228,3,45,0.1), rgba(228,3,45,0.1) 3px, transparent 3px, transparent 6px);
+            border: 1px solid rgba(228,3,45,0.4);
+            border-radius: 2px;
+            box-sizing: border-box;
+            z-index: 5;
+        }
+        
+        .notice-label {
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 10px;
+            color: var(--gov-red);
+            font-weight: 800;
+            white-space: nowrap;
+        }
+
+        /* ✨ 오늘 마커 (현재 위치) */
+        .today-marker {
+            position: absolute;
+            top: -15px;
+            width: 2px;
+            height: 32px; /* 선을 관통하도록 길게 */
+            background: var(--gov-red);
+            z-index: 10;
+        }
+
+        .today-label {
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 11px;
+            color: var(--gov-red);
+            font-weight: 900;
+            background: #f8fafc;
+            padding: 0 4px;
+            border-radius: 2px;
         }
 
         #result-area { flex: 1; overflow-y: auto; padding: 5px 15px; display: flex; flex-direction: column; }
@@ -219,7 +280,15 @@ const depositInput = document.getElementById("deposit");
 const rentInput = document.getElementById("rent");
 const visualLine = document.getElementById("date-visual-line");
 
-// ✨ 수정: 시작일을 기준으로 2년 주기의 다중 날짜를 계산하고 렌더링하는 로직
+// 포맷 함수: YY.MM.DD 반환
+function formatDate(date) {
+    let yy = String(date.getFullYear()).slice(-2);
+    let mm = String(date.getMonth() + 1).padStart(2, '0');
+    let dd = String(date.getDate()).padStart(2, '0');
+    return `${yy}.${mm}.${dd}`;
+}
+
+// ✨ 수정: 갱신 이력, 갱신의사표시기간, 현재일을 정교하게 렌더링
 function calculateTwoYears() {
     let y = dateInputs[0].value, m = dateInputs[1].value, d = dateInputs[2].value;
     if (y.length === 2 && m.length === 2 && d.length === 2) {
@@ -229,71 +298,112 @@ function calculateTwoYears() {
         let dateObj = new Date(fullYear, numM - 1, numD);
         if (dateObj.getMonth() !== numM - 1) { visualLine.style.visibility = "hidden"; return; }
 
-        renderTimeline(dateObj);
+        renderAdvancedTimeline(dateObj);
     } else { 
         visualLine.style.visibility = "hidden"; 
     }
 }
 
-function renderTimeline(startDate) {
+function renderAdvancedTimeline(startDate) {
     visualLine.innerHTML = '';
     visualLine.style.visibility = "visible";
 
-    const today = new Date(); // 오늘 날짜 기준
-    let dates = [];
-    let current = new Date(startDate);
-    dates.push(new Date(current)); // 최초 계약일 추가
+    const today = new Date();
+    today.setHours(0,0,0,0); // 시간 제거
 
-    // 오늘 기준으로 최소 +3년까지 커버할 수 있도록 넉넉히 갱신일 생성
-    let maxFutureDate = new Date(today);
-    maxFutureDate.setFullYear(maxFutureDate.getFullYear() + 3);
-
-    while (current < maxFutureDate) {
-        current.setFullYear(current.getFullYear() + 2);
-        dates.push(new Date(current));
+    let dates = [new Date(startDate)];
+    let nextDate = new Date(startDate);
+    
+    // 최초계약일부터 오늘을 넘어서는 첫 만기일까지 2년 단위로 배열 생성
+    while (nextDate <= today) {
+        nextDate = new Date(nextDate);
+        nextDate.setFullYear(nextDate.getFullYear() + 2);
+        dates.push(nextDate);
     }
     
-    // 혹시라도 미래의 날짜를 입력한 경우 최소 1회 갱신일은 보여주도록 보완
+    // 만약 미래 날짜를 입력했다면, 최초 1회 갱신일(2년 후)만 추가
     if (dates.length === 1) {
-        current.setFullYear(current.getFullYear() + 2);
-        dates.push(new Date(current));
+        let future = new Date(startDate);
+        future.setFullYear(future.getFullYear() + 2);
+        dates.push(future);
     }
 
-    // 오늘을 기준으로 '현재 유효한 구간'(-2년 ~ +2년) 판별 변수
-    let overlapStart = new Date(today);
-    overlapStart.setFullYear(overlapStart.getFullYear() - 2);
-    let overlapEnd = new Date(today);
-    overlapEnd.setFullYear(overlapEnd.getFullYear() + 2);
+    const totalNodes = dates.length;
 
-    // 날짜별로 점(Node)과 선(Segment) 생성
-    for (let i = 0; i < dates.length; i++) {
-        // 점(Node)과 라벨 생성
+    // 타임라인 그리기
+    for (let i = 0; i < totalNodes; i++) {
+        let isFirst = (i === 0);
+        let isCurrentPeriodStart = (i === totalNodes - 2);
+        let isEnd = (i === totalNodes - 1);
+        let isPast = (i < totalNodes - 2);
+
+        // 점(Node) 생성
         let node = document.createElement('div');
         node.className = 'timeline-node';
         
+        // 라벨 생성
         let label = document.createElement('div');
         label.className = 'timeline-date-label';
-        let yy = String(dates[i].getFullYear()).slice(-2);
-        let mm = String(dates[i].getMonth() + 1).padStart(2, '0');
-        let dd = String(dates[i].getDate()).padStart(2, '0');
-        label.innerText = `${yy}.${mm}.${dd}`;
+        
+        if (isFirst || isCurrentPeriodStart || isEnd) {
+            label.innerText = formatDate(dates[i]); // 중요 날짜는 전체 표기 (YY.MM.DD)
+        } else {
+            label.innerText = String(dates[i].getFullYear()).slice(-2) + '년'; // 중간 과거는 연도만
+            label.classList.add('past-label');
+        }
         
         node.appendChild(label);
         visualLine.appendChild(node);
 
-        // 마지막 점이 아니라면 다음 점으로 이어지는 선(Segment) 생성
-        if (i < dates.length - 1) {
+        // 선(Segment) 생성 - 마지막 노드가 아닐 때만
+        if (!isEnd) {
             let segment = document.createElement('div');
             segment.className = 'timeline-segment';
             
-            // 현재 유효 구간(overlap)에 해당하면 넓고 진하게, 아니면 좁고 연하게
-            if (dates[i+1] > overlapStart && dates[i] < overlapEnd) {
-                segment.style.flex = "4"; // 폭을 넓게
-                segment.style.opacity = "1"; // 선명하게
+            if (isCurrentPeriodStart) {
+                // ✨ 현재 진행 중인 계약 구간 (가장 넓게)
+                segment.classList.add('current');
+                
+                // 1. 갱신 의사표시 기간 (빗금 박스) 추가: 만기일 기준 6개월 전 ~ 2개월 전
+                // 2년(24개월) 중 6개월 전은 75% 지점, 2개월 전은 91.66% 지점 (폭 16.66%)
+                let noticeBox = document.createElement('div');
+                noticeBox.className = 'notice-box';
+                noticeBox.style.left = '75%';
+                noticeBox.style.width = '16.66%';
+                
+                let noticeLabel = document.createElement('div');
+                noticeLabel.className = 'notice-label';
+                noticeLabel.innerText = '갱신의사표시';
+                noticeBox.appendChild(noticeLabel);
+                
+                segment.appendChild(noticeBox);
+
+                // 2. 현재일(오늘) 마커 추가
+                let periodStart = dates[i].getTime();
+                let periodEnd = dates[i+1].getTime();
+                let todayTime = today.getTime();
+                
+                // 오늘이 현재 구간 안에 있다면 마커 표시
+                if (todayTime >= periodStart && todayTime <= periodEnd) {
+                    let progressPercent = ((todayTime - periodStart) / (periodEnd - periodStart)) * 100;
+                    
+                    let todayMarker = document.createElement('div');
+                    todayMarker.className = 'today-marker';
+                    todayMarker.style.left = `${progressPercent}%`;
+                    
+                    let todayLabel = document.createElement('div');
+                    todayLabel.className = 'today-label';
+                    todayLabel.innerText = '오늘';
+                    
+                    todayMarker.appendChild(todayLabel);
+                    segment.appendChild(todayMarker);
+                }
+
             } else {
-                segment.style.flex = "1"; // 폭을 좁게 (축소)
-                segment.style.opacity = "0.2"; // 흐리게
+                // 과거 구간은 좁게 축소
+                segment.classList.add('past');
             }
+            
             visualLine.appendChild(segment);
         }
     }

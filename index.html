@@ -211,21 +211,56 @@
     animation: fadeInUp 0.4s ease-out forwards;
 }
      
+
         #calculator-container {
             visibility: hidden;
             position: absolute; 
             top: 20px;
             
-        
+            
             left: calc(clamp(500px, 40vw, 650px) + 780px); 
             
-            width: 400px;
+            width: 440px;
             background: #fff;
             border: 2px solid var(--gov-blue);
             border-radius: 6px;
-            padding: 15px;
+            padding: 10px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.2);
             z-index: 9999;
+        }
+        .calc-title { font-size: 14.5px; font-weight: 900; color: var(--gov-blue); margin-bottom: 12px; border-bottom: 2px solid #f1f5f9; padding-bottom: 8px;}
+        .calc-setting { font-size: 13px; color: var(--gov-gray); font-weight: 800; margin-bottom: 15px; display: flex; align-items: center; gap: 5px;}
+        .calc-setting input { width: 45px; text-align: right; border: 1px solid #cbd5e1; border-radius: 3px; font-weight: 900; color: var(--gov-red); outline: none; padding: 3px; font-size: 13px;}
+        .rate-help { font-size: 11px; color: #94a3b8; font-weight: 700; margin-left: 2px; }
+        .calc-box { margin-bottom: 15px; }
+        .calc-subtitle { font-size: 13px; font-weight: 800; color: var(--gov-gray); margin-bottom: 6px; }
+        .calc-row { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 4px; align-items: center; font-weight: 700;}    
+
+        .date-group span {
+            margin: 0 4px !important;    
+            font-weight: 900 !important;
+            color: #94a3b8 !important;   
+        }
+
+     
+        .price-container {
+            justify-content: flex-start !important; 
+            gap: 5px !important; 
+        }
+
+        /* 💡 3. 보증금과 월세 입력칸 크기 다이어트 */
+        .price-input-wrap {
+            flex: none !important; /* 멋대로 늘어나는 성질 차단 */
+        }
+        
+        .price-container #deposit {
+            width: 110px !important; 
+            text-align: right;
+        }
+
+        .price-container #rent {
+            width: 30px !important; 
+            text-align: right;
         }
     </style>
 </head>
@@ -241,8 +276,8 @@
                 </div>
                 <div class="date-container">
                     <div class="date-group">
-                        <input type="text" id="yy" maxlength="2" placeholder=""><span>.</span>
-                        <input type="text" id="mm" maxlength="2" placeholder=""><span>.</span>
+                        <input type="text" id="yy" maxlength="2" placeholder=""><span>-</span>
+                        <input type="text" id="mm" maxlength="2" placeholder=""><span>-</span>
                         <input type="text" id="dd" maxlength="2" placeholder="">
                     </div>
                 </div>
@@ -730,10 +765,18 @@ document.addEventListener("click", (e) => {
             <span class="rate-help">(변동 시 직접 수정)</span>
         </div>
         
-        <div class="calc-box">
+       <div class="calc-box">
             <div class="calc-subtitle">1. 5% 최대 증액 범위 (합의 시)</div>
-            <div class="calc-row"><span>보증금 상한:</span> <b id="calc-max-deposit">-</b></div>
-            <div class="calc-row"><span>월차임 상한:</span> <b id="calc-max-rent">-</b></div>
+            
+            <div class="calc-row">
+                <span>보증금 최대 증액액: <span style="font-size:11px; color:#64748b; font-weight:normal;">(원금의 5%)</span></span> 
+                <b id="calc-max-deposit">-</b>
+            </div>
+            
+            <div class="calc-row">
+                <span>월차임 최대 증액액: <span style="font-size:11px; color:#64748b; font-weight:normal;">(월세의 5%)</span></span> 
+                <b id="calc-max-rent">-</b>
+            </div>
         </div>
 
         <div class="calc-box" style="margin-bottom: 0;">

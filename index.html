@@ -241,9 +241,9 @@
 <body>
 <div class="main-wrapper">
     <div id="sidebar-search">
+        
         <div class="search-header">
             <h1>관할기관 통합 검색</h1>
-
             <div class="search-row">
                 <div class="search-container">
                     <input id="keyword" placeholder="주소 입력" autocomplete="off" autofocus>
@@ -268,46 +268,45 @@
                 </div>
                 <div id="addressList"></div>
             </div>
+        </div> <div id="timeline-container">
+            <div class="contract-settings">
+                <label><input type="radio" name="bldgType" value="house" checked> 주택</label>
+                <label><input type="radio" name="bldgType" value="com"> 상가 (최대 10년)</label>
+                <div class="year-input-wrap">
+                    <span style="font-size:12px; color:#64748b; margin-right:4px;">최초계약</span>
+                    <input type="number" id="initYears" value="2" min="1" max="10">
+                    <span style="font-size:12px; color:#64748b;">년</span>
+                </div>
+            </div>
             
-       <div id="timeline-container">
-                <div class="contract-settings">
-                    <label><input type="radio" name="bldgType" value="house" checked> 주택</label>
-                    <label><input type="radio" name="bldgType" value="com"> 상가 (최대 10년)</label>
-                    <div class="year-input-wrap">
-                        <span style="font-size:12px; color:#64748b; margin-right:4px;">최초계약</span>
-                        <input type="number" id="initYears" value="2" min="1" max="10">
-                        <span style="font-size:12px; color:#64748b;">년</span>
-                    </div>
+            <div id="date-visual-line"></div>
+            <div id="notice-detail-info"></div>
+            
+            <div id="calculator-container">
+                <div class="calc-title"> 보증금 / 월차임 상한 & 전환 계산기</div>
+                
+                <div class="calc-setting">
+                    <span>한국은행 기준금리:</span>
+                    <input type="number" id="baseRateInput" value="2.5" step="0.1"> <span>%</span>
+                    <span class="rate-help">(변동 시 직접 수정)</span>
                 </div>
                 
-                <div id="date-visual-line"></div>
-                <div id="notice-detail-info"></div>
-                
-                <div id="calculator-container">
-                    <div class="calc-title">보증금 / 월차임 상한 & 전환 계산기</div>
-                    
-                    <div class="calc-setting">
-                        <span>한국은행 기준금리:</span>
-                        <input type="number" id="baseRateInput" value="2.5" step="0.1"> <span>%</span>
-                        <span class="rate-help">(변동 시 직접 수정)</span>
-                    </div>
-                    
-                    <div class="calc-box">
-                        <div class="calc-subtitle">1. 5% 최대 증액 범위 (합의 시)</div>
-                        <div class="calc-row"><span>보증금 상한:</span> <b id="calc-max-deposit">-</b></div>
-                        <div class="calc-row"><span>월차임 상한:</span> <b id="calc-max-rent">-</b></div>
-                    </div>
+                <div class="calc-box">
+                    <div class="calc-subtitle">1. 5% 최대 증액 범위 (합의 시)</div>
+                    <div class="calc-row"><span>보증금 상한:</span> <b id="calc-max-deposit">-</b></div>
+                    <div class="calc-row"><span>월차임 상한:</span> <b id="calc-max-rent">-</b></div>
+                </div>
 
-                    <div class="calc-box" style="margin-bottom: 0;">
-                        <div class="calc-subtitle">2. 전월세 전환 (환산 월차임)</div>
-                        <div class="calc-row"><span>적용 전환율:</span> <b id="calc-conv-rate" style="color:var(--gov-red);">-</b></div>
-                        <div class="calc-row" style="font-size:11px; color:#64748b; margin-top:-4px; margin-bottom:6px;" id="calc-conv-formula"></div>
-                        <div class="calc-row" style="background:#f8fafc; padding:8px; border-radius:4px; border: 1px solid #e2e8f0;">
-                            <span style="font-size: 12px;"> 보증금 <b>1,000만 원</b> 월세 전환 시<br> ➔ 월 <b id="calc-conv-example" style="color:var(--gov-blue); font-size:14px;">-</b> 추가</span>
-                        </div>
+                <div class="calc-box" style="margin-bottom: 0;">
+                    <div class="calc-subtitle">2. 전월세 전환 (환산 월차임)</div>
+                    <div class="calc-row"><span>적용 전환율:</span> <b id="calc-conv-rate" style="color:var(--gov-red);">-</b></div>
+                    <div class="calc-row" style="font-size:11px; color:#64748b; margin-top:-4px; margin-bottom:6px;" id="calc-conv-formula"></div>
+                    <div class="calc-row" style="background:#f8fafc; padding:8px; border-radius:4px; border: 1px solid #e2e8f0;">
+                        <span style="font-size: 12px;"> 보증금 <b>1,000만 원</b> 월세 전환 시<br> ➔ 월 <b id="calc-conv-example" style="color:var(--gov-blue); font-size:14px;">-</b> 추가</span>
                     </div>
-                </div> </div> </div> <div id="result-area">
-            <div id="rec-section"><p class="intro-msg">주소를 입력해주세요</p></div>
+                </div>
+            </div> </div> </div> <div id="result-area">
+        <div id="rec-section"><p class="intro-msg">주소를 입력해주세요</p></div>
             
             <div id="sub-info-area" style="display:none;">
                 <div id="office-list"></div>

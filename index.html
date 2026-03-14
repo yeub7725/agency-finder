@@ -847,11 +847,10 @@ document.addEventListener("click", (e) => {
 
       
                 let maxDep = Math.floor(depositVal * 0.05);
-                let maxRent = Math.floor(rentVal * 0.05);
+                let maxRent = rentVal * 0.05;
                 
                 document.getElementById("calc-max-deposit").innerText = depositVal > 0 ? maxDep.toLocaleString() + " 만원" : "-";
-                document.getElementById("calc-max-rent").innerText = rentVal > 0 ? maxRent.toLocaleString() + " 만원" : "-";
-
+                document.getElementById("calc-max-rent")if (maxRentEl) maxRentEl.innerText = rentVal > 0 ? maxRent.toLocaleString('ko-KR', { maximumFractionDigits: 1 }) + " 만원" : "-";
                 let conversionRate = 0;
                 let formulaStr = "";
                 

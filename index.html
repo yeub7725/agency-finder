@@ -210,6 +210,27 @@
 .animate-update {
     animation: fadeInUp 0.4s ease-out forwards;
 }
+        /* 임대차 금액 계산기 스타일 */
+        #calculator-container {
+            visibility: hidden;
+            position: absolute;
+            left: calc(100% + 40px); /* 👈 이 코드가 계산기를 오른쪽 우측 빈 공간으로 밀어냅니다 */
+            top: 150px; 
+            width: 320px;
+            background: #fff;
+            border: 2px solid var(--gov-blue);
+            border-radius: 6px;
+            padding: 15px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            z-index: 1000;
+        }
+        .calc-title { font-size: 14.5px; font-weight: 900; color: var(--gov-blue); margin-bottom: 12px; border-bottom: 2px solid #f1f5f9; padding-bottom: 8px;}
+        .calc-setting { font-size: 13px; color: var(--gov-gray); font-weight: 800; margin-bottom: 15px; display: flex; align-items: center; gap: 5px;}
+        .calc-setting input { width: 45px; text-align: right; border: 1px solid #cbd5e1; border-radius: 3px; font-weight: 900; color: var(--gov-red); outline: none; padding: 3px; font-size: 13px;}
+        .rate-help { font-size: 11px; color: #94a3b8; font-weight: 700; margin-left: 2px; }
+        .calc-box { margin-bottom: 15px; }
+        .calc-subtitle { font-size: 13px; font-weight: 800; color: var(--gov-gray); margin-bottom: 6px; }
+        .calc-row { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 4px; align-items: center; font-weight: 700;}
     </style>
 </head>
 <body>
@@ -724,15 +745,14 @@ document.addEventListener("click", (e) => {
     if (!e.target.closest('.search-row')) addressList.style.display = "none";
 });
 
+// --- 보증금/월차임 계산기 로직 ---
 const baseRateInput = document.getElementById("baseRateInput");
 const calcContainer = document.getElementById("calculator-container");
 
 function updateCalculator() {
-
     let depositVal = parseInt(depositInput.value.replace(/,/g, '')) || 0;
     let rentVal = parseInt(rentInput.value.replace(/,/g, '')) || 0;
     
-
     if (depositVal > 0 || rentVal > 0) {
         calcContainer.style.visibility = "visible";
     } else {
@@ -741,9 +761,7 @@ function updateCalculator() {
     }
 
     let baseRate = parseFloat(baseRateInput.value) || 0;
-   
     let isCom = document.querySelector('input[name="bldgType"]:checked').value === 'com';
-
 
     let maxDep = Math.floor(depositVal * 1.05);
     let maxRent = Math.floor(rentVal * 1.05);
@@ -751,34 +769,29 @@ function updateCalculator() {
     document.getElementById("calc-max-deposit").innerText = depositVal > 0 ? maxDep.toLocaleString() + " 만원" : "-";
     document.getElementById("calc-max-rent").innerText = rentVal > 0 ? maxRent.toLocaleString() + " 만원" : "-";
 
-    
     let conversionRate = 0;
     let formulaStr = "";
     
     if (!isCom) { 
-     
         let r2 = baseRate + 2.0;
         conversionRate = Math.min(10, r2);
-        formulaStr = `기준금리(${baseRate}%) + 2% = ${r2.toFixed(2)}% 
+        formulaStr = `기준금리(${baseRate}%) + 2% = ${r2.toFixed(2)}% (10%와 비교해 낮은 값 적용)`;
     } else { 
-     
         let r2 = baseRate * 4.5;
         conversionRate = Math.min(12, r2);
-        formulaStr = `기준금리(${baseRate}%) × 4.5배 = ${r2.toFixed(2)}% 
+        formulaStr = `기준금리(${baseRate}%) × 4.5배 = ${r2.toFixed(2)}% (12%와 비교해 낮은 값 적용)`;
     }
 
     document.getElementById("calc-conv-rate").innerText = `연 ${conversionRate.toFixed(2)}%`;
     document.getElementById("calc-conv-formula").innerText = formulaStr;
 
-  
     let monthlyAdd = (10000000 * (conversionRate / 100)) / 12;
     document.getElementById("calc-conv-example").innerText = Math.floor(monthlyAdd).toLocaleString() + "원";
 }
 
-
 depositInput.addEventListener("input", updateCalculator);
 rentInput.addEventListener("input", updateCalculator);
-baseRateInput.addEventListener("input", updateCalculator);
+if(baseRateInput) baseRateInput.addEventListener("input", updateCalculator);
 typeRadios.forEach(r => r.addEventListener('change', updateCalculator));
 </script>
 </body>

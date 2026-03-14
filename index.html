@@ -832,31 +832,36 @@ document.addEventListener("click", (e) => {
             }
 document.addEventListener("DOMContentLoaded", function() {
     
-
     function updateCalculator() {
-
         let depositInput = document.getElementById("deposit");
         let rentInput = document.getElementById("rent");
         let baseRateInput = document.getElementById("baseRateInput");
         let convDepositInput = document.getElementById("calc-conv-deposit");
         let typeRadios = document.getElementsByName("bldgType");
-        
-   
-        let calcContainer = document.getElementById("calculator-container");
 
         if (!depositInput || !rentInput || !typeRadios) return;
 
-     
         let depositVal = parseInt(depositInput.value.replace(/,/g, '')) || 0;
         let rentVal = parseInt(rentInput.value.replace(/,/g, '')) || 0;
         let baseRate = baseRateInput ? parseFloat(baseRateInput.value) || 2.5 : 2.5;
         
        
-        if (calcContainer) {
-            if (depositVal > 0 || rentVal > 0) {
-                calcContainer.style.visibility = "visible";
-            } else {
-                calcContainer.style.visibility = "hidden"; 
+        let startNode = document.getElementById("calc-max-deposit");
+        if (startNode) {
+            let parent = startNode.parentElement;
+            let shouldShow = (depositVal > 0 || rentVal > 0);
+            
+         
+            for (let i = 0; i < 6; i++) {
+                if (parent && parent !== document.body) {
+                    let compStyle = window.getComputedStyle(parent);
+                    if (shouldShow && (compStyle.visibility === "hidden" || parent.style.visibility === "hidden")) {
+                        parent.style.visibility = "visible";
+                    } else if (!shouldShow && parent.style.visibility === "visible") {
+                       
+                    }
+                    parent = parent.parentElement;
+                }
             }
         }
 
@@ -868,7 +873,6 @@ document.addEventListener("DOMContentLoaded", function() {
             }
         }
 
- 
         let maxDep = Math.floor(depositVal * 0.05);
         let maxRent = rentVal * 0.05;
         let displayMaxRent = Number(maxRent.toFixed(1));
@@ -878,7 +882,6 @@ document.addEventListener("DOMContentLoaded", function() {
         if (calcMaxDepEl) calcMaxDepEl.innerText = depositVal > 0 ? maxDep.toLocaleString() + " 만원" : "-";
         if (calcMaxRentEl) calcMaxRentEl.innerText = rentVal > 0 ? displayMaxRent.toLocaleString() + " 만원" : "-";
 
-  
         let conversionRate = 0;
         let formulaStr = "";
         if (!isCom) {
@@ -898,7 +901,6 @@ document.addEventListener("DOMContentLoaded", function() {
         if (calcConvRateEl) calcConvRateEl.innerText = `연 ${conversionRate.toFixed(1)}%`;
         if (calcConvFormulaEl) calcConvFormulaEl.innerText = formulaStr;
 
-   
         if (convDepositInput) {
             let convDepStr = convDepositInput.value.replace(/,/g, '');
             let convDepVal = parseInt(convDepStr) || 0;
@@ -919,7 +921,6 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     }
 
-
     let depositInputEl = document.getElementById("deposit");
     let rentInputEl = document.getElementById("rent");
     let baseRateInputEl = document.getElementById("baseRateInput");
@@ -932,7 +933,6 @@ document.addEventListener("DOMContentLoaded", function() {
     if (convDepositInputEl) convDepositInputEl.addEventListener("input", updateCalculator);
     
     typeRadiosEls.forEach(r => r.addEventListener("change", updateCalculator));
-
 
     updateCalculator();
 });

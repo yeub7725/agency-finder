@@ -839,11 +839,11 @@ document.addEventListener("click", (e) => {
                 if (!isCom) { 
                     let r2 = baseRate + 2.0;
                     conversionRate = Math.min(10, r2);
-                    formulaStr = `기준금리(${baseRate}%) + 2% = ${Number(r2.toFixed(2))}% (10%와 비교해 낮은 값 적용)`;
+                    formulaStr = `기준금리(${baseRate}%) + 2% = ${Number(r2.toFixed(2))}% (연 10%와 비교해 낮은 값 적용)`;
                 } else { 
                     let r2 = baseRate * 4.5;
                     conversionRate = Math.min(12, r2);
-                    formulaStr = `기준금리(${baseRate}%) × 4.5배 = ${Number(r2.toFixed(2))}% (12%와 비교해 낮은 값 적용)`;
+                    formulaStr = `기준금리(${baseRate}%) × 4.5배 = ${Number(r2.toFixed(2))}% (연 12%와 비교해 낮은 값 적용)`;
                 }
 
                 document.getElementById("calc-conv-rate").innerText = `연 ${Number(conversionRate.toFixed(2))}%`;

@@ -884,9 +884,9 @@ document.addEventListener("click", (e) => {
             
                 let detailFormulaText = "";
                 if (!isCom) {
-                    detailFormulaText = "전환할 금액 X (기준금리+대통령령(2%)) / 12";
+                    detailFormulaText = "전환할 금액 X (한국은행 기준금리+대통령령(2%)) / 12";
                 } else {
-                    detailFormulaText = "전환할 금액 X (기준금리×대통령령(4.5배)) / 12";
+                    detailFormulaText = "전환할 금액 X (한국은행 기준금리×대통령령(4.5배)) / 12";
                 }
                 document.getElementById("calc-conv-detail-formula").innerText = detailFormulaText;
             } 

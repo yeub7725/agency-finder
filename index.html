@@ -220,7 +220,7 @@
             
             left: calc(clamp(500px, 40vw, 650px) + 780px); 
             
-            width: 450px;
+            width: 480px;
             background: #fff;
             border: 2px solid var(--gov-blue);
             border-radius: 6px;
@@ -882,37 +882,39 @@ let formulaStr = "";
             
             
            
-                let rateEl = document.getElementById("calc-conv-rate");
+              let rateEl = document.getElementById("calc-conv-rate");
                 if (rateEl) {
-                    
+        
                     rateEl.style.display = "flex";
-                    rateEl.style.flexDirection = "row"; 
+                    rateEl.style.flexDirection = "row";
                     rateEl.style.alignItems = "center";
-                    rateEl.style.justifyContent = "flex-start"; 
+                    rateEl.style.justifyContent = "space-between";
                     rateEl.style.width = "100%";
                     rateEl.style.whiteSpace = "nowrap"; 
-                    rateEl.style.overflow = "visible";
+                    rateEl.style.position = "relative"; 
 
-            
-                    let formattedRate = parseFloat(conversionRate.toFixed(2));
+                    let finalPercent = Number(conversionRate.toFixed(2)).toString(); 
 
-                  
+               
                     rateEl.innerHTML = `
-                        <span style="color: var(--gov-gray); font-weight: 700; font-size: 14px; margin-right: 5px; flex-shrink: 0;">적용 전환율:</span>
-                        <span style="color: #666666; font-size: 11.5px; font-weight: 400; font-family: 'Noto Sans KR', sans-serif; flex-shrink: 1; overflow: hidden; text-overflow: ellipsis;">
-                            ${formulaStr.split('     ')[0]}
-                        </span>
-                        <span style="color: var(--gov-red); font-size: 18px; font-weight: 900; margin-left: auto; flex-shrink: 0; padding-left: 10px;">
-                            ${formattedRate}%
-                        </span>
+                        <div style="display: flex; align-items: center; overflow: hidden; margin-right: 10px;">
+                            <span style="color: var(--gov-gray); font-weight: 700; font-size: 14px; margin-right: 6px; flex-shrink: 0;">적용 전환율:</span>
+                            <span style="color: #666666; font-size: 11.5px; font-weight: 400; font-family: 'Noto Sans KR', sans-serif; overflow: hidden; text-overflow: ellipsis;">
+                                ${formulaStr.split('     ')[0]}
+                            </span>
+                        </div>
+                        <div style="color: var(--gov-red); font-size: 18px; font-weight: 900; flex-shrink: 0;">
+                            ${finalPercent}%
+                        </div>
                     `;
                 }
 
-             
-                let formulaEl = document.getElementById("calc-conv-formula");
-                if (formulaEl) formulaEl.innerHTML = "";
-                let detailEl = document.getElementById("calc-conv-detail-formula");
-                if (detailEl) detailEl.innerHTML = "";
+                
+                const idsToClean = ["calc-conv-formula", "calc-conv-detail-formula"];
+                idsToClean.forEach(id => {
+                    let el = document.getElementById(id);
+                    if (el) el.innerHTML = "";
+                });
             
             
                 let convDepStr = convDepositInput.value.replace(/,/g, '');

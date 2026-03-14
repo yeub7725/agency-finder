@@ -220,7 +220,7 @@
             
             left: calc(clamp(500px, 40vw, 650px) + 780px); 
             
-            width: 480px;
+            width: 440px;
             background: #fff;
             border: 2px solid var(--gov-blue);
             border-radius: 6px;
@@ -865,61 +865,19 @@ let conversionRate = 0;
 let formulaStr = "";
                 
             
-             if (!isCom) { 
+                if (!isCom) { 
                     let r2 = baseRate + 2.0;
                     conversionRate = Math.min(10, r2);
-               
                     formulaStr = `기준금리(${baseRate}%) + 2% = ${Number(r2.toFixed(2))}% or (연 10%중 낮은 값 적용)`;
                 } else { 
                     let r2 = baseRate * 4.5;
                     conversionRate = Math.min(12, r2);
-             
                     formulaStr = `기준금리(${baseRate}%) × 4.5배 = ${Number(r2.toFixed(2))}% or (연 12%중 낮은 값 적용)`;
                 }
 
-           
-                document.getElementById("calc-conv-rate").innerText = formulaStr;
-            
-            
-           
-          let rateEl = document.getElementById("calc-conv-rate");
-                if (rateEl) {
-                    rateEl.style.display = "flex";
-                    rateEl.style.flexDirection = "row";
-                    rateEl.style.alignItems = "center";
-                    rateEl.style.justifyContent = "space-between";
-                    rateEl.style.width = "100%";
-                    rateEl.style.whiteSpace = "nowrap";
-                    rateEl.style.gap = "0";
-                    let finalRateDisplay = Number(parseFloat(conversionRate).toFixed(2)).toString();
-                    rateEl.innerHTML = `
-                        <div style="display: flex; align-items: center; overflow: hidden;">
-                            <span style="color: var(--gov-gray); font-weight: 700; font-size: 13.5px; margin-right: 5px; flex-shrink: 0;">적용 전환율:</span>
-                            <span style="color: #666666; font-size: 12px; font-weight: 400; font-family: 'Noto Sans KR', sans-serif; overflow: hidden; text-overflow: ellipsis; flex-shrink: 1;">
-                                ${formulaStr.split('     ')[0]}
-                            </span>
-                        </div>
-                        <div style="color: var(--gov-red); font-size: 18px; font-weight: 900; flex-shrink: 0; padding-left: 10px;">
-                            ${finalRateDisplay}%
-                        </div>
-                    `;
-                }
+                document.getElementById("calc-conv-rate").innerText = `${Number(conversionRate.toFixed(2))}%`;
+                document.getElementById("calc-conv-formula").innerText = formulaStr;
 
-        
-                const cleanIds = ["calc-conv-formula", "calc-conv-detail-formula"];
-                cleanIds.forEach(id => {
-                    let el = document.getElementById(id);
-                    if (el) el.innerText = "";
-                });
-            } 
-
-                
-                const idsToClean = ["calc-conv-formula", "calc-conv-detail-formula"];
-                idsToClean.forEach(id => {
-                    let el = document.getElementById(id);
-                    if (el) el.innerHTML = "";
-                });
-            
             
                 let convDepStr = convDepositInput.value.replace(/,/g, '');
                 let convDepVal = parseInt(convDepStr) || 0; // 단위: 만 원

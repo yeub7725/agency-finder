@@ -772,8 +772,8 @@ document.addEventListener("click", (e) => {
                 let baseRate = parseFloat(baseRateInput.value) || 0;
                 let isCom = document.querySelector('input[name="bldgType"]:checked').value === 'com';
 
-                let maxDep = Math.floor(depositVal * 1.05);
-                let maxRent = Math.floor(rentVal * 1.05);
+                let maxDep = Math.floor(depositVal * 0.05);
+                let maxRent = Math.floor(rentVal * 0.05);
                 
                 document.getElementById("calc-max-deposit").innerText = depositVal > 0 ? maxDep.toLocaleString() + " 만원" : "-";
                 document.getElementById("calc-max-rent").innerText = rentVal > 0 ? maxRent.toLocaleString() + " 만원" : "-";

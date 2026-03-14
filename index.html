@@ -793,8 +793,16 @@ document.addEventListener("click", (e) => {
             <div class="calc-row"><span>적용 전환율:</span> <b id="calc-conv-rate" style="color:var(--gov-red);">-</b></div>
             <div class="calc-row" style="font-size:11px; color:#64748b; margin-top:-4px; margin-bottom:6px;" id="calc-conv-formula"></div>
             
-            <div class="calc-row" style="background:#f8fafc; padding:8px; border-radius:4px; border: 1px solid #e2e8f0;">
-                <span style="font-size: 12px;">보증금 <b id="calc-conv-target-text">0만 원</b> 월세 전환 시<br> ➔ 월 <b id="calc-conv-example" style="color:var(--gov-blue); font-size:14px;">-</b> </span>
+          <div style="background:#f8fafc; padding:10px; border-radius:4px; border: 1px solid #e2e8f0;">
+                
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                    <span style="font-size: 12px; font-weight: 700;">보증금 <b id="calc-conv-target-text" style="color:var(--gov-gray);">0원</b> 월세 전환 시</span>
+                    <span style="font-size: 13px; font-weight: 900;">➔ 월 <b id="calc-conv-example" style="color:var(--gov-blue); font-size:15px;">-</b></span>
+                </div>
+                
+                <div id="calc-conv-detail-formula" style="font-size: 11px; color: #94a3b8; text-align: right; letter-spacing: -0.5px;">
+                    </div>
+                
             </div>
         </div>
     </div>
@@ -869,9 +877,19 @@ document.addEventListener("click", (e) => {
                 document.getElementById("calc-conv-target-text").innerText = convDepVal > 0 ? convDepVal.toLocaleString() + "만 원" : "0원";
 
               
+            
                 let monthlyAdd = (convDepVal * 10000) * (conversionRate / 100) / 12;
                 document.getElementById("calc-conv-example").innerText = Math.floor(monthlyAdd).toLocaleString() + "원";
-            }
+                
+            
+                let detailFormulaText = "";
+                if (!isCom) {
+                    detailFormulaText = "전환할 금액 X (기준금리+대통령령(2%)) / 12";
+                } else {
+                    detailFormulaText = "전환할 금액 X (기준금리×대통령령(4.5배)) / 12";
+                }
+                document.getElementById("calc-conv-detail-formula").innerText = detailFormulaText;
+            } 
 
             depositInputLocal.addEventListener("input", updateCalculator);
             rentInputLocal.addEventListener("input", updateCalculator);

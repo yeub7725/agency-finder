@@ -832,90 +832,105 @@ document.addEventListener("click", (e) => {
             }
 
 
-            function updateCalculator() {
+         function updateCalculator() {
                 let depositInputLocal = document.getElementById("deposit");
                 let rentInputLocal = document.getElementById("rent");
-                let baseRateInputLocal = document.getElementById("baseRateInput");
-                let convDepositInputLocal = document.getElementById("calc-conv-deposit");
+                let baseRateInput = document.getElementById("baseRateInput");
+                let convDepositInput = document.getElementById("calc-conv-deposit");
+                let typeRadiosLocal = document.getElementsByName("bldgType");
 
-                let depositVal = depositInputLocal ? parseInt(depositInputLocal.value.replace(/,/g, '')) || 0 : 0;
-                let rentVal = rentInputLocal ? parseInt(rentInputLocal.value.replace(/,/g, '')) || 0 : 0;
-                let baseRate = baseRateInputLocal ? parseFloat(baseRateInputLocal.value) || 2.5 : 2.5;
+                if (!depositInputLocal || !rentInputLocal) return;
 
-                let calcContainer = document.getElementById("calculator-container");
-                if (calcContainer) {
-                    let convDepStr = convDepositInputLocal ? convDepositInputLocal.value.replace(/,/g, '') : "0";
-                    let convDepVal = parseInt(convDepStr) || 0;
-                    if (depositVal > 0 || rentVal > 0 || convDepVal > 0) {
-                        calcContainer.style.visibility = "visible";
-                    } else {
-                        calcContainer.style.visibility = "hidden";
-                    }
-                }
-                
+                let depositVal = parseInt(depositInputLocal.value.replace(/,/g, '')) || 0;
+                let rentVal = parseInt(rentInputLocal.value.replace(/,/g, '')) || 0;
+                let baseRate = parseFloat(baseRateInput.value) || 2.5;
+
                 let isCom = false;
-                document.getElementsByName("bldgType").forEach(r => {
-                    if (r.checked && r.value === "com") isCom = true;
-                });
+                if (typeRadiosLocal) {
+                    typeRadiosLocal.forEach(r => {
+                        if (r.checked && r.value === "com") isCom = true;
+                    });
+                }
 
                 let maxDep = Math.floor(depositVal * 0.05);
                 let maxRent = rentVal * 0.05;
 
-                let calcMaxDepEl = document.getElementById("calc-max-deposit");
-                if (calcMaxDepEl) calcMaxDepEl.innerText = depositVal > 0 ? maxDep.toLocaleString() + " 만원" : "-";
+                let maxDepEl = document.getElementById("calc-max-deposit");
+                if (maxDepEl) maxDepEl.innerText = depositVal > 0 ? maxDep.toLocaleString() + " 만원" : "-";
                 
-                let calcMaxRentEl = document.getElementById("calc-max-rent");
-                if (calcMaxRentEl) calcMaxRentEl.innerText = rentVal > 0 ? Number(maxRent.toFixed(1)).toLocaleString() + " 만원" : "-";
+                let maxRentEl = document.getElementById("calc-max-rent");
+                if (maxRentEl) maxRentEl.innerText = rentVal > 0 ? Number(maxRent.toFixed(1)).toLocaleString() + " 만원" : "-";
 
-             
+                // ⭐ 1. 적용 전환율 텍스트만 원하시는 대로 변경 (폰트, 색상 유지)
                 let conversionRate = 0;
                 let formulaStr = "";
                 if (!isCom) {
                     let calcRate = baseRate + 2.0;
                     conversionRate = Math.min(calcRate, 10.0);
-                    formulaStr = `기준금리(${baseRate}%) + 2% = ${calcRate}% (10%와 비교해 낮은 값 적용)`;
+                    formulaStr = `기준금리(${baseRate}%) + 2% = ${calcRate}% (10%와 비교해 낮은 값 적용)     ${Number(conversionRate.toFixed(2))}%`;
                 } else {
                     let calcRate = baseRate * 4.5;
                     conversionRate = Math.min(calcRate, 12.0);
-                    formulaStr = `기준금리(${baseRate}%) × 4.5 = ${calcRate}% (12%와 비교해 낮은 값 적용)`;
+                    formulaStr = `기준금리(${baseRate}%) × 4.5 = ${calcRate}% (12%와 비교해 낮은 값 적용)     ${Number(conversionRate.toFixed(2))}%`;
                 }
 
                 let rateEl = document.getElementById("calc-conv-rate");
                 if (rateEl) {
-                    rateEl.innerHTML = `<span style="font-size: 11px; color: #64748b; font-weight: 700; margin-right: 5px;">${formulaStr}</span> ${Number(conversionRate.toFixed(2))}%`;
+                    rateEl.innerText = formulaStr;
                 }
-                
+
+                // 옆에 붙던 수식 제거
                 let formEl = document.getElementById("calc-conv-formula");
-                if (formEl) formEl.style.display = "none"; 
+                if (formEl) formEl.innerText = "";
 
-               
-                let convDepStr = convDepositInputLocal ? convDepositInputLocal.value.replace(/,/g, '') : "0";
-                let convDepVal = parseInt(convDepStr) || 0;
+                // ⭐ 2. 보증금 전환 출력 로직
+                if (convDepositInput) {
+                    let convDepStr = convDepositInput.value.replace(/,/g, '');
+                    let convDepVal = parseInt(convDepStr) || 0;
 
-                let targetTextEl = document.getElementById("calc-conv-target-text");
-                let exampleEl = document.getElementById("calc-conv-example");
+                    let targetTextEl = document.getElementById("calc-conv-target-text");
+                    let exampleEl = document.getElementById("calc-conv-example");
 
-                if (targetTextEl) targetTextEl.innerText = convDepVal > 0 ? convDepVal.toLocaleString() + "만원" : "0원";
-
-                if (exampleEl) {
                     if (convDepVal > 0) {
+                        if (targetTextEl) targetTextEl.innerText = convDepVal.toLocaleString() + "만원";
+                        
                         let monthlyAdd = (convDepVal * 10000) * (conversionRate / 100) / 12;
-                        exampleEl.innerText = Math.floor(monthlyAdd).toLocaleString() + "원";
+                        // 줄바꿈(<br>) 적용해서 '➔ 월 00원'을 밑으로 내림
+                        if (exampleEl) exampleEl.innerHTML = `<br>➔ 월 ${Math.floor(monthlyAdd).toLocaleString()}원`;
                     } else {
-                        exampleEl.innerText = "0원";
+                        if (targetTextEl) targetTextEl.innerText = "0원";
+                        if (exampleEl) exampleEl.innerHTML = `<br>➔ 월 0원`;
                     }
                 }
 
-                
-                if (targetTextEl && targetTextEl.parentNode) {
-                    let flexDiv = targetTextEl.parentNode;
-                    flexDiv.style.display = "block"; 
-                    flexDiv.style.lineHeight = "1.8";
-                }
-
+                // ⭐ 3. 맨 밑에 나오던 수식 지우기
                 let detailFormEl = document.getElementById("calc-conv-detail-formula");
-                if (detailFormEl) detailFormEl.style.display = "none";
+                if (detailFormEl) detailFormEl.innerText = "";
             }
+
+            // --- 이벤트 리스너 세팅 (콤마 기능 포함) ---
+            let depositInputLocal = document.getElementById("deposit");
+            let rentInputLocal = document.getElementById("rent");
+            let baseRateInputLocal = document.getElementById("baseRateInput");
+            let typeRadiosLocal = document.getElementsByName("bldgType");
+            let convDepositInputLocal = document.getElementById("calc-conv-deposit");
+
+            if (depositInputLocal) depositInputLocal.addEventListener("input", updateCalculator);
+            if (rentInputLocal) rentInputLocal.addEventListener("input", updateCalculator);
+            if (baseRateInputLocal) baseRateInputLocal.addEventListener("input", updateCalculator);
+            if (typeRadiosLocal) typeRadiosLocal.forEach(r => r.addEventListener("change", updateCalculator));
+
+            // 전환 보증금 콤마(,) 기능 및 숫자 외 입력 방지
+            if (convDepositInputLocal) {
+                convDepositInputLocal.type = "text"; 
+                convDepositInputLocal.addEventListener("input", function(e) {
+                    let val = e.target.value.replace(/[^0-9]/g, '');
+                    e.target.value = val ? Number(val).toLocaleString() : '';
+                    updateCalculator();
+                });
+            }
+
+            updateCalculator();
 
           
             let depositInputLocal = document.getElementById("deposit");

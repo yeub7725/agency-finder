@@ -60,15 +60,19 @@
         .price-unit { font-size: 12px; color: var(--gov-gray); font-weight: 700; white-space: nowrap; flex-shrink: 0; }
         .price-slash { color: #e2e8f0; margin: 0 6px; flex-shrink: 0; }
 
-        #timeline-container {
+        #calculator-container {
             visibility: hidden;
             position: absolute;
-            left: calc(100% + 40px);
-            top: 20px; 
-            width: 700px;
+            top: -15px;            
+            left: 100%;            
+            margin-left: 25px;    
+            width: 320px;
+            background: #fff;
+            border: 2px solid var(--gov-blue);
+            border-radius: 6px;
+            padding: 15px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
             z-index: 1000;
-            display: flex;
-            flex-direction: column;
         }
 
         .contract-settings {
@@ -279,7 +283,8 @@
                 <div id="notice-detail-info"></div>
             </div> <div id="calculator-container">
                 <div class="calc-title"> 보증금 / 월차임 상한 & 전환 계산기</div>
-                
+                </div>
+                </div> </div>
                 <div class="calc-setting">
                     <span>한국은행 기준금리:</span>
                     <input type="number" id="baseRateInput" value="2.5" step="0.1"> <span>%</span>

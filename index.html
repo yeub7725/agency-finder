@@ -832,7 +832,7 @@ document.addEventListener("click", (e) => {
             }
 
 
-         function updateCalculator() {
+       function updateCalculator() {
                 let depositInputLocal = document.getElementById("deposit");
                 let rentInputLocal = document.getElementById("rent");
                 let baseRateInput = document.getElementById("baseRateInput");
@@ -923,29 +923,6 @@ document.addEventListener("click", (e) => {
             // 전환 보증금 콤마(,) 기능 및 숫자 외 입력 방지
             if (convDepositInputLocal) {
                 convDepositInputLocal.type = "text"; 
-                convDepositInputLocal.addEventListener("input", function(e) {
-                    let val = e.target.value.replace(/[^0-9]/g, '');
-                    e.target.value = val ? Number(val).toLocaleString() : '';
-                    updateCalculator();
-                });
-            }
-
-            updateCalculator();
-
-          
-            let depositInputLocal = document.getElementById("deposit");
-            let rentInputLocal = document.getElementById("rent");
-            let baseRateInputLocal = document.getElementById("baseRateInput");
-            let typeRadiosLocal = document.getElementsByName("bldgType");
-            let convDepositInputLocal = document.getElementById("calc-conv-deposit");
-
-            if (depositInputLocal) depositInputLocal.addEventListener("input", updateCalculator);
-            if (rentInputLocal) rentInputLocal.addEventListener("input", updateCalculator);
-            if (baseRateInputLocal) baseRateInputLocal.addEventListener("input", updateCalculator);
-            if (typeRadiosLocal) typeRadiosLocal.forEach(r => r.addEventListener("change", updateCalculator));
-
-            if (convDepositInputLocal) {
-                convDepositInputLocal.type = "text";
                 convDepositInputLocal.addEventListener("input", function(e) {
                     let val = e.target.value.replace(/[^0-9]/g, '');
                     e.target.value = val ? Number(val).toLocaleString() : '';

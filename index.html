@@ -248,9 +248,9 @@
             gap: 5px !important; 
         }
 
-        /* 💡 3. 보증금과 월세 입력칸 크기 다이어트 */
+     
         .price-input-wrap {
-            flex: none !important; /* 멋대로 늘어나는 성질 차단 */
+            flex: none !important; 
         }
         
         .price-container #deposit {
@@ -459,11 +459,11 @@ function renderAdvancedTimeline(startDate) {
 
     // 배열에 2년씩 더해가며 구간 날짜들을 채움
     while (true) {
-        // ✨ 주택 로직: current(현재 구간의 끝)가 오늘보다 뒤에 있다면, 우리가 렌더링해야 할 '미래 만기 구간'까지 도달한 것이므로 스톱
+       
         if (!isCom && current.getTime() >= today.getTime()) {
             break; 
         }
-        // ✨ 상가 로직: 정확히 10년이 될 때 스톱
+     
         if (isCom && current.getTime() >= maxComDate.getTime()) {
             break; 
         }

@@ -867,7 +867,7 @@ document.addEventListener("DOMContentLoaded", function() {
             }
 
             document.querySelectorAll("#calc-conv-rate").forEach(el => {
-                el.innerHTML = `<span style="font-size: 11px; color: var(--gov-light-gray, #64748b); font-weight: 700;">${formulaStr}</span> 연 ${Number(conversionRate.toFixed(2))}%`;
+                el.innerHTML = `<span style="font-size: 11px; color: var(--gov-light-gray, #64748b); font-weight: 700;">${formulaStr}</span> ${Number(conversionRate.toFixed(2))}%`;
             });
 
             

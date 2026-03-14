@@ -86,7 +86,14 @@
             align-items: center;
             position: relative;
         }
-        
+      
+        .category-tabs { display: flex; gap: 8px; margin-bottom: 20px; overflow-x: auto; padding-bottom: 5px; }
+        .tab-item { 
+            padding: 8px 15px; border: 1px solid #e2e8f0; border-radius: 6px; 
+            cursor: pointer; background: #fff; font-size: 13px; font-weight: 700;
+            white-space: nowrap; transition: all 0.2s; color: #64748b;
+        }
+        .tab-item.active { background: var(--gov-blue); color: white; border-color: var(--gov-blue); }
         .timeline-node { width: 2px; height: 12px; background: var(--gov-blue); position: relative; flex-shrink: 0; }
         .timeline-segment { height: 2px; background: var(--gov-blue); transition: all 0.3s ease; position: relative; }
         .timeline-segment.past { flex: 1; opacity: 0.3; }
@@ -137,7 +144,20 @@
             background: var(--gov-red);
             z-index: 10;
         }
+<div style="padding: 20px;"> 
+    
+    <div class="category-tabs">
+        <div class="tab-item active" onclick="showContent('cat1')">임대차 계산기</div>
+        <div class="tab-item" onclick="showContent('cat2')">카테고리 2</div>
+        <div class="tab-item" onclick="showContent('cat3')">카테고리 3</div>
+        <div class="tab-item" onclick="showContent('cat4')">카테고리 4</div>
+        <div class="tab-item" onclick="showContent('cat5')">카테고리 5</div>
+    </div>
 
+    <div class="calc-title">임대료 인상 상한 제한 (5%)</div>
+
+
+        
         #notice-detail-info {
             display: none;
             width: 100%;
@@ -904,6 +924,15 @@ let formulaStr = "";
             baseRateInput.addEventListener("input", updateCalculator);
             typeRadiosLocal.forEach(r => r.addEventListener('change', updateCalculator)); 
         })();
+       function showContent(tabId) {
+         
+            document.querySelectorAll('.tab-item').forEach(tab => tab.classList.remove('active'));
+          
+            event.currentTarget.classList.add('active');
+            
+
+            console.log(tabId + " 카테고리가 선택되었습니다.");
+        }
     </script>
 
 </body>

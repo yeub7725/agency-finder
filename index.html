@@ -859,19 +859,19 @@ document.addEventListener("DOMContentLoaded", function() {
             let calcRate = baseRate + 2.0;
             let statRate = 10.0;
             conversionRate = Math.min(calcRate, statRate);
-            formulaStr = `전환할 금액X(기준금리${baseRate}%+대통령령(2.0%), 연 10.0%)`;
+            formulaStr = `전환할 금액X(기준금리${baseRate}%+대통령령(2.0%) 연 10.0%)`;
         } else {
             let calcRate = baseRate * 4.5;
             let statRate = 12.0;
             conversionRate = Math.min(calcRate, statRate);
-            formulaStr = `전환할 금액X(기준금리${baseRate}%×대통령령(4.5), 연 12.0%)`;
+            formulaStr = `전환할 금액X(기준금리${baseRate}%×대통령령(4.5) 연 12.0%)`;
         }
 
   
         let calcConvRateEl = document.getElementById("calc-conv-rate");
         if (calcConvRateEl) {
        
-            calcConvRateEl.innerHTML = `<span style="font-size: 11px; color: var(--gov-light-gray); font-weight: 700;">[${formulaStr}]</span>, 연 ${Number(conversionRate.toFixed(2))}%`;
+            calcConvRateEl.innerHTML = `<span style="font-size: 11px; color: var(--gov-light-gray); font-weight: 700;">[${formulaStr}]</span> 연 ${Number(conversionRate.toFixed(2))}%`;
         }
         
         

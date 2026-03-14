@@ -879,13 +879,24 @@ let formulaStr = "";
 
            
                 document.getElementById("calc-conv-rate").innerText = formulaStr;
-                
-      
-                if(document.getElementById("calc-conv-formula")) {
-                    document.getElementById("calc-conv-formula").innerText = "";
+            
+                let rateEl = document.getElementById("calc-conv-rate");
+                if (rateEl) {
+                    rateEl.innerText = formulaStr;
+                    
+                    
+                    rateEl.style.color = "#666666";            
+                    rateEl.style.fontSize = "13px";           
+                    rateEl.style.fontWeight = "400";          
+                    rateEl.style.fontFamily = "'Noto Sans KR', sans-serif";
+                    rateEl.style.marginLeft = "10px"; 
                 }
-               
 
+               
+                let formEl = document.getElementById("calc-conv-formula");
+                if (formEl) formEl.innerText = "";
+
+            
             
                 let convDepStr = convDepositInput.value.replace(/,/g, '');
                 let convDepVal = parseInt(convDepStr) || 0; // 단위: 만 원

@@ -722,7 +722,7 @@ document.addEventListener("click", (e) => {
 });
 </script>
     <div id="calculator-container">
-        <div class="calc-title">💰 보증금 / 월차임 상한 & 전환 계산기</div>
+        <div class="calc-title">보증금 / 월차임 상한 & 전환 계산기</div>
         
         <div class="calc-setting">
             <span>한국은행 기준금리:</span>
@@ -741,7 +741,7 @@ document.addEventListener("click", (e) => {
             <div class="calc-row"><span>적용 전환율:</span> <b id="calc-conv-rate" style="color:var(--gov-red);">-</b></div>
             <div class="calc-row" style="font-size:11px; color:#64748b; margin-top:-4px; margin-bottom:6px;" id="calc-conv-formula"></div>
             <div class="calc-row" style="background:#f8fafc; padding:8px; border-radius:4px; border: 1px solid #e2e8f0;">
-                <span style="font-size: 12px;">💡 보증금 <b>1,000만 원</b> 월세 전환 시<br> ➔ 월 <b id="calc-conv-example" style="color:var(--gov-blue); font-size:14px;">-</b> 추가</span>
+                <span style="font-size: 12px;">보증금 <b>0만 원</b> 월세 전환 시<br> ➔ 월 <b id="calc-conv-example" style="color:var(--gov-blue); font-size:14px;">-</b> 추가</span>
             </div>
         </div>
     </div>
@@ -769,8 +769,8 @@ document.addEventListener("click", (e) => {
                 let baseRate = parseFloat(baseRateInput.value) || 0;
                 let isCom = document.querySelector('input[name="bldgType"]:checked').value === 'com';
 
-                let maxDep = Math.floor(depositVal * 1.05);
-                let maxRent = Math.floor(rentVal * 1.05);
+                let maxDep = Math.floor(depositVal * 0.05);
+                let maxRent = Math.floor(rentVal * 0.05);
                 
                 document.getElementById("calc-max-deposit").innerText = depositVal > 0 ? maxDep.toLocaleString() + " 만원" : "-";
                 document.getElementById("calc-max-rent").innerText = rentVal > 0 ? maxRent.toLocaleString() + " 만원" : "-";

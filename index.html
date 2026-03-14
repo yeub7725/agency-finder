@@ -797,7 +797,7 @@ document.addEventListener("click", (e) => {
                 
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
                     <span style="font-size: 12px; font-weight: 700;">보증금 <b id="calc-conv-target-text" style="color:var(--gov-gray);">0원</b> 월세 전환 시</span>
-                    <span style="font-size: 13px; font-weight: 900;">➔ 월 <b id="calc-conv-example" style="color:var(--gov-blue); font-size:15px;">-</b></span>
+                    <span style="font-size: 13px; font-weight: 900;">월 <b id="calc-conv-example" style="color:var(--gov-blue); font-size:15px;">-</b></span>
                 </div>
                 
                 <div id="calc-conv-detail-formula" style="font-size: 11px; color: #94a3b8; text-align: right; letter-spacing: -0.5px;">
@@ -808,7 +808,6 @@ document.addEventListener("click", (e) => {
     </div>
 <script>
 document.addEventListener("DOMContentLoaded", function() {
-    
     function updateCalculator() {
         let depositInput = document.getElementById("deposit");
         let rentInput = document.getElementById("rent");
@@ -821,7 +820,7 @@ document.addEventListener("DOMContentLoaded", function() {
         let rentVal = rentInput ? parseInt(rentInput.value.replace(/,/g, '')) || 0 : 0;
         let baseRate = baseRateInput ? parseFloat(baseRateInput.value) || 2.5 : 2.5;
 
-      
+    
         let convDepStrForCheck = convDepositInput ? convDepositInput.value.replace(/,/g, '') : "0";
         let convDepValForCheck = parseInt(convDepStrForCheck) || 0;
 
@@ -843,7 +842,7 @@ document.addEventListener("DOMContentLoaded", function() {
             }
         }
 
-     
+   
         let maxDep = Math.floor(depositVal * 0.05);
         let maxRent = rentVal * 0.05;
         let displayMaxRent = Number(maxRent.toFixed(1));
@@ -853,7 +852,7 @@ document.addEventListener("DOMContentLoaded", function() {
         if (calcMaxDepEl) calcMaxDepEl.innerText = depositVal > 0 ? maxDep.toLocaleString() + " 만원" : "-";
         if (calcMaxRentEl) calcMaxRentEl.innerText = rentVal > 0 ? displayMaxRent.toLocaleString() + " 만원" : "-";
 
-        
+      
         let conversionRate = 0;
         let formulaStr = "";
         if (!isCom) {
@@ -868,19 +867,16 @@ document.addEventListener("DOMContentLoaded", function() {
             formulaStr = `전환할 금액X(기준금리${baseRate}%×대통령령(4.5), 연 12.0%)`;
         }
 
+  
         let calcConvRateEl = document.getElementById("calc-conv-rate");
-        let calcConvFormulaEl = document.getElementById("calc-conv-formula");
-        
-        
         if (calcConvRateEl) {
-            // 예시: 연 11.25% (전환할 금액X(기준금리2.5%×대통령령(4.5), 연 12.0%))
-            calcConvRateEl.innerText = `연 ${Number(conversionRate.toFixed(2))}%  [${formulaStr}]`;
+       
+            calcConvRateEl.innerHTML = `<span style="font-size: 11px; color: var(--gov-light-gray); font-weight: 700;">[${formulaStr}]</span>, 연 ${Number(conversionRate.toFixed(2))}%`;
         }
         
-      
-        if (calcConvFormulaEl) {
-            calcConvFormulaEl.style.display = "none";
-        }
+        
+        let calcConvFormulaEl = document.getElementById("calc-conv-formula");
+        if (calcConvFormulaEl) calcConvFormulaEl.style.display = "none";
 
       
         if (convDepositInput) {
@@ -895,23 +891,14 @@ document.addEventListener("DOMContentLoaded", function() {
             if (exampleEl) exampleEl.innerText = Math.floor(monthlyAdd).toLocaleString() + "원";
         }
 
-   
         let detailFormulaEl = document.getElementById("calc-conv-detail-formula");
-        if (detailFormulaEl) {
-            detailFormulaEl.style.display = "none";
-        }
+        if (detailFormulaEl) detailFormulaEl.style.display = "none";
     }
 
-    document.addEventListener("input", function() {
-        updateCalculator();
-    });
-    document.addEventListener("change", function() {
-        updateCalculator();
-    });
-    document.addEventListener("keyup", function() {
-        updateCalculator();
-    });
-    
+    document.addEventListener("input", function() { updateCalculator(); });
+    document.addEventListener("change", function() { updateCalculator(); });
+    document.addEventListener("keyup", function() { updateCalculator(); });
+
     updateCalculator();
 });
 </script>

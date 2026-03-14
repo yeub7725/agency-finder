@@ -807,19 +807,21 @@ document.addEventListener("click", (e) => {
         </div>
     </div>
 
- <script>
+<script>
             function updateCalculator() {
                 let depositInputLocal = document.getElementById("deposit");
                 let rentInputLocal = document.getElementById("rent");
-                let baseRateInput = document.getElementById("baseRateInput");
-                let convDepositInput = document.getElementById("calc-conv-deposit");
+                let baseRateInputLocal = document.getElementById("baseRateInput");
+                let convDepositInputLocal = document.getElementById("calc-conv-deposit");
                 let typeRadiosLocal = document.getElementsByName("bldgType");
 
                 if (!depositInputLocal || !rentInputLocal) return;
 
                 let depositVal = parseInt(depositInputLocal.value.replace(/,/g, '')) || 0;
                 let rentVal = parseInt(rentInputLocal.value.replace(/,/g, '')) || 0;
-                let baseRate = parseFloat(baseRateInput.value) || 2.5;
+                
+                // 🚨 바로 이 부분! 에러의 주범이었던 곳에 철통 안전장치를 달았습니다.
+                let baseRate = baseRateInputLocal ? parseFloat(baseRateInputLocal.value) || 2.5 : 2.5;
 
                 let isCom = false;
                 if (typeRadiosLocal) {
@@ -838,34 +840,30 @@ document.addEventListener("click", (e) => {
                 let maxRentEl = document.getElementById("calc-max-rent");
                 if (maxRentEl) maxRentEl.innerText = rentVal > 0 ? maxRent.toLocaleString('ko-KR', { maximumFractionDigits: 1 }) + " 만원" : "-";
 
-                // ⭐ [수정됨] 적용 전환율: 원하시는 문구로 한 줄로 통합!
+                // ⭐ 적용 전환율: 원하시는 문구로 한 줄로 통합!
                 let conversionRate = 0;
                 let formulaStr = "";
                 if (!isCom) {
                     let calcRate = baseRate + 2.0;
                     conversionRate = Math.min(calcRate, 10.0);
-                    // 주택용 문구
                     formulaStr = `전환할 금액*[기준금리(${baseRate}%) + 대통령령2%] or (연 10%와 비교해 낮은 값 적용)     ${Number(conversionRate.toFixed(2))}%`;
                 } else {
                     let calcRate = baseRate * 4.5;
                     conversionRate = Math.min(calcRate, 12.0);
-                    // 상가용 문구
                     formulaStr = `전환할 금액*[기준금리(${baseRate}%) × 대통령령4.5배] or (연 12%와 비교해 낮은 값 적용)     ${Number(conversionRate.toFixed(2))}%`;
                 }
 
-                // 폰트나 크기를 건드리지 않고 텍스트만 통째로 꽂아 넣습니다.
                 let rateEl = document.getElementById("calc-conv-rate");
                 if (rateEl) {
                     rateEl.innerText = formulaStr;
                 }
 
-                // 밑에 따로 나오던 수식 공간은 비워버립니다.
                 let formEl = document.getElementById("calc-conv-formula");
                 if (formEl) formEl.innerText = "";
 
-                // 보증금 전환 출력 로직
-                if (convDepositInput) {
-                    let convDepStr = convDepositInput.value.replace(/,/g, '');
+                // ⭐ 보증금 전환 출력 로직
+                if (convDepositInputLocal) {
+                    let convDepStr = convDepositInputLocal.value.replace(/,/g, '');
                     let convDepVal = parseInt(convDepStr) || 0;
 
                     let targetTextEl = document.getElementById("calc-conv-target-text");
@@ -882,12 +880,11 @@ document.addEventListener("click", (e) => {
                     }
                 }
 
-                // 맨 밑에 나오던 불필요한 공식 지우기
                 let detailFormEl = document.getElementById("calc-conv-detail-formula");
                 if (detailFormEl) detailFormEl.innerText = "";
             }
 
-            // 이벤트 리스너 세팅
+            // --- 이벤트 리스너 세팅 ---
             let depositInputLocal = document.getElementById("deposit");
             let rentInputLocal = document.getElementById("rent");
             let baseRateInputLocal = document.getElementById("baseRateInput");

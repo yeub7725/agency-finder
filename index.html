@@ -210,18 +210,20 @@
 .animate-update {
     animation: fadeInUp 0.4s ease-out forwards;
 }
-        #calculator-container {
+ #calculator-container {
             visibility: hidden;
-            position: fixed; 
-            top: 20px;       
-            right: 20px;     
+            position: absolute;  
+            top: 20px;
+
+            left: calc(clamp(500px, 40vw, 650px) + 20px); 
+            
             width: 320px;
             background: #fff;
             border: 2px solid var(--gov-blue);
             border-radius: 6px;
             padding: 15px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-            z-index: 9999;  
+            z-index: 9999;
         }
         .calc-title { font-size: 14.5px; font-weight: 900; color: var(--gov-blue); margin-bottom: 12px; border-bottom: 2px solid #f1f5f9; padding-bottom: 8px;}
         .calc-setting { font-size: 13px; color: var(--gov-gray); font-weight: 800; margin-bottom: 15px; display: flex; align-items: center; gap: 5px;}

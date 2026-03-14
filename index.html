@@ -808,38 +808,44 @@ document.addEventListener("click", (e) => {
     </div>
 <script>
 (function() {
-    function updateCalculator() {
-        let depositInput = document.getElementById("deposit");
-        let rentInput = document.getElementById("rent");
-        let baseRateInput = document.getElementById("baseRateInput");
-        let convDepositInput = document.getElementById("calc-conv-deposit");
-        let calcContainer = document.getElementById("calculator-container");
+    let depositInput = document.getElementById("deposit");
+    let rentInput = document.getElementById("rent");
+    let baseRateInput = document.getElementById("baseRateInput");
+    let convDepositInput = document.getElementById("calc-conv-deposit");
+    let typeRadios = document.getElementsByName("bldgType");
 
    
+    if (convDepositInput) {
+        convDepositInput.type = "text";
+    }
+
+    function updateCalculator() {
+        let calcContainer = document.getElementById("calculator-container");
+
+       
         let depositVal = depositInput ? parseInt(depositInput.value.replace(/,/g, '')) || 0 : 0;
         let rentVal = rentInput ? parseInt(rentInput.value.replace(/,/g, '')) || 0 : 0;
         let baseRate = baseRateInput ? parseFloat(baseRateInput.value) || 2.5 : 2.5;
         let convDepVal = convDepositInput ? parseInt(convDepositInput.value.replace(/,/g, '')) || 0 : 0;
 
-     
         if (calcContainer) {
             calcContainer.style.visibility = (depositVal > 0 || rentVal > 0 || convDepVal > 0) ? "visible" : "hidden";
         }
 
-    
         let isCom = false;
-        let typeRadios = document.getElementsByName("bldgType");
-        for (let i = 0; i < typeRadios.length; i++) {
-            if (typeRadios[i].checked && typeRadios[i].value === "com") isCom = true;
+        if (typeRadios) {
+            for (let i = 0; i < typeRadios.length; i++) {
+                if (typeRadios[i].checked && typeRadios[i].value === "com") isCom = true;
+            }
         }
 
-   
+     
         let maxDepEl = document.getElementById("calc-max-deposit");
         let maxRentEl = document.getElementById("calc-max-rent");
         if (maxDepEl) maxDepEl.innerText = depositVal > 0 ? Math.floor(depositVal * 0.05).toLocaleString() + " 만원" : "-";
         if (maxRentEl) maxRentEl.innerText = rentVal > 0 ? Number((rentVal * 0.05).toFixed(1)).toLocaleString() + " 만원" : "-";
 
-        
+     
         let conversionRate = isCom ? Math.min(baseRate * 4.5, 12.0) : Math.min(baseRate + 2.0, 10.0);
         let formulaStr = isCom 
             ? `[전환할 금액X(기준금리${baseRate}%×대통령령(4.5배) 연 12.0%)]` 
@@ -847,7 +853,7 @@ document.addEventListener("click", (e) => {
 
         let rateEl = document.getElementById("calc-conv-rate");
         if (rateEl) {
-            rateEl.innerHTML = `<span style="font-size: 11px; color: var(--gov-light-gray, #64748b); font-weight: 700;">${formulaStr}</span> 연 ${Number(conversionRate.toFixed(2))}%`;
+            rateEl.innerHTML = `<span style="font-size: 11px; color: var(--gov-light-gray, #64748b); font-weight: 700;">${formulaStr}</span> ${Number(conversionRate.toFixed(2))}%`;
         }
 
        
@@ -855,13 +861,12 @@ document.addEventListener("click", (e) => {
         let exampleEl = document.getElementById("calc-conv-example");
 
         if (targetTextEl) {
- 
-            targetTextEl.innerText = convDepVal > 0 ? convDepVal.toLocaleString() + "만원" : "0원";
+            targetTextEl.innerText = convDepVal > 0 ? convDepVal.toLocaleString() + " 만원" : "0원";
         }
 
         if (exampleEl) {
             if (convDepVal > 0) {
-          
+     
                 let monthlyAdd = Math.floor((convDepVal * 10000) * (conversionRate / 100) / 12);
                 exampleEl.innerText = "월 " + monthlyAdd.toLocaleString() + "원";
             } else {
@@ -869,25 +874,28 @@ document.addEventListener("click", (e) => {
             }
         }
 
+    
         let f1 = document.getElementById("calc-conv-formula");
         let f2 = document.getElementById("calc-conv-detail-formula");
-        if(f1) f1.style.display = "none";
-        if(f2) f2.style.display = "none";
+        if (f1) f1.style.display = "none";
+        if (f2) f2.style.display = "none";
     }
 
-    let depositInputLocal = document.getElementById("deposit");
-    let rentInputLocal = document.getElementById("rent");
-    let baseRateInputLocal = document.getElementById("baseRateInput");
-    let convDepositInputLocal = document.getElementById("calc-conv-deposit");
-    let typeRadiosLocal = document.getElementsByName("bldgType");
-
-    if (depositInputLocal) depositInputLocal.addEventListener("input", updateCalculator);
-    if (rentInputLocal) rentInputLocal.addEventListener("input", updateCalculator);
-    if (baseRateInputLocal) baseRateInputLocal.addEventListener("input", updateCalculator);
-    if (convDepositInputLocal) convDepositInputLocal.addEventListener("input", updateCalculator);
+    if (depositInput) depositInput.addEventListener("input", updateCalculator);
+    if (rentInput) rentInput.addEventListener("input", updateCalculator);
+    if (baseRateInput) baseRateInput.addEventListener("input", updateCalculator);
     
-    if (typeRadiosLocal) {
-        typeRadiosLocal.forEach(r => r.addEventListener("change", updateCalculator));
+   
+    if (convDepositInput) {
+        convDepositInput.addEventListener("input", function(e) {
+            let val = e.target.value.replace(/[^0-9]/g, '');
+            e.target.value = val ? Number(val).toLocaleString() : '';
+            updateCalculator();
+        });
+    }
+
+    if (typeRadios) {
+        typeRadios.forEach(r => r.addEventListener("change", updateCalculator));
     }
 
 

@@ -832,64 +832,68 @@ document.addEventListener("click", (e) => {
             }
 
             function updateCalculator() {
-                let depositVal = parseInt(depositInputLocal.value.replace(/,/g, '')) || 0;
-                let rentVal = parseInt(rentInputLocal.value.replace(/,/g, '')) || 0;
-                
-                if (depositVal > 0 || rentVal > 0) {
-                    calcContainer.style.visibility = "visible";
-                } else {
-                    calcContainer.style.visibility = "hidden";
-                    return;
-                }
+    let depositVal = parseInt(depositInputLocal.value.replace(/,/g, '')) || 0; // 단위: 만원
+    let rentVal = parseInt(rentInputLocal.value.replace(/,/g, '')) || 0;
 
-                let baseRate = parseFloat(baseRateInput.value) || 0;
-                let isCom = document.querySelector('input[name="bldgType"]:checked').value === 'com';
+    let typeRadiosLocal = document.getElementsByName("calcType");
+    let isCom = false;
+    for (let i = 0; i < typeRadiosLocal.length; i++) {
+        if (typeRadiosLocal[i].checked && typeRadiosLocal[i].value === "com") {
+            isCom = true;
+            break;
+        }
+    }
 
-      
-                let maxDep = Math.floor(depositVal * 0.05);
-                let maxRent = Math.floor(rentVal * 0.05);
-                
-                document.getElementById("calc-max-deposit").innerText = depositVal > 0 ? maxDep.toLocaleString() + " 만원" : "-";
-                document.getElementById("calc-max-rent").innerText = rentVal > 0 ? maxRent.toLocaleString() + " 만원" : "-";
+    let baseRate = parseFloat(baseRateInput.value) || 3.5;
 
-                let conversionRate = 0;
-                let formulaStr = "";
-                
-            
-                if (!isCom) { 
-                    let r2 = baseRate + 2.0;
-                    conversionRate = Math.min(10, r2);
-                    formulaStr = `기준금리(${baseRate}%) + 2% = ${Number(r2.toFixed(2))}% (10%와 비교해 낮은 값 적용)`;
-                } else { 
-                    let r2 = baseRate * 4.5;
-                    conversionRate = Math.min(12, r2);
-                    formulaStr = `기준금리(${baseRate}%) × 4.5배 = ${Number(r2.toFixed(2))}% (12%와 비교해 낮은 값 적용)`;
-                }
 
-                document.getElementById("calc-conv-rate").innerText = `연 ${Number(conversionRate.toFixed(2))}%`;
-                document.getElementById("calc-conv-formula").innerText = formulaStr;
+    let maxDep = Math.floor(depositVal * 0.05); 
+    let maxRent = rentVal * 0.05; 
+ 
+    let displayMaxRent = Number(maxRent.toFixed(1)); 
+    
+    document.getElementById("calc-max-deposit").innerText = depositVal > 0 ? maxDep.toLocaleString() + " 만원" : "-";
+    document.getElementById("calc-max-rent").innerText = rentVal > 0 ? displayMaxRent.toLocaleString() + " 만원" : "-";
+    
+   
+    let conversionRate = 0;
+    let formulaStr = "";
+    if (!isCom) {
 
-            
-                let convDepStr = convDepositInput.value.replace(/,/g, '');
-                let convDepVal = parseInt(convDepStr) || 0; // 단위: 만 원
-                
-               
-                document.getElementById("calc-conv-target-text").innerText = convDepVal > 0 ? convDepVal.toLocaleString() + "만 원" : "0원";
+        let calcRate = baseRate + 2.0;
+        let statRate = 10.0;
+        conversionRate = Math.min(calcRate, statRate);
+        formulaStr = `MIN(${baseRate}%+2.0%, 10.0%)`;
+    } else {
+   
+        let calcRate = baseRate * 4.5;
+        let statRate = 12.0;
+        conversionRate = Math.min(calcRate, statRate);
+        formulaStr = `MIN(${baseRate}%×4.5, 12.0%)`;
+    }
 
-              
-            
-                let monthlyAdd = (convDepVal * 10000) * (conversionRate / 100) / 12;
-                document.getElementById("calc-conv-example").innerText = Math.floor(monthlyAdd).toLocaleString() + "원";
-                
-            
-                let detailFormulaText = "";
-                if (!isCom) {
-                    detailFormulaText = "전환할 금액 X (기준금리+대통령령(2%)) / 12";
-                } else {
-                    detailFormulaText = "전환할 금액 X (기준금리×대통령령(4.5배)) / 12";
-                }
-                document.getElementById("calc-conv-detail-formula").innerText = detailFormulaText;
-            } 
+
+    document.getElementById("calc-conv-rate").innerText = `연 ${conversionRate.toFixed(1)}%`;
+    document.getElementById("calc-conv-formula").innerText = formulaStr;
+
+
+    let convDepStr = document.getElementById("calc-conv-deposit").value.replace(/,/g, '');
+    let convDepVal = parseInt(convDepStr) || 0; // 단위: 만 원
+    
+    document.getElementById("calc-conv-target-text").innerText = convDepVal > 0 ? convDepVal.toLocaleString() + "만 원" : "0원";
+
+    let monthlyAdd = (convDepVal * 10000) * (conversionRate / 100) / 12;
+    document.getElementById("calc-conv-example").innerText = Math.floor(monthlyAdd).toLocaleString() + "원";
+    
+
+    let detailFormulaText = "";
+    if (!isCom) {
+        detailFormulaText = "전환할 금액 × 낮은비율(기준금리+2% or 10%) / 12";
+    } else {
+        detailFormulaText = "전환할 금액 × 낮은비율(기준금리×4.5 or 12%) / 12";
+    }
+    document.getElementById("calc-conv-detail-formula").innerText = detailFormulaText;
+}
 
             depositInputLocal.addEventListener("input", updateCalculator);
             rentInputLocal.addEventListener("input", updateCalculator);

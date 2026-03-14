@@ -882,22 +882,23 @@ let formulaStr = "";
             
             
              
+             // 1. 출력 대상 가져오기
                 let rateEl = document.getElementById("calc-conv-rate");
                 if (rateEl) {
-                   
+               
                     rateEl.style.display = "flex";
                     rateEl.style.justifyContent = "space-between";
                     rateEl.style.alignItems = "center";
                     rateEl.style.width = "100%";
-                    rateEl.style.whiteSpace = "nowrap"; // 줄바꿈 금지
-                    rateEl.style.overflow = "hidden";
+                    rateEl.style.whiteSpace = "nowrap"; // ⭐ 절대 줄바꿈 금지
+                    rateEl.style.gap = "5px";
 
-                 
+                   
                     let formattedRate = parseFloat(conversionRate.toFixed(2));
 
-                 
                     rateEl.innerHTML = `
-                        <div style="display: flex; align-items: center; gap: 8px;">
+                        <div style="display: flex; align-items: center; white-space: nowrap;">
+                            <span style="color: var(--gov-gray); font-weight: 700; font-size: 14px; margin-right: 5px;">적용 전환율:</span>
                             <span style="color: #666666; font-size: 12px; font-weight: 400; font-family: 'Noto Sans KR', sans-serif;">
                                 ${formulaStr.split('     ')[0]}
                             </span>
@@ -908,9 +909,8 @@ let formulaStr = "";
                     `;
                 }
 
-             
-                let formEl = document.getElementById("calc-conv-formula");
-                if (formEl) formEl.innerHTML = "";
+                if(document.getElementById("calc-conv-formula")) document.getElementById("calc-conv-formula").innerHTML = "";
+                if(document.getElementById("calc-conv-detail-formula")) document.getElementById("calc-conv-detail-formula").innerHTML = "";
 
             
             

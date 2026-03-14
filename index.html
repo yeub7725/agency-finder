@@ -882,32 +882,36 @@ let formulaStr = "";
             
             
            
-              let rateEl = document.getElementById("calc-conv-rate");
+          let rateEl = document.getElementById("calc-conv-rate");
                 if (rateEl) {
-        
                     rateEl.style.display = "flex";
                     rateEl.style.flexDirection = "row";
                     rateEl.style.alignItems = "center";
                     rateEl.style.justifyContent = "space-between";
                     rateEl.style.width = "100%";
-                    rateEl.style.whiteSpace = "nowrap"; 
-                    rateEl.style.position = "relative"; 
-
-                    let finalPercent = Number(conversionRate.toFixed(2)).toString(); 
-
-               
+                    rateEl.style.whiteSpace = "nowrap";
+                    rateEl.style.gap = "0";
+                    let finalRateDisplay = Number(parseFloat(conversionRate).toFixed(2)).toString();
                     rateEl.innerHTML = `
-                        <div style="display: flex; align-items: center; overflow: hidden; margin-right: 10px;">
-                            <span style="color: var(--gov-gray); font-weight: 700; font-size: 14px; margin-right: 6px; flex-shrink: 0;">적용 전환율:</span>
-                            <span style="color: #666666; font-size: 11.5px; font-weight: 400; font-family: 'Noto Sans KR', sans-serif; overflow: hidden; text-overflow: ellipsis;">
+                        <div style="display: flex; align-items: center; overflow: hidden;">
+                            <span style="color: var(--gov-gray); font-weight: 700; font-size: 13.5px; margin-right: 5px; flex-shrink: 0;">적용 전환율:</span>
+                            <span style="color: #666666; font-size: 12px; font-weight: 400; font-family: 'Noto Sans KR', sans-serif; overflow: hidden; text-overflow: ellipsis; flex-shrink: 1;">
                                 ${formulaStr.split('     ')[0]}
                             </span>
                         </div>
-                        <div style="color: var(--gov-red); font-size: 18px; font-weight: 900; flex-shrink: 0;">
-                            ${finalPercent}%
+                        <div style="color: var(--gov-red); font-size: 18px; font-weight: 900; flex-shrink: 0; padding-left: 10px;">
+                            ${finalRateDisplay}%
                         </div>
                     `;
                 }
+
+        
+                const cleanIds = ["calc-conv-formula", "calc-conv-detail-formula"];
+                cleanIds.forEach(id => {
+                    let el = document.getElementById(id);
+                    if (el) el.innerText = "";
+                });
+            } 
 
                 
                 const idsToClean = ["calc-conv-formula", "calc-conv-detail-formula"];

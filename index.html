@@ -254,12 +254,33 @@
                     </div>
                 </div>
                 
-                <div id="date-visual-line"></div>
+             <div id="date-visual-line"></div>
                 <div id="notice-detail-info"></div>
-            </div>
+            </div> <div id="calculator-container">
+                <div class="calc-title"> 보증금 / 월차임 상한 & 전환 계산기</div>
+                
+                <div class="calc-setting">
+                    <span>한국은행 기준금리:</span>
+                    <input type="number" id="baseRateInput" value="2.5" step="0.1"> <span>%</span>
+                    <span class="rate-help">(변동 시 직접 수정)</span>
+                </div>
+                
+                <div class="calc-box">
+                    <div class="calc-subtitle">1. 5% 최대 증액 범위 (합의 시)</div>
+                    <div class="calc-row"><span>보증금 상한:</span> <b id="calc-max-deposit">-</b></div>
+                    <div class="calc-row"><span>월차임 상한:</span> <b id="calc-max-rent">-</b></div>
+                </div>
 
-        </div>
-        <div id="result-area">
+                <div class="calc-box" style="margin-bottom: 0;">
+                    <div class="calc-subtitle">2. 전월세 전환 (환산 월차임)</div>
+                    <div class="calc-row"><span>적용 전환율:</span> <b id="calc-conv-rate" style="color:var(--gov-red);">-</b></div>
+                    <div class="calc-row" style="font-size:11px; color:#64748b; margin-top:-4px; margin-bottom:6px;" id="calc-conv-formula"></div>
+                    <div class="calc-row" style="background:#f8fafc; padding:8px; border-radius:4px; border: 1px solid #e2e8f0;">
+                        <span style="font-size: 12px;"> 보증금 <b>1,000만 원</b> 월세 전환 시<br> ➔ 월 <b id="calc-conv-example" style="color:var(--gov-blue); font-size:14px;">-</b> 추가</span>
+                    </div>
+                </div>
+            </div>
+            </div> <div id="result-area">
             <div id="rec-section"><p class="intro-msg">주소를 입력해주세요</p></div>
             
             <div id="sub-info-area" style="display:none;">
@@ -383,7 +404,6 @@ function calculateTimeline() {
     }
 }
 
-// ✨ 주택 vs 상가 렌더링 조건을 분리한 핵심 함수
 function renderAdvancedTimeline(startDate) {
     timelineContainer.style.visibility = "visible";
     visualLine.innerHTML = '';
@@ -398,7 +418,7 @@ function renderAdvancedTimeline(startDate) {
 
     let dates = [new Date(startDate)];
     let maxComDate = new Date(startDate);
-    maxComDate.setFullYear(maxComDate.getFullYear() + 10); // 상가 한정 10년 캡
+    maxComDate.setFullYear(maxComDate.getFullYear() + 10); 
 
     let current = new Date(startDate);
     current.setFullYear(current.getFullYear() + initYears);
@@ -406,13 +426,13 @@ function renderAdvancedTimeline(startDate) {
     if (isCom && current > maxComDate) current = new Date(maxComDate);
     dates.push(new Date(current));
 
-    // 배열에 2년씩 더해가며 구간 날짜들을 채움
+   
     while (true) {
-        // ✨ 주택 로직: current(현재 구간의 끝)가 오늘보다 뒤에 있다면, 우리가 렌더링해야 할 '미래 만기 구간'까지 도달한 것이므로 스톱
+       
         if (!isCom && current.getTime() >= today.getTime()) {
             break; 
         }
-        // ✨ 상가 로직: 정확히 10년이 될 때 스톱
+       
         if (isCom && current.getTime() >= maxComDate.getTime()) {
             break; 
         }
@@ -703,6 +723,63 @@ keywordInput.addEventListener("input", () => {
 document.addEventListener("click", (e) => {
     if (!e.target.closest('.search-row')) addressList.style.display = "none";
 });
+
+const baseRateInput = document.getElementById("baseRateInput");
+const calcContainer = document.getElementById("calculator-container");
+
+function updateCalculator() {
+
+    let depositVal = parseInt(depositInput.value.replace(/,/g, '')) || 0;
+    let rentVal = parseInt(rentInput.value.replace(/,/g, '')) || 0;
+    
+
+    if (depositVal > 0 || rentVal > 0) {
+        calcContainer.style.visibility = "visible";
+    } else {
+        calcContainer.style.visibility = "hidden";
+        return;
+    }
+
+    let baseRate = parseFloat(baseRateInput.value) || 0;
+   
+    let isCom = document.querySelector('input[name="bldgType"]:checked').value === 'com';
+
+
+    let maxDep = Math.floor(depositVal * 1.05);
+    let maxRent = Math.floor(rentVal * 1.05);
+    
+    document.getElementById("calc-max-deposit").innerText = depositVal > 0 ? maxDep.toLocaleString() + " 만원" : "-";
+    document.getElementById("calc-max-rent").innerText = rentVal > 0 ? maxRent.toLocaleString() + " 만원" : "-";
+
+    
+    let conversionRate = 0;
+    let formulaStr = "";
+    
+    if (!isCom) { 
+     
+        let r2 = baseRate + 2.0;
+        conversionRate = Math.min(10, r2);
+        formulaStr = `기준금리(${baseRate}%) + 2% = ${r2.toFixed(2)}% 
+    } else { 
+     
+        let r2 = baseRate * 4.5;
+        conversionRate = Math.min(12, r2);
+        formulaStr = `기준금리(${baseRate}%) × 4.5배 = ${r2.toFixed(2)}% 
+    }
+
+    document.getElementById("calc-conv-rate").innerText = `연 ${conversionRate.toFixed(2)}%`;
+    document.getElementById("calc-conv-formula").innerText = formulaStr;
+
+  
+    let monthlyAdd = (10000000 * (conversionRate / 100)) / 12;
+    document.getElementById("calc-conv-example").innerText = Math.floor(monthlyAdd).toLocaleString() + "원";
+}
+
+
+depositInput.addEventListener("input", updateCalculator);
+rentInput.addEventListener("input", updateCalculator);
+baseRateInput.addEventListener("input", updateCalculator);
+typeRadios.forEach(r => r.addEventListener('change', updateCalculator));
 </script>
 </body>
 </html>

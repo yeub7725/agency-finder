@@ -220,7 +220,7 @@
             
             left: calc(clamp(500px, 40vw, 650px) + 780px); 
             
-            width: 440px;
+            width: 450px;
             background: #fff;
             border: 2px solid var(--gov-blue);
             border-radius: 6px;
@@ -880,22 +880,27 @@ let formulaStr = "";
            
                 document.getElementById("calc-conv-rate").innerText = formulaStr;
             
+            
                 let rateEl = document.getElementById("calc-conv-rate");
                 if (rateEl) {
-                 
-                    rateEl.style.textAlign = "left";
+                   
                     rateEl.style.display = "flex";
-                    rateEl.style.justifyContent = "space-between";
+                    rateEl.style.flexWrap = "nowrap";    
+                    rateEl.style.justifyContent = "space-between"; 
                     rateEl.style.alignItems = "center";
                     rateEl.style.width = "100%";
-                    rateEl.style.color = "#666666"; 
-                    rateEl.style.fontSize = "13px";
-                    rateEl.style.fontWeight = "400";
+                    rateEl.style.whiteSpace = "nowrap";   
 
+                   
+                    let formattedRate = parseFloat(conversionRate.toFixed(2));
+
+                    
                     rateEl.innerHTML = `
-                        <span>${formulaStr.split('     ')[0]}</span>
-                        <span style="color: var(--gov-red); font-size: 18px; font-weight: 900;">
-                            ${conversionRate.toFixed(2)}%
+                        <span style="color: #666666; font-size: 13px; font-weight: 400; font-family: 'Noto Sans KR', sans-serif;">
+                            ${formulaStr.split('     ')[0]}
+                        </span>
+                        <span style="color: var(--gov-red); font-size: 18px; font-weight: 900; margin-left: auto;">
+                            ${formattedRate}%
                         </span>
                     `;
                 }

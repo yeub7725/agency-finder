@@ -881,32 +881,36 @@ let formulaStr = "";
                 document.getElementById("calc-conv-rate").innerText = formulaStr;
             
             
+              // 1. 출력 대상 가져오기
                 let rateEl = document.getElementById("calc-conv-rate");
                 if (rateEl) {
                    
                     rateEl.style.display = "flex";
-                    rateEl.style.flexWrap = "nowrap";    
-                    rateEl.style.justifyContent = "space-between"; 
+                    rateEl.style.justifyContent = "space-between";
                     rateEl.style.alignItems = "center";
                     rateEl.style.width = "100%";
-                    rateEl.style.whiteSpace = "nowrap";   
+                    rateEl.style.whiteSpace = "nowrap"; // 줄바꿈 금지
+                    rateEl.style.overflow = "hidden";
 
-                   
+                 
                     let formattedRate = parseFloat(conversionRate.toFixed(2));
 
-                    
+                 
                     rateEl.innerHTML = `
-                        <span style="color: #666666; font-size: 13px; font-weight: 400; font-family: 'Noto Sans KR', sans-serif;">
-                            ${formulaStr.split('     ')[0]}
-                        </span>
-                        <span style="color: var(--gov-red); font-size: 18px; font-weight: 900; margin-left: auto;">
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <span style="color: #666666; font-size: 12px; font-weight: 400; font-family: 'Noto Sans KR', sans-serif;">
+                                ${formulaStr.split('     ')[0]}
+                            </span>
+                        </div>
+                        <div style="color: var(--gov-red); font-size: 18px; font-weight: 900; margin-left: auto;">
                             ${formattedRate}%
-                        </span>
+                        </div>
                     `;
                 }
 
+             
                 let formEl = document.getElementById("calc-conv-formula");
-                if (formEl) formEl.innerText = "";
+                if (formEl) formEl.innerHTML = "";
 
             
             

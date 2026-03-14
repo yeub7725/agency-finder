@@ -847,14 +847,14 @@ typeRadios.forEach(r => r.addEventListener('change', updateCalculator));
         if(baseRateInput) baseRateInput.addEventListener("input", updateCalculator);
         typeRadios.forEach(r => r.addEventListener('change', updateCalculator));
 </script>
-<div id="calculator-container">
-        <div class="calc-title"> 보증금 / 월차임 상한 & 전환 계산기</div>
-        
-        <div class="calc-setting">
-            <span>한국은행 기준금리:</span>
-            <input type="number" id="baseRateInput" value="2.5" step="0.1"> <span>%</span>
-            <span class="rate-help">(변동 시 직접 수정)</span>
-        </div>
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 2px solid var(--gov-blue); padding-bottom: 10px;">
+    <div style="font-size: 14px; font-weight: 900; color: var(--gov-blue);">보증금/월차임 상한 & 전환</div>
+    <div style="display: flex; align-items: center; gap: 3px;">
+        <span style="font-size: 11px; color: var(--gov-gray);">기준금리:</span>
+        <input type="number" id="baseRateInput" value="2.5" step="0.1" style="width: 45px; padding: 2px; text-align: center; border: 1px solid #cbd5e1; border-radius: 3px; font-weight: bold; color: var(--gov-red); outline: none;">
+        <span style="font-size: 11px; color: var(--gov-gray);">%</span>
+    </div>
+</div>
         
         <div class="calc-box">
             <div class="calc-subtitle">1. 5% 최대 증액 범위 (합의 시)</div>

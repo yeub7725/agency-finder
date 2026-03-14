@@ -831,96 +831,105 @@ document.addEventListener("click", (e) => {
                 });
             }
 
-function updateCalculator() {
- 
-    let depositInput = document.getElementById("deposit");
-    let rentInput = document.getElementById("rent");
-    let depositVal = depositInput ? parseInt(depositInput.value.replace(/,/g, '')) || 0 : 0;
-    let rentVal = rentInput ? parseInt(rentInput.value.replace(/,/g, '')) || 0 : 0;
 
- 
-    let typeRadios = document.getElementsByName("bldgType");
-    let isCom = false;
-    for (let i = 0; i < typeRadios.length; i++) {
-        if (typeRadios[i].checked && typeRadios[i].value === "com") {
-            isCom = true;
-            break;
+document.addEventListener("DOMContentLoaded", function() {
+    
+
+    function updateCalculator() {
+  
+        let depositInput = document.getElementById("deposit");
+        let rentInput = document.getElementById("rent");
+        let baseRateInput = document.getElementById("baseRateInput");
+        let convDepositInput = document.getElementById("calc-conv-deposit");
+        let typeRadios = document.getElementsByName("bldgType");
+
+        
+        if (!depositInput || !rentInput || !typeRadios) return;
+
+     
+        let depositVal = parseInt(depositInput.value.replace(/,/g, '')) || 0;
+        let rentVal = parseInt(rentInput.value.replace(/,/g, '')) || 0;
+        
+     
+        let baseRate = baseRateInput ? parseFloat(baseRateInput.value) || 2.5 : 2.5;
+        
+
+        let isCom = false;
+        for (let i = 0; i < typeRadios.length; i++) {
+            if (typeRadios[i].checked && typeRadios[i].value === "com") {
+                isCom = true;
+                break;
+            }
+        }
+
+      
+        let maxDep = Math.floor(depositVal * 0.05);
+        let maxRent = rentVal * 0.05;
+        let displayMaxRent = Number(maxRent.toFixed(1));
+
+        let calcMaxDepEl = document.getElementById("calc-max-deposit");
+        let calcMaxRentEl = document.getElementById("calc-max-rent");
+        if (calcMaxDepEl) calcMaxDepEl.innerText = depositVal > 0 ? maxDep.toLocaleString() + " 만원" : "-";
+        if (calcMaxRentEl) calcMaxRentEl.innerText = rentVal > 0 ? displayMaxRent.toLocaleString() + " 만원" : "-";
+
+   
+        let conversionRate = 0;
+        let formulaStr = "";
+        if (!isCom) {
+            let calcRate = baseRate + 2.0;
+            let statRate = 10.0;
+            conversionRate = Math.min(calcRate, statRate);
+            formulaStr = `MIN(${baseRate}%+2.0%, 10.0%)`;
+        } else {
+            let calcRate = baseRate * 4.5;
+            let statRate = 12.0;
+            conversionRate = Math.min(calcRate, statRate);
+            formulaStr = `MIN(${baseRate}%×4.5, 12.0%)`;
+        }
+
+        let calcConvRateEl = document.getElementById("calc-conv-rate");
+        let calcConvFormulaEl = document.getElementById("calc-conv-formula");
+        if (calcConvRateEl) calcConvRateEl.innerText = `연 ${conversionRate.toFixed(1)}%`;
+        if (calcConvFormulaEl) calcConvFormulaEl.innerText = formulaStr;
+
+        
+        if (convDepositInput) {
+            let convDepStr = convDepositInput.value.replace(/,/g, '');
+            let convDepVal = parseInt(convDepStr) || 0;
+
+            let targetTextEl = document.getElementById("calc-conv-target-text");
+            if (targetTextEl) targetTextEl.innerText = convDepVal > 0 ? convDepVal.toLocaleString() + "만 원" : "0원";
+
+            let monthlyAdd = (convDepVal * 10000) * (conversionRate / 100) / 12;
+            let exampleEl = document.getElementById("calc-conv-example");
+            if (exampleEl) exampleEl.innerText = Math.floor(monthlyAdd).toLocaleString() + "원";
+        }
+
+       
+        let detailFormulaEl = document.getElementById("calc-conv-detail-formula");
+        if (detailFormulaEl) {
+            detailFormulaEl.innerText = !isCom 
+                ? "전환할 금액 × 낮은비율(기준금리+2% or 10%) / 12" 
+                : "전환할 금액 × 낮은비율(기준금리×4.5 or 12%) / 12";
         }
     }
 
- 
-    let baseRateInput = document.getElementById("baseRateInput");
-    let baseRate = baseRateInput ? parseFloat(baseRateInput.value) || 3.5 : 3.5;
+    let depositInputEl = document.getElementById("deposit");
+    let rentInputEl = document.getElementById("rent");
+    let baseRateInputEl = document.getElementById("baseRateInput");
+    let convDepositInputEl = document.getElementById("calc-conv-deposit");
+    let typeRadiosEls = document.getElementsByName("bldgType");
 
-   
-    let maxDep = Math.floor(depositVal * 0.05); 
-    let maxRent = rentVal * 0.05; 
-    let displayMaxRent = Number(maxRent.toFixed(1)); 
+    if (depositInputEl) depositInputEl.addEventListener("input", updateCalculator);
+    if (rentInputEl) rentInputEl.addEventListener("input", updateCalculator);
+    if (baseRateInputEl) baseRateInputEl.addEventListener("input", updateCalculator);
+    if (convDepositInputEl) convDepositInputEl.addEventListener("input", updateCalculator);
     
-    let calcMaxDepEl = document.getElementById("calc-max-deposit");
-    let calcMaxRentEl = document.getElementById("calc-max-rent");
-    if (calcMaxDepEl) calcMaxDepEl.innerText = depositVal > 0 ? maxDep.toLocaleString() + " 만원" : "-";
-    if (calcMaxRentEl) calcMaxRentEl.innerText = rentVal > 0 ? displayMaxRent.toLocaleString() + " 만원" : "-";
-    
-   
-    let conversionRate = 0;
-    let formulaStr = "";
-    if (!isCom) {
-        let calcRate = baseRate + 2.0;
-        let statRate = 10.0;
-        conversionRate = Math.min(calcRate, statRate);
-        formulaStr = `MIN(${baseRate}%+2.0%, 10.0%)`;
-    } else {
-        let calcRate = baseRate * 4.5;
-        let statRate = 12.0;
-        conversionRate = Math.min(calcRate, statRate);
-        formulaStr = `MIN(${baseRate}%×4.5, 12.0%)`;
-    }
-
-    let calcConvRateEl = document.getElementById("calc-conv-rate");
-    let calcConvFormulaEl = document.getElementById("calc-conv-formula");
-    if (calcConvRateEl) calcConvRateEl.innerText = `연 ${conversionRate.toFixed(1)}%`;
-    if (calcConvFormulaEl) calcConvFormulaEl.innerText = formulaStr;
+    typeRadiosEls.forEach(r => r.addEventListener("change", updateCalculator));
 
   
-    let convDepositInput = document.getElementById("calc-conv-deposit");
-    if (convDepositInput) {
-        let convDepStr = convDepositInput.value.replace(/,/g, '');
-        let convDepVal = parseInt(convDepStr) || 0; 
-        
-        let targetTextEl = document.getElementById("calc-conv-target-text");
-        if (targetTextEl) targetTextEl.innerText = convDepVal > 0 ? convDepVal.toLocaleString() + "만 원" : "0원";
-
-        let monthlyAdd = (convDepVal * 10000) * (conversionRate / 100) / 12;
-        let exampleEl = document.getElementById("calc-conv-example");
-        if (exampleEl) exampleEl.innerText = Math.floor(monthlyAdd).toLocaleString() + "원";
-    }
-    
-    let detailFormulaEl = document.getElementById("calc-conv-detail-formula");
-    if (detailFormulaEl) {
-        let detailFormulaText = "";
-        if (!isCom) {
-            detailFormulaText = "전환할 금액 × 낮은비율(기준금리+2% or 10%) / 12";
-        } else {
-            detailFormulaText = "전환할 금액 × 낮은비율(기준금리×4.5 or 12%) / 12";
-        }
-        detailFormulaEl.innerText = detailFormulaText;
-    }
-}
-
-let depInputForCalc = document.getElementById("deposit");
-if (depInputForCalc) depInputForCalc.addEventListener("input", updateCalculator);
-
-let rentInputForCalc = document.getElementById("rent");
-if (rentInputForCalc) rentInputForCalc.addEventListener("input", updateCalculator);
-
-let baseRateInputForCalc = document.getElementById("baseRateInput");
-if (baseRateInputForCalc) baseRateInputForCalc.addEventListener("input", updateCalculator);
-
-document.getElementsByName("bldgType").forEach(r => r.addEventListener('change', updateCalculator)); 
-
-let convDepInputForCalc = document.getElementById("calc-conv-deposit");
-if (convDepInputForCalc) convDepInputForCalc.addEventListener("input", updateCalculator);
+    updateCalculator();
+});
     </script>
 </body>
 </html>

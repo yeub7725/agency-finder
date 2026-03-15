@@ -755,58 +755,95 @@ document.addEventListener("click", (e) => {
     if (!e.target.closest('.search-row')) addressList.style.display = "none";
 });
 </script>
-    <div id="calculator-container">
-       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 2px solid var(--gov-blue); padding-bottom: 10px;">
-            
-            <div style="font-size: 14px; font-weight: 900; color: var(--gov-blue);">보증금/월차임 상한 & 전환 계산기</div>
-            
-            <div style="display: flex; align-items: center; gap: 3px;">
-                <span style="font-size: 11px; color: var(--gov-gray);">기준금리:</span>
-                <input type="number" id="baseRateInput" value="2.5" step="0.1" style="width: 45px; padding: 2px; text-align: center; border: 1px solid #cbd5e1; border-radius: 3px; font-weight: bold; color: var(--gov-red); outline: none;">
-                <span style="font-size: 11px; color: var(--gov-gray);">%</span>
-            </div>
-            
-        </div>
+  <div id="calculator-container" style="display: block; position: absolute; top: 20px; left: calc(clamp(500px, 40vw, 650px) + 780px); width: 440px; background: #fff; border: 2px solid var(--gov-blue); border-radius: 6px; padding: 10px; z-index: 1000; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+    
+    <div class="content-title" id="content-title" style="background-color: var(--gov-blue); color: white; padding: 12px 15px; font-size: 16px; font-weight: 900; margin: -10px -10px 15px -10px; border-radius: 4px 4px 0 0;">임대차 계산기</div>
+    <div style="padding: 10px;">
         
-       <div class="calc-box">
-            <div class="calc-subtitle">1. 5% 증액 범위 (합의 시)</div>
-            
-            <div class="calc-row">
-                <span>보증금 증액: <span style="font-size:11px; color:#64748b; font-weight:normal;"></span></span> 
-                <b id="calc-max-deposit">-</b>
-            </div>
-            
-            <div class="calc-row">
-                <span>월차임 증액: <span style="font-size:11px; color:#64748b; font-weight:normal;"></span></span> 
-                <b id="calc-max-rent">-</b>
-            </div>
+        <style>
+            .category-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; margin-bottom: 25px; width: 100%; }
+            .category-btn { aspect-ratio: 1 / 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; background-color: #fff; border: 1px solid #cbd5e1; border-radius: 8px; cursor: pointer; font-size: 12px; font-weight: 700; line-height: 1.25; letter-spacing: -0.5px; padding: 2px; box-sizing: border-box; word-break: keep-all; color: #475569; transition: all 0.2s; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+            .category-btn:hover { background-color: #f8fafc; }
+            .category-btn.active { background-color: var(--gov-blue); color: white; border-color: var(--gov-blue); }
+            .tab-content { display: none; }
+            .tab-content.active { display: block; }
+        </style>
+
+        <div class="category-grid">
+            <div class="category-btn active" onclick="showContent('cat1', '임대차 계산기')">임대차<br>계산기</div>
+            <div class="category-btn" onclick="showContent('cat2', '중개보수 계산')">중개보수<br>계산</div>
+            <div class="category-btn" onclick="showContent('cat3', '취득세 계산')">취득세<br>계산</div>
+            <div class="category-btn" onclick="showContent('cat4', '양도세 계산')">양도세<br>계산</div>
+            <div class="category-btn" onclick="showContent('cat5', '대출 계산기')">대출<br>계산기</div>
+            <div class="category-btn" onclick="showContent('cat6', '등기비용')">등기비용</div>
+            <div class="category-btn" onclick="showContent('cat7', '수익률 계산')">수익률<br>계산</div>
+            <div class="category-btn" onclick="showContent('cat8', '면적 환산')">면적<br>환산</div>
+            <div class="category-btn" onclick="showContent('cat9', 'DSR 계산')">DSR<br>계산</div>
+            <div class="category-btn" onclick="showContent('cat10', '기타')">기타</div>
         </div>
 
-        <div class="calc-box" style="margin-bottom: 0;">
-            <div class="calc-subtitle" style="display: flex; justify-content: space-between; align-items: center;">
-                <span>2. 전월세 전환 (환산 월차임)</span>
-                <span style="font-weight: 700; font-size: 12px; color: var(--gov-gray);">
-                    전환 보증금: <input type="text" id="convDepositInput" value="0" style="width: 55px; text-align: right; border: 1px solid #cbd5e1; border-radius: 3px; font-weight: 900; color: var(--gov-blue); outline: none; padding: 2px;"> 만원
-                </span>
-            </div>
-            
-            <div class="calc-row"><span>적용 전환율:</span> <b id="calc-conv-rate" style="color:var(--gov-red);">-</b></div>
-            <div class="calc-row" style="font-size:11px; color:#64748b; margin-top:-4px; margin-bottom:6px;" id="calc-conv-formula"></div>
-            
-          <div style="background:#f8fafc; padding:10px; border-radius:4px; border: 1px solid #e2e8f0;">
-                
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                    <span style="font-size: 12px; font-weight: 700;">보증금 <b id="calc-conv-target-text" style="color:var(--gov-gray);">0원</b> 월세 전환 시</span>
-                    <span style="font-size: 13px; font-weight: 900;">➔ 월 <b id="calc-conv-example" style="color:var(--gov-blue); font-size:15px;">-</b></span>
+        <div id="cat1" class="tab-content active">
+            <div class="calc-title" style="font-weight: 900; color: var(--gov-blue); margin-bottom: 10px;">임대료 인상 상한 제한 (5%)</div>
+            <div class="calc-row" style="display:flex; justify-content:space-between; margin-bottom:8px;">
+                <div class="calc-label" style="font-size: 13px; font-weight: 700;">기존 보증금</div>
+                <div class="input-wrapper">
+                    <input type="text" id="calc-deposit" class="calc-input" placeholder="0" style="text-align: right; width: 100px; padding: 4px; border: 1px solid #cbd5e1;">
+                    <span class="unit-text" style="font-size: 13px; font-weight: 700;">만 원</span>
                 </div>
-                
-                <div id="calc-conv-detail-formula" style="font-size: 11px; color: #94a3b8; text-align: right; letter-spacing: -0.5px;">
-                    </div>
-                
+            </div>
+            <div class="calc-row" style="display:flex; justify-content:space-between; margin-bottom:8px;">
+                <div class="calc-label" style="font-size: 13px; font-weight: 700;">기존 월세</div>
+                <div class="input-wrapper">
+                    <input type="text" id="calc-rent" class="calc-input" placeholder="0" style="text-align: right; width: 100px; padding: 4px; border: 1px solid #cbd5e1;">
+                    <span class="unit-text" style="font-size: 13px; font-weight: 700;">만 원</span>
+                </div>
+            </div>
+            <div class="calc-row" style="margin-top: 15px; padding-top: 15px; border-top: 1px dashed #e2e8f0; display:flex; justify-content:space-between;">
+                <div class="calc-label" style="font-size: 13px; font-weight: 800;">
+                    인상 한도액<br><span style="font-size: 11px; color: #64748b; font-weight: 400;">(동시 5% 인상 시)</span>
+                </div>
+                <div class="calc-result" id="calc-result" style="text-align: right; font-weight: 900; color: var(--gov-red);">보증금 0만 원<br>월세 0만 원</div>
+            </div>
+            
+            <div style="margin: 25px 0; border-top: 2px solid #e2e8f0;"></div>
+
+            <div class="calc-title" style="font-weight: 900; color: var(--gov-blue); margin-bottom: 10px;">전월세 전환율 계산</div>
+            <div class="calc-row" style="display:flex; justify-content:space-between; margin-bottom:8px;">
+                <div class="calc-label" style="font-size: 13px; font-weight: 700;">한국은행 기준금리</div>
+                <div class="input-wrapper">
+                    <input type="number" id="calc-base-rate" class="calc-input" value="3.25" step="0.25" style="text-align: right; width: 60px; padding: 4px; border: 1px solid #cbd5e1;">
+                    <span class="unit-text" style="font-size: 13px; font-weight: 700;">%</span>
+                </div>
+            </div>
+            <div class="calc-row" style="display:flex; justify-content:space-between; margin-bottom:8px;">
+                <div class="calc-label" style="font-size: 13px; font-weight: 700;">법정 전월세 전환율</div>
+                <div class="calc-result" id="calc-conv-rate" style="text-align: right; font-weight: 900; color: var(--gov-blue);">5.25%</div>
             </div>
         </div>
-    </div>
 
+        <div id="cat2" class="tab-content"><div class="calc-title" style="font-weight:900;">중개보수 계산기 (준비 중)</div></div>
+        <div id="cat3" class="tab-content"><div class="calc-title" style="font-weight:900;">취득세 계산기 (준비 중)</div></div>
+        <div id="cat4" class="tab-content"><div class="calc-title" style="font-weight:900;">양도세 계산기 (준비 중)</div></div>
+        <div id="cat5" class="tab-content"><div class="calc-title" style="font-weight:900;">대출 계산기 (준비 중)</div></div>
+        <div id="cat6" class="tab-content"><div class="calc-title" style="font-weight:900;">등기비용 (준비 중)</div></div>
+        <div id="cat7" class="tab-content"><div class="calc-title" style="font-weight:900;">수익률 계산기 (준비 중)</div></div>
+        <div id="cat8" class="tab-content"><div class="calc-title" style="font-weight:900;">면적 환산 (준비 중)</div></div>
+        <div id="cat9" class="tab-content"><div class="calc-title" style="font-weight:900;">DSR 계산기 (준비 중)</div></div>
+        <div id="cat10" class="tab-content"><div class="calc-title" style="font-weight:900;">기타 기능 (준비 중)</div></div>
+
+    </div>
+</div>
+
+<script>
+    function showContent(tabId, titleName) {
+        document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+        document.querySelectorAll('.category-btn').forEach(btn => btn.classList.remove('active'));
+        document.getElementById(tabId).classList.add('active');
+        event.currentTarget.classList.add('active');
+        let mainTitle = document.getElementById('content-title');
+        if(mainTitle) mainTitle.innerText = titleName;
+    }
+</script>
    <script>
         (function() {
             const baseRateInput = document.getElementById("baseRateInput");

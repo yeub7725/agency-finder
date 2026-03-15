@@ -137,7 +137,23 @@
             background: var(--gov-red);
             z-index: 10;
         }
+<h2 id="content-title" style="margin-top: 0; margin-bottom: 20px; font-size: 22px; color: var(--gov-blue);">임대차 계산기</h2>
 
+        <div class="category-grid">
+            <div class="category-btn active" onclick="showContent('cat1', '임대차 계산기')">임대차<br>계산기</div>
+            <div class="category-btn" onclick="showContent('cat2', '중개보수 계산')">중개보수<br>계산</div>
+            <div class="category-btn" onclick="showContent('cat3', '취득세 계산')">취득세<br>계산</div>
+            <div class="category-btn" onclick="showContent('cat4', '양도세 계산')">양도세<br>계산</div>
+            <div class="category-btn" onclick="showContent('cat5', '대출 계산기')">대출<br>계산기</div>
+            <div class="category-btn" onclick="showContent('cat6', '등기비용')">등기비용</div>
+            <div class="category-btn" onclick="showContent('cat7', '수익률 계산')">수익률<br>계산</div>
+            <div class="category-btn" onclick="showContent('cat8', '면적 환산')">면적<br>환산</div>
+            <div class="category-btn" onclick="showContent('cat9', 'DSR 계산')">DSR<br>계산</div>
+            <div class="category-btn" onclick="showContent('cat10', '기타')">기타</div>
+        </div>
+
+        <div id="cat1" class="tab-content active">
+            <div class="calc-title">임대료 인상 상한 제한 (5%)</div>
         #notice-detail-info {
             display: none;
             width: 100%;
@@ -248,9 +264,9 @@
             gap: 5px !important; 
         }
 
-        /* 💡 3. 보증금과 월세 입력칸 크기 다이어트 */
+       
         .price-input-wrap {
-            flex: none !important; /* 멋대로 늘어나는 성질 차단 */
+            flex: none !important; 
         }
         
         .price-container #deposit {
@@ -262,6 +278,45 @@
             width: 30px !important; 
             text-align: right;
         }
+        .calc-row:last-child {
+            border-bottom: none;
+        }
+
+       
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr); 
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+        .category-btn {
+            aspect-ratio: 1 / 1; 
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            background-color: #fff;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 700;
+            color: #475569;
+            transition: all 0.2s;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            line-height: 1.4;
+        }
+        .category-btn:hover { background-color: #f8fafc; }
+        .category-btn.active {
+            background-color: var(--gov-blue);
+            color: white;
+            border-color: var(--gov-blue);
+        }
+        
+        
+        .tab-content { display: none; }
+        .tab-content.active { display: block; } 
+    </style>
     </style>
 </head>
 <body>
@@ -803,11 +858,19 @@ document.addEventListener("click", (e) => {
                 <div id="calc-conv-detail-formula" style="font-size: 11px; color: #94a3b8; text-align: right; letter-spacing: -0.5px;">
                     </div>
                 
+         </div>
             </div>
-        </div>
-    </div>
+            </div> <div id="cat2" class="tab-content"><div class="calc-title">중개보수 계산 내용</div><p>여기에 나중에 내용 추가</p></div>
+            <div id="cat3" class="tab-content"><div class="calc-title">취득세 계산 내용</div></div>
+            <div id="cat4" class="tab-content"><div class="calc-title">양도세 계산 내용</div></div>
+            <div id="cat5" class="tab-content"><div class="calc-title">대출 계산기 내용</div></div>
+            <div id="cat6" class="tab-content"><div class="calc-title">등기비용 내용</div></div>
+            <div id="cat7" class="tab-content"><div class="calc-title">수익률 계산 내용</div></div>
+            <div id="cat8" class="tab-content"><div class="calc-title">면적 환산 내용</div></div>
+            <div id="cat9" class="tab-content"><div class="calc-title">DSR 계산 내용</div></div>
+            <div id="cat10" class="tab-content"><div class="calc-title">기타 내용</div></div>
 
-   <script>
+        </div> <script>
         (function() {
             const baseRateInput = document.getElementById("baseRateInput");
             const calcContainer = document.getElementById("calculator-container");
@@ -903,9 +966,23 @@ let formulaStr = "";
             depositInputLocal.addEventListener("input", updateCalculator);
             rentInputLocal.addEventListener("input", updateCalculator);
             baseRateInput.addEventListener("input", updateCalculator);
-            typeRadiosLocal.forEach(r => r.addEventListener('change', updateCalculator)); 
+       typeRadiosLocal.forEach(r => r.addEventListener('change', updateCalculator)); 
         })();
-    </script>
 
+     
+        function showContent(tabId, titleName) {
+   
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+     
+            document.querySelectorAll('.category-btn').forEach(btn => btn.classList.remove('active'));
+            
+
+            document.getElementById(tabId).classList.add('active');
+            event.currentTarget.classList.add('active');
+            
+            let mainTitle = document.getElementById('content-title');
+            if(mainTitle) mainTitle.innerText = titleName;
+        }
+    </script>
 </body>
 </html>

@@ -998,11 +998,11 @@ let formulaStr = "";
                 if (!isCom) { 
                     let r2 = baseRate + 2.0;
                     conversionRate = Math.min(10, r2);
-                    formulaStr = `기준금리(${baseRate}%) + 2% = ${Number(r2.toFixed(2))}% or (연 10%중 낮은 값 적용)`;
+                    formulaStr = `기준금리(${baseRate}%) + 2% = ${Number(r2.toFixed(2))}% or 연 10%중 낮은 값 적용`;
                 } else { 
                     let r2 = baseRate * 4.5;
                     conversionRate = Math.min(12, r2);
-                    formulaStr = `기준금리(${baseRate}%) × 4.5배 = ${Number(r2.toFixed(2))}% or (연 12%중 낮은 값 적용)`;
+                    formulaStr = `기준금리(${baseRate}%) × 4.5배 = ${Number(r2.toFixed(2))}% or 연 12%중 낮은 값 적용`;
                 }
 
                 document.getElementById("calc-conv-rate").innerText = `${Number(conversionRate.toFixed(2))}%`;
@@ -1023,9 +1023,9 @@ let formulaStr = "";
             
                 let detailFormulaText = "";
                 if (!isCom) {
-                    detailFormulaText = "전환할 금액 X (한국은행 기준금리+대통령령(2%)) / 12";
+                    detailFormulaText = "전환할 금액 X (한국은행 기준금리+대통령령(2%) or 10%) / 12";
                 } else {
-                    detailFormulaText = "전환할 금액 X (한국은행 기준금리×대통령령(4.5배)) / 12";
+                    detailFormulaText = "전환할 금액 X (한국은행 기준금리×대통령령(4.5배) or 12%) / 12";
                 }
                 document.getElementById("calc-conv-detail-formula").innerText = detailFormulaText;
             } 

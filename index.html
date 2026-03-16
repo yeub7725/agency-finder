@@ -391,7 +391,7 @@
             </a> ㅣ
         </div>
         
-        <div style="line-height: 1.6; flex: 1; word-break: keep-all; overflow-wrap: break-word;">
+        <div style="line-height: 1.6; flex: 1; min-width: 0; word-break: break-all;">
             ① 당사자는 약정한 차임이나 보증금이 임차주택에 관한 조세, 공과금, 그 밖의 부담의 증감이나 경제사정의 변동으로 인하여 적절하지 아니하게 된 때에는 장래에 대하여 그 증감을 청구할 수 있다.<br>
             ② 제1항에 따른 증액청구는 약정한 차임이나 보증금의 20분의 1의 금액을 초과하지 못한다.
         </div>
@@ -1043,12 +1043,20 @@ let formulaStr = "";
                 document.getElementById("calc-conv-detail-formula").innerText = detailFormulaText;
             } 
 
-            depositInputLocal.addEventListener("input", updateCalculator);
+           depositInputLocal.addEventListener("input", updateCalculator);
             rentInputLocal.addEventListener("input", updateCalculator);
             baseRateInput.addEventListener("input", updateCalculator);
             typeRadiosLocal.forEach(r => r.addEventListener('change', updateCalculator)); 
         })();
-    </script>
 
+        function showCategoryContent(contentId, clickedButton) {
+            document.querySelectorAll('.info-panel').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.category-box .category-btn').forEach(b => b.classList.remove('active'));
+            
+            document.getElementById(contentId).classList.add('active');
+            clickedButton.classList.add('active');
+        }
+        
+    </script>
 </body>
 </html>

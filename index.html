@@ -70,7 +70,7 @@
             display: flex;
             flex-direction: column;
         }
-        
+
         .contract-settings {
             display: flex; align-items: center; gap: 15px; margin-bottom: 25px; font-size: 13px; color: var(--gov-gray); font-weight: 700;
         }
@@ -162,7 +162,8 @@
     flex-direction: column; 
     position: relative; 
 }
-        
+
+
 #rec-section {
     display: flex;
     align-items: center;
@@ -247,9 +248,9 @@
             gap: 5px !important; 
         }
 
-        
+        /* 💡 3. 보증금과 월세 입력칸 크기 다이어트 */
         .price-input-wrap {
-            flex: none !important; 
+            flex: none !important; /* 멋대로 늘어나는 성질 차단 */
         }
         
         .price-container #deposit {
@@ -261,59 +262,6 @@
             width: 30px !important; 
             text-align: right;
         }
-      
-/* 🌟 카테고리 전체를 감싸는 새로운 위치 컨테이너 (타임라인 바로 아래 띄움) */
-#category-container {
-    position: absolute;
-    left: calc(100% + 40px); /* 타임라인과 똑같이 우측으로 40px 띄움 */
-    top: 220px; /* 타임라인 아래쪽에 위치하도록 위에서 220px 여백 (겹치지 않게 넉넉히) */
-    width: 700px; /* 타임라인과 동일한 너비 */
-    z-index: 1000;
-}
-
-/* 파란색 카테고리 영역 */
-.category-blue-box {
-    display: flex;
-    gap: 10px;
-    padding: 10px 15px;
-    border: 3px solid #0056b3; 
-    background-color: #f0f8ff; 
-    border-radius: 8px;
-    overflow-x: auto;
-    margin-bottom: 15px; /* 아래 빨간 박스와의 간격 */
-}
-
-/* 카테고리 버튼 디자인 (기존 동일) */
-.category-btn {
-    padding: 10px 20px;
-    border: 1px solid #cbd5e1;
-    background-color: #ffffff;
-    border-radius: 5px;
-    cursor: pointer;
-    font-weight: bold;
-    color: #333;
-    transition: all 0.2s;
-}
-
-/* 선택된 카테고리 버튼 (기존 동일) */
-.category-btn.active {
-    background-color: var(--gov-blue);
-    color: #ffffff;
-    border-color: var(--gov-blue);
-}
-
-/* 빨간색 내용 표시 창 */
-.category-red-box {
-    padding: 20px;
-    border: 3px solid #e4032d; 
-    background-color: #ffffff;
-    border-radius: 8px;
-    min-height: 400px; 
-}
-
-/* 내용 패널 숨김/표시 처리 (기존 동일) */
-.info-panel { display: none; }
-.info-panel.active { display: block; }
     </style>
 </head>
 <body>
@@ -357,38 +305,15 @@
                         <span style="font-size:12px; color:#64748b;">년</span>
                     </div>
                 </div>
-                  </div>
+                
                 <div id="date-visual-line"></div>
                 <div id="notice-detail-info"></div>
             </div>
-  <div id="category-container">
-                <div class="category-blue-box">
-                    <button class="category-btn active" onclick="showCategoryContent('content-court', this)">법원</button>
-                    <button class="category-btn" onclick="showCategoryContent('content-registry', this)">등기소</button>
-                    <button class="category-btn" onclick="showCategoryContent('content-police', this)">경찰서</button>
-                    <button class="category-btn" onclick="showCategoryContent('content-family', this)">가족관계등록</button>
-                    <button class="category-btn" onclick="showCategoryContent('content-tax', this)">세무서</button>
-                    <button class="category-btn" onclick="showCategoryContent('content-health', this)">보건소</button>
-                </div>
 
-                <div class="category-red-box">
-                    <div id="content-court" class="info-panel active">
-                        <h3>법원 관련 안내</h3>
-                        <p>여기에 법원 관련 내용을 작성합니다.</p>
-                    </div>
-                    <div id="content-registry" class="info-panel">
-                        <h3>등기소 관련 안내</h3>
-                        <p>여기에 등기소 관련 내용을 작성합니다.</p>
-                    </div>
-                    <div id="content-police" class="info-panel">
-                        <h3>경찰서 관련 안내</h3>
-                        <p>여기에 경찰서 관련 내용을 작성합니다.</p>
-                    </div>
-                    </div>
-            </div>
-            </div> <div id="result-area">
+        </div>
+        <div id="result-area">
             <div id="rec-section"><p class="intro-msg">주소를 입력해주세요</p></div>
-    
+            
             <div id="sub-info-area" style="display:none;">
                 <div id="office-list"></div>
                 
@@ -524,7 +449,7 @@ function renderAdvancedTimeline(startDate) {
 
     let dates = [new Date(startDate)];
     let maxComDate = new Date(startDate);
-    maxComDate.setFullYear(maxComDate.getFullYear() + 10); 
+    maxComDate.setFullYear(maxComDate.getFullYear() + 10); // 상가 한정 10년 캡
 
     let current = new Date(startDate);
     current.setFullYear(current.getFullYear() + initYears);
@@ -532,13 +457,13 @@ function renderAdvancedTimeline(startDate) {
     if (isCom && current > maxComDate) current = new Date(maxComDate);
     dates.push(new Date(current));
 
-   
+    // 배열에 2년씩 더해가며 구간 날짜들을 채움
     while (true) {
-     
+        // ✨ 주택 로직: current(현재 구간의 끝)가 오늘보다 뒤에 있다면, 우리가 렌더링해야 할 '미래 만기 구간'까지 도달한 것이므로 스톱
         if (!isCom && current.getTime() >= today.getTime()) {
             break; 
         }
-      
+        // ✨ 상가 로직: 정확히 10년이 될 때 스톱
         if (isCom && current.getTime() >= maxComDate.getTime()) {
             break; 
         }
@@ -980,24 +905,6 @@ let formulaStr = "";
             baseRateInput.addEventListener("input", updateCalculator);
             typeRadiosLocal.forEach(r => r.addEventListener('change', updateCalculator)); 
         })();
-  
-function showCategoryContent(contentId, clickedButton) {
-   
-    document.querySelectorAll('.info-panel').forEach(function(panel) {
-        panel.classList.remove('active');
-    });
-    
-  
-    document.querySelectorAll('.category-blue-box .category-btn').forEach(function(btn) {
-        btn.classList.remove('active');
-    });
-    
-  
-    document.getElementById(contentId).classList.add('active');
-    
- 
-    clickedButton.classList.add('active');
-}
     </script>
 
 </body>

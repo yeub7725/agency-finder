@@ -315,30 +315,44 @@
 }
 
 /* 출력되는 내용 영역은 오른쪽 끝까지 꽉 차게! */
-.category-content-box {
-    flex: 1; 
-    width: 100%; /* 화면 끝까지 넓게 사용 */
-    overflow-y: auto;
-    padding: 15px 20px;
+/* 1. 카테고리 탭(버튼들) 영역: 화면 끝까지 늘어나지 못하게 꽉 잡아줌! */
+.category-box {
+    max-width: 650px; /* 기존 버튼들이 차지하던 폭까지만 허용 */
+    display: flex;
+    flex-wrap: wrap; 
+    gap: 10px;
+    padding: 12px 15px;
+    margin: 15px 20px 0 5px; 
+    border: 1px solid #e2e8f0; 
+    background-color: #f8fafc; 
+    border-radius: 8px;
 }
 
-/* ========================================= */
-/* 2. 법조항과 내용 분리 박스 (얇은 테두리 적용) */
+/* 2. 내용 출력 틀: 공간을 100% 쓸 수 있게 허락 */
+.category-content-box {
+    width: 100%; 
+    box-sizing: border-box; 
+    padding: 10px 5px;
+}
+
+/* 3. ★핵심★ 법조항 박스 (테두리): 오른쪽 끝까지 시원하게 100% 꽉 채움 */
 .law-item {
     display: flex;
-    border: 1px solid #cbd5e1; /* 카테고리 창과 비슷한 얇은 테두리 */
-    border-radius: 4px;        /* 살짝 둥근 모서리 */
-    margin-bottom: 12px;       /* 박스 간격 */
+    width: 100%; /* 테두리가 오른쪽 화면 끝까지 쫙 늘어납니다! */
+    box-sizing: border-box;
+    border: 1px solid #cbd5e1; /* 얇고 깔끔한 테두리 */
+    border-radius: 4px;
+    margin-bottom: 12px;
     background-color: #fff;
 }
 
-/* 법조항(링크) 부분 - 왼쪽 고정 칸 */
+/* 법조항 제목(왼쪽)은 고정, 내용(오른쪽)은 나머지 빈 공간 다 채우기 */
 .law-title {
-    width: 140px; /* ★ 너비 고정! 내용이 아무리 길어도 이 칸을 침범 못함 */
-    flex-shrink: 0; /* 화면이 좁아져도 조항 칸은 찌그러지지 않음 */
+    width: 140px; 
+    flex-shrink: 0; 
     padding: 15px 10px;
-    background-color: #f8fafc; /* 살짝 회색 배경으로 시각적 분리 */
-    border-right: 1px solid #cbd5e1; /* 내용과 나누는 세로줄 */
+    background-color: #f8fafc; 
+    border-right: 1px solid #cbd5e1; 
     display: flex;
     align-items: center;
     justify-content: center;
@@ -346,21 +360,13 @@
     text-align: center;
 }
 
-.law-title a {
-    color: var(--gov-blue);
-    text-decoration: underline;
-    font-size: 13px;
-    word-break: keep-all;
-}
-
-/* 내용 부분 - 오른쪽 꽉 차는 칸 */
 .law-content {
-    flex: 1; /* 왼쪽 칸을 제외한 나머지 공간을 끝까지 꽉 채움 */
+    flex: 1; /* 테두리 안의 남은 공간을 끝까지 꽉 채움 */
     padding: 15px;
     font-size: 14px;
     line-height: 1.6;
     color: #333;
-    word-break: break-all; /* 내용이 길어지면 아래로 자동 줄바꿈 */
+    word-break: break-all;
 }
     </style>
 </head>
@@ -409,7 +415,7 @@
                 <div id="date-visual-line"></div>
                 <div id="notice-detail-info"></div>
             </div>
-</div> <div id="category-container" style="position: absolute; left: calc(100% + 10px); top: 180px; width: 700px; z-index: 1000; display: none;">
+</div> <div id="category-container" style="position: absolute; left: calc(100% + 10px); top: 180px; width: calc(100vw - 100% - 30px); z-index: 1000; display: none;">
                 
                 <div class="category-box">
                     <button class="category-btn active" onclick="showCategoryContent('charges/deposits increase/decrease', this)">차임/보증금 증감</button>
@@ -426,8 +432,6 @@
 
                 <div class="category-content-box">
                   <div id="charges/deposits increase/decrease" class="info-panel active">
-    <h3 style="margin-top: 0; margin-bottom: 15px; color: var(--gov-blue);">차임/보증금 증감 안내</h3>
-    
     <div class="law-item">
         <div class="law-title">
             <a href="https://www.law.go.kr/법령/주택임대차보호법/제7조" target="_blank">주임법 제7조</a>

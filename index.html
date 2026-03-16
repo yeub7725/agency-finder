@@ -70,36 +70,7 @@
             display: flex;
             flex-direction: column;
         }
-        <div class="top-tabs">
-    </div>
-
-<div class="category-blue-box">
-    <button class="category-btn active" onclick="showCategoryContent('content-court', this)">법원</button>
-    <button class="category-btn" onclick="showCategoryContent('content-registry', this)">등기소</button>
-    <button class="category-btn" onclick="showCategoryContent('content-police', this)">경찰서</button>
-    <button class="category-btn" onclick="showCategoryContent('content-family', this)">가족관계등록</button>
-    <button class="category-btn" onclick="showCategoryContent('content-tax', this)">세무서</button>
-    <button class="category-btn" onclick="showCategoryContent('content-health', this)">보건소</button>
-</div>
-
-<div class="category-red-box">
-    <div id="content-court" class="info-panel active">
-        <h3>법원 관련 안내</h3>
-        <p>여기에 법원 관련 내용을 작성합니다.</p>
-    </div>
-    <div id="content-registry" class="info-panel">
-        <h3>등기소 관련 안내</h3>
-        <p>여기에 등기소 관련 내용을 작성합니다.</p>
-    </div>
-    <div id="content-police" class="info-panel">
-        <h3>경찰서 관련 안내</h3>
-        <p>여기에 경찰서 관련 내용을 작성합니다.</p>
-    </div>
-    </div>
-
-<div id="tab-calc" class="tab-content">
-    </div>
-
+        
         .contract-settings {
             display: flex; align-items: center; gap: 15px; margin-bottom: 25px; font-size: 13px; color: var(--gov-gray); font-weight: 700;
         }
@@ -191,7 +162,32 @@
     flex-direction: column; 
     position: relative; 
 }
+<div id="result-area">
+            
+            <div class="category-blue-box">
+                <button class="category-btn active" onclick="showCategoryContent('content-court', this)">법원</button>
+                <button class="category-btn" onclick="showCategoryContent('content-registry', this)">등기소</button>
+                <button class="category-btn" onclick="showCategoryContent('content-police', this)">경찰서</button>
+                <button class="category-btn" onclick="showCategoryContent('content-family', this)">가족관계등록</button>
+                <button class="category-btn" onclick="showCategoryContent('content-tax', this)">세무서</button>
+                <button class="category-btn" onclick="showCategoryContent('content-health', this)">보건소</button>
+            </div>
 
+            <div class="category-red-box">
+                <div id="content-court" class="info-panel active">
+                    <h3>법원 관련 안내</h3>
+                    <p>여기에 법원 관련 내용을 작성합니다.</p>
+                </div>
+                <div id="content-registry" class="info-panel">
+                    <h3>등기소 관련 안내</h3>
+                    <p>여기에 등기소 관련 내용을 작성합니다.</p>
+                </div>
+                <div id="content-police" class="info-panel">
+                    <h3>경찰서 관련 안내</h3>
+                    <p>여기에 경찰서 관련 내용을 작성합니다.</p>
+                </div>
+            </div>
+            <div id="rec-section"><p class="intro-msg">주소를 입력해주세요</p></div>
 
 #rec-section {
     display: flex;
@@ -982,9 +978,9 @@ let formulaStr = "";
             baseRateInput.addEventListener("input", updateCalculator);
             typeRadiosLocal.forEach(r => r.addEventListener('change', updateCalculator)); 
         })();
-       // 카테고리 버튼 클릭 시 호출되는 함수
+   // 카테고리 버튼 클릭 시 호출되는 함수
 function showCategoryContent(contentId, clickedButton) {
-    // 1. 모든 내용 패널(info-panel) 숨기기
+    // 1. 모든 내용 패널 숨기기
     document.querySelectorAll('.info-panel').forEach(function(panel) {
         panel.classList.remove('active');
     });

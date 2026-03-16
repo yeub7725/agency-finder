@@ -70,6 +70,35 @@
             display: flex;
             flex-direction: column;
         }
+        <div class="top-tabs">
+    </div>
+
+<div class="category-blue-box">
+    <button class="category-btn active" onclick="showCategoryContent('content-court', this)">법원</button>
+    <button class="category-btn" onclick="showCategoryContent('content-registry', this)">등기소</button>
+    <button class="category-btn" onclick="showCategoryContent('content-police', this)">경찰서</button>
+    <button class="category-btn" onclick="showCategoryContent('content-family', this)">가족관계등록</button>
+    <button class="category-btn" onclick="showCategoryContent('content-tax', this)">세무서</button>
+    <button class="category-btn" onclick="showCategoryContent('content-health', this)">보건소</button>
+</div>
+
+<div class="category-red-box">
+    <div id="content-court" class="info-panel active">
+        <h3>법원 관련 안내</h3>
+        <p>여기에 법원 관련 내용을 작성합니다.</p>
+    </div>
+    <div id="content-registry" class="info-panel">
+        <h3>등기소 관련 안내</h3>
+        <p>여기에 등기소 관련 내용을 작성합니다.</p>
+    </div>
+    <div id="content-police" class="info-panel">
+        <h3>경찰서 관련 안내</h3>
+        <p>여기에 경찰서 관련 내용을 작성합니다.</p>
+    </div>
+    </div>
+
+<div id="tab-calc" class="tab-content">
+    </div>
 
         .contract-settings {
             display: flex; align-items: center; gap: 15px; margin-bottom: 25px; font-size: 13px; color: var(--gov-gray); font-weight: 700;
@@ -262,6 +291,54 @@
             width: 30px !important; 
             text-align: right;
         }
+        /* 파란색 카테고리 영역 */
+.category-blue-box {
+    display: flex;
+    gap: 10px;
+    padding: 15px;
+    margin: 10px 20px;
+    border: 3px solid #0056b3; /* 파란색 테두리 */
+    background-color: #f0f8ff; /* 연한 파란색 배경 (선택사항) */
+    border-radius: 8px;
+    overflow-x: auto;
+}
+
+/* 카테고리 버튼 디자인 */
+.category-btn {
+    padding: 10px 20px;
+    border: 1px solid #cbd5e1;
+    background-color: #ffffff;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    color: #333;
+    transition: all 0.2s;
+}
+
+/* 선택된 카테고리 버튼 */
+.category-btn.active {
+    background-color: var(--gov-blue);
+    color: #ffffff;
+    border-color: var(--gov-blue);
+}
+
+/* 빨간색 내용 표시 창 */
+.category-red-box {
+    margin: 10px 20px;
+    padding: 20px;
+    border: 3px solid #e4032d; /* 빨간색 테두리 */
+    background-color: #ffffff;
+    border-radius: 8px;
+    min-height: 300px; /* 창의 최소 높이 확보 */
+}
+
+/* 내용 패널 숨김/표시 처리 */
+.info-panel {
+    display: none; /* 기본적으로 숨김 */
+}
+.info-panel.active {
+    display: block; /* active 클래스가 붙으면 표시 */
+}
     </style>
 </head>
 <body>
@@ -905,6 +982,24 @@ let formulaStr = "";
             baseRateInput.addEventListener("input", updateCalculator);
             typeRadiosLocal.forEach(r => r.addEventListener('change', updateCalculator)); 
         })();
+       // 카테고리 버튼 클릭 시 호출되는 함수
+function showCategoryContent(contentId, clickedButton) {
+    // 1. 모든 내용 패널(info-panel) 숨기기
+    document.querySelectorAll('.info-panel').forEach(function(panel) {
+        panel.classList.remove('active');
+    });
+    
+    // 2. 모든 카테고리 버튼의 활성화 상태(파란색 배경) 제거
+    document.querySelectorAll('.category-blue-box .category-btn').forEach(function(btn) {
+        btn.classList.remove('active');
+    });
+    
+    // 3. 클릭한 버튼에 연결된 내용 패널만 보이기
+    document.getElementById(contentId).classList.add('active');
+    
+    // 4. 클릭한 버튼 자체를 활성화 상태로 변경
+    clickedButton.classList.add('active');
+}
     </script>
 
 </body>

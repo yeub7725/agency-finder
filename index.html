@@ -29,8 +29,7 @@
         .search-row { 
             display: flex; align-items: center; width: 100%; 
             border: 2px solid var(--gov-blue); border-radius: 4px; 
-            background: #fff; box-sizing: border-box; height: 40px;
-            position: relative; 
+            background: #fff; box-sizing: border-box; height: 40px; position: relative;
         }
         
         .search-container { flex: 1.8; }
@@ -40,7 +39,7 @@
             position: absolute; top: calc(100%); left: -2px; width: calc(100% + 4px); 
             border: 2px solid var(--gov-blue); border-top: 1px solid #eee; border-radius: 0 0 4px 4px;
             background: white; z-index: 9999; display: none; box-sizing: border-box; 
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1); 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         }
         .search-item { padding: 10px 15px; border-bottom: 1px solid #f1f5f9; cursor: pointer; font-size: 14px; text-align: left; color: #333; }
         .search-item:hover, .search-item.active { background-color: #f0f7ff !important; font-weight: 700; color: var(--gov-blue); }
@@ -49,138 +48,52 @@
         .date-container { flex: 1; display: flex; align-items: center; justify-content: center; background: #fff; height: 100%; }
         .date-group { display: flex; align-items: center; gap: 1px; }
         .date-group input { width: 22px; border: none !important; text-align: center; font-size: 13px; font-weight: bold; color: var(--gov-blue); outline: none; background: transparent; padding: 0; }
-        .date-group span { color: #cbd5e1; font-weight: bold; font-size: 12px; }
+        .date-group span { color: #cbd5e1; font-weight: bold; font-size: 12px; margin: 0 4px !important; }
 
-        .price-container { 
-            flex: 2; display: flex; align-items: center; justify-content: flex-end;
-            padding: 0 10px; background: #fff; height: 100%; 
-        }
-        .price-input-wrap { display: flex; align-items: center; gap: 2px; flex-shrink: 0; }
+        .price-container { flex: 2; display: flex; align-items: center; justify-content: flex-start !important; gap: 5px !important; padding: 0 10px; background: #fff; height: 100%; }
+        .price-input-wrap { display: flex; align-items: center; gap: 2px; flex: none !important; }
         .price-input-wrap input { width: 55px; border: none; outline: none; font-size: 12px; font-weight: 700; color: var(--gov-gray); text-align: right; background: transparent; }
+        .price-container #deposit { width: 110px !important; text-align: right; }
+        .price-container #rent { width: 30px !important; text-align: right; }
         .price-unit { font-size: 12px; color: var(--gov-gray); font-weight: 700; white-space: nowrap; flex-shrink: 0; }
         .price-slash { color: #e2e8f0; margin: 0 6px; flex-shrink: 0; }
 
         #timeline-container {
-            visibility: hidden;
-            position: absolute;
-            left: calc(100% + 40px);
-            top: 20px; 
-            width: 700px;
-            z-index: 1000;
-            display: flex;
-            flex-direction: column;
+            visibility: hidden; position: absolute; left: calc(100% + 40px); top: 20px; 
+            width: 700px; z-index: 1000; display: flex; flex-direction: column;
         }
 
-        .contract-settings {
-            display: flex; align-items: center; gap: 15px; margin-bottom: 25px; font-size: 13px; color: var(--gov-gray); font-weight: 700;
-        }
+        .contract-settings { display: flex; align-items: center; gap: 15px; margin-bottom: 25px; font-size: 13px; color: var(--gov-gray); font-weight: 700; }
         .contract-settings input[type="radio"] { margin: 0 4px 0 0; accent-color: var(--gov-blue); cursor: pointer; }
         .contract-settings label { display: flex; align-items: center; cursor: pointer; }
         .year-input-wrap { display: flex; align-items: center; background: #f1f5f9; padding: 2px 8px; border-radius: 4px; border: 1px solid #e2e8f0;}
         .year-input-wrap input { width: 25px; border: none; background: transparent; text-align: right; font-weight: 900; color: var(--gov-blue); outline: none; font-size: 13px; margin-right: 2px;}
 
-        #date-visual-line { 
-            width: 100%; 
-            height: 30px;
-            display: flex;
-            align-items: center;
-            position: relative;
-        }
-        
+        #date-visual-line { width: 100%; height: 30px; display: flex; align-items: center; position: relative; }
         .timeline-node { width: 2px; height: 12px; background: var(--gov-blue); position: relative; flex-shrink: 0; }
         .timeline-segment { height: 2px; background: var(--gov-blue); transition: all 0.3s ease; position: relative; }
         .timeline-segment.past { flex: 1; opacity: 0.3; }
         .timeline-segment.future { flex: 1; opacity: 0.3; }
         .timeline-segment.current { flex: 6; opacity: 1; }
 
-      .timeline-tick-1yr {
-    position: absolute;
-    top: 50%; transform: translateY(-50%);
-    width: 2px;       
-    height: 10px;      
-    background: var(--gov-blue);
-    opacity: 0.8;      
-    z-index: 1;
-}
-
+        .timeline-tick-1yr { position: absolute; top: 50%; transform: translateY(-50%); width: 2px; height: 10px; background: var(--gov-blue); opacity: 0.8; z-index: 1; }
         .timeline-date-label { position: absolute; top: 14px; font-size: 12px; font-weight: 900; color: var(--gov-blue); transform: translateX(-50%); white-space: nowrap; }
         .timeline-date-label.past-label { font-size: 11px; opacity: 0.6; font-weight: 700; }
         .timeline-date-label.limit-label { color: var(--gov-red); font-size: 11px; }
 
-        .notice-box {
-            position: absolute;
-            height: 14px;
-            top: -6px; 
-            background: repeating-linear-gradient(45deg, rgba(228,3,45,0.1), rgba(228,3,45,0.1) 3px, transparent 3px, transparent 6px);
-            border: 1px solid rgba(228,3,45,0.4);
-            border-radius: 2px;
-            box-sizing: border-box;
-            z-index: 5;
-        }
-        
-        .notice-label {
-            position: absolute;
-            top: -18px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 11px;
-            color: var(--gov-red);
-            font-weight: 900;
-            white-space: nowrap;
-        }
+        .notice-box { position: absolute; height: 14px; top: -6px; background: repeating-linear-gradient(45deg, rgba(228,3,45,0.1), rgba(228,3,45,0.1) 3px, transparent 3px, transparent 6px); border: 1px solid rgba(228,3,45,0.4); border-radius: 2px; box-sizing: border-box; z-index: 5; }
+        .notice-label { position: absolute; top: -18px; left: 50%; transform: translateX(-50%); font-size: 11px; color: var(--gov-red); font-weight: 900; white-space: nowrap; }
+        .today-marker { position: absolute; top: -3px; width: 2px; height: 8px; background: var(--gov-red); z-index: 10; }
 
-        .today-marker {
-            position: absolute;
-            top: -3px;
-            width: 2px;
-            height: 8px;
-            background: var(--gov-red);
-            z-index: 10;
-        }
-
-        #notice-detail-info {
-            display: none;
-            width: 100%;
-            background: #fff;
-            border: 2px solid #eef2f6;
-            border-radius: 6px;
-            padding: 10px 15px;
-            box-sizing: border-box;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-            margin-top: 30px;
-        }
+        #notice-detail-info { display: none; width: 100%; background: #fff; border: 2px solid #eef2f6; border-radius: 6px; padding: 10px 15px; box-sizing: border-box; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-top: 30px; }
         .detail-row { display: flex; align-items: center; font-size: 13px; }
         .detail-badge.red { background: rgba(228,3,45,0.1); color: var(--gov-red); font-weight: 800; padding: 3px 8px; border-radius: 4px; margin-right: 10px; font-size: 12px; }
         .detail-text { font-weight: 800; display: flex; align-items: baseline; gap: 5px; color: var(--gov-red); }
         .detail-sub { font-size: 11px; color: var(--gov-light-gray); font-weight: 700; margin-left: 2px; }
 
-#result-area { 
-    flex: 1; 
-    overflow-y: auto; 
-    padding: 5px 15px; 
-    display: flex; 
-    flex-direction: column; 
-    position: relative; 
-}
-
-
-#rec-section {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 100%; 
-    min-height: 400px;
-}
-
-
-.intro-msg {
-    font-size: 24px;
-    font-weight: 800;
-    color: var(--gov-light-gray);
-    opacity: 0.4;
-    margin: 0;
-    letter-spacing: -1px;
-}
+        #result-area { flex: 1; overflow-y: auto; padding: 5px 15px; display: flex; flex-direction: column; position: relative; }
+        #rec-section { display: flex; align-items: center; justify-content: center; height: 100%; min-height: 400px; }
+        .intro-msg { font-size: 24px; font-weight: 800; color: var(--gov-light-gray); opacity: 0.4; margin: 0; letter-spacing: -1px; }
         .section-title { font-size: 14px; font-weight: 800; color: var(--gov-gray); margin: 5px 0 2px 0; display: flex; align-items: center; gap: 5px; }
         .section-title::before { content: ''; width: 3px; height: 12px; background: var(--gov-blue); }
 
@@ -203,30 +116,13 @@
         .contact-item b { color: var(--gov-red); font-weight: 900; font-size: 14px; }
         .sub-desc { font-size: 11px; color: #64748b; margin-left: 3px; font-weight: normal; }
 
-@keyframes fadeInUp {
-    from { opacity: 0; transform: translateY(15px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-.animate-update {
-    animation: fadeInUp 0.4s ease-out forwards;
-}
-     
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-update { animation: fadeInUp 0.4s ease-out forwards; }
 
         #calculator-container {
-            visibility: hidden;
-            position: absolute; 
-            top: 20px;
-            
-            
+            visibility: hidden; position: absolute; top: 20px; 
             left: calc(clamp(500px, 40vw, 650px) + 780px); 
-            
-            width: 440px;
-            background: #fff;
-            border: 2px solid var(--gov-blue);
-            border-radius: 6px;
-            padding: 10px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-            z-index: 9999;
+            width: 440px; background: #fff; border: 2px solid var(--gov-blue); border-radius: 6px; padding: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); z-index: 9999;
         }
         .calc-title { font-size: 14.5px; font-weight: 900; color: var(--gov-blue); margin-bottom: 12px; border-bottom: 2px solid #f1f5f9; padding-bottom: 8px;}
         .calc-setting { font-size: 13px; color: var(--gov-gray); font-weight: 800; margin-bottom: 15px; display: flex; align-items: center; gap: 5px;}
@@ -235,69 +131,20 @@
         .calc-box { margin-bottom: 15px; }
         .calc-subtitle { font-size: 13px; font-weight: 800; color: var(--gov-gray); margin-bottom: 6px; }
         .calc-row { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 4px; align-items: center; font-weight: 700;}    
-
-        .date-group span { margin: 0 4px !important; font-weight: 900 !important; color: #94a3b8 !important;}
-        .price-container { justify-content: flex-start !important; gap: 5px !important; }
-        .price-input-wrap { flex: none !important; }
-        
-        .price-container #deposit {
-            width: 110px !important; 
-            text-align: right;
+       
+        .category-box {
+            display: flex; flex-wrap: wrap; gap: 10px; padding: 12px 15px; margin: 15px 20px 0 5px; 
+            border: 1px solid #e2e8f0; background-color: #f8fafc; border-radius: 8px; max-width: 700px;
         }
-
-        .price-container #rent {
-            width: 30px !important; 
-            text-align: right;
+        .guide-btn {
+            flex: 1 1 calc((100% - 40px) / 5); box-sizing: border-box; text-align: center;
+            padding: 8px 10px; border: 1px solid #cbd5e1; background-color: #ffffff; border-radius: 5px;
+            cursor: pointer; font-weight: bold; color: #333; transition: all 0.2s; white-space: nowrap;
         }
-
-.category-box {
-    display: flex;
-    flex-wrap: wrap; 
-    gap: 10px;
-    padding: 12px 15px;
-    margin: 15px 20px 0 5px; 
-    border: 1px solid #e2e8f0; 
-    background-color: #f8fafc; 
-    border-radius: 8px;
-}
-
-
-.category-btn {
-   
-    flex: 1 1 calc((100% - 40px) / 5); 
-    box-sizing: border-box; 
-    text-align: center; 
-    
-    padding: 8px 10px; 
-    border: 1px solid #cbd5e1;
-    background-color: #ffffff;
-    border-radius: 5px;
-    cursor: pointer;
-    font-weight: bold;
-    color: #333;
-    transition: all 0.2s;
-    white-space: nowrap; 
-}
-
-
-.category-btn.active {
-    background-color: var(--gov-blue);
-    color: #ffffff;
-    border-color: var(--gov-blue);
-}
-
-
-.category-content-box {
-    margin: 10px 5px;
-    padding: 10px 0;
-    background-color: transparent;
-    border: none; 
-    min-height: 200px;
-}
-
-
-.info-panel { display: none; }
-.info-panel.active { display: block; }
+        .guide-btn.active { background-color: var(--gov-blue); color: #ffffff; border-color: var(--gov-blue); }
+        .category-content-box { margin: 10px 5px; padding: 10px 0; background-color: transparent; border: none; min-height: 200px; }
+        .guide-panel { display: none; }
+        .guide-panel.active { display: block; }
     </style>
 </head>
 <body>
@@ -345,64 +192,47 @@
                 <div id="date-visual-line"></div>
                 <div id="notice-detail-info"></div>
             </div>
-</div> <div id="category-container" style="position: absolute; left: calc(100% + 10px); top: 180px; width: 700px; z-index: 1000; display: none;">
+</div> <div id="category-container" style="position: absolute; left: calc(100% + 10px); top: 180px; width: calc(100vw - 100% - 30px); z-index: 1000; display: none;">
                 
                 <div class="category-box">
-                    <button class="category-btn active" onclick="showCategoryContent('charges/deposits increase/decrease', this)">차임/보증금 증감</button>
-                    <button class="category-btn" onclick="showCategoryContent('lease period', this)">임대차 기간</button>
-                    <button class="category-btn" onclick="showCategoryContent('deposit return', this)">보증금 반환</button>
-                    <button class="category-btn" onclick="showCategoryContent('crepair obligations', this)">유지수선 의무</button>
-                    <button class="category-btn" onclick="showCategoryContent('contract/ Analysis', this)">계약이행/해석</button>
-                    <button class="category-btn" onclick="showCategoryContent('termination of contract', this)">계약갱신/종료</button>
-                    <button class="category-btn" onclick="showCategoryContent('compensation for damages', this)">손해배상</button>
-                    <button class="category-btn" onclick="showCategoryContent('broker remuneration', this)">중개사 보수</button>
-                    <button class="category-btn" onclick="showCategoryContent('premium', this)">권리금</button>
-                    <button class="category-btn" onclick="showCategoryContent('standard contract', this)">표준계약서</button>
+                    <button class="guide-btn active" onclick="showCategoryContent('charges-deposits', this)">차임/보증금 증감</button>
+                    <button class="guide-btn" onclick="showCategoryContent('lease-period', this)">임대차 기간</button>
+                    <button class="guide-btn" onclick="showCategoryContent('deposit-return', this)">보증금 반환</button>
+                    <button class="guide-btn" onclick="showCategoryContent('repair-obligations', this)">유지수선 의무</button>
+                    <button class="guide-btn" onclick="showCategoryContent('contract-analysis', this)">계약이행/해석</button>
+                    <button class="guide-btn" onclick="showCategoryContent('termination-contract', this)">계약갱신/종료</button>
+                    <button class="guide-btn" onclick="showCategoryContent('compensation-damages', this)">손해배상</button>
+                    <button class="guide-btn" onclick="showCategoryContent('broker-remuneration', this)">중개사 보수</button>
+                    <button class="guide-btn" onclick="showCategoryContent('premium-rights', this)">권리금</button>
+                    <button class="guide-btn" onclick="showCategoryContent('standard-contract', this)">표준계약서</button>
                 </div>
-
-                <div class="category-content-box">
-                    <div id="charges/deposits increase/decrease" class="info-panel active">
-                        <h3>차임/보증금 증감 안내</h3>
-                        <p>여기에 차임/보증금 증감 관련 내용 및 검색 결과가 출력됩니다.</p>
+    <div class="category-content-box">
+                    <div id="charges-deposits" class="guide-panel active">
+                        <h3>📉 차임/보증금 증감 안내</h3>
+                        <div style="display: flex; margin-bottom: 15px;">
+                            <div style="white-space: nowrap; margin-right: 10px;">
+                                <strong>법조항:</strong> <a href="#" target="_blank" style="color:#2563eb; text-decoration:underline; font-weight:bold;">00법 제0조</a> ㅣ
+                            </div>
+                            <div style="line-height: 1.6; flex: 1; min-width: 0; word-break: break-all;">
+                                ① 여기에 법조항 상세 내용이 들어갑니다. 아무리 길어져도 우측으로 탈출하지 않고 예쁘게 줄바꿈이 일어납니다.
+                            </div>
+                        </div>
                     </div>
-                    <div id="lease period" class="info-panel">
-                        <h3>임대차 기간 관련 안내</h3>
-                        <p>여기에 임대차 기간 관련 내용 및 검색 결과가 출력됩니다.</p>
+                    
+                    <div id="lease-period" class="guide-panel">
+                        <h3>⏳ 임대차 기간 안내</h3>
+                        <p>임대차 기간 내용이 들어갑니다.</p>
                     </div>
-                    <div id="deposit return" class="info-panel">
-                        <h3>보증금 반환 관련 안내</h3>
-                        <p>여기에 보증금 반환 관련 내용 및 검색 결과가 출력됩니다.</p>
-                    </div>
-                    <div id="crepair obligations" class="info-panel">
-                        <h3>유지수선 의무 관련 안내</h3>
-                        <p>여기에 유지수선 의무 관련 내용이 출력됩니다.</p>
-                    </div>
-                    <div id="contract/ Analysis" class="info-panel">
-                        <h3>계약이행/해석 관련 안내</h3>
-                        <p>여기에 계약이행/해석 관련 내용이 출력됩니다.</p>
-                    </div>
-                        <div id="termination of contract" class="info-panel">
-                        <h3>계약갱신/종료 안내</h3>
-                        <p>여기에 계약갱신/종료 관련 내용이 출력됩니다.</p>
-                    </div>
-                    <div id="compensation for damages" class="info-panel">
-                        <h3>손해배상 관련 안내</h3>
-                        <p>여기에 손해배상 관련 내용이 출력됩니다.</p>
-                    </div>
-                      <div id="broker remuneration" class="info-panel">
-                        <h3>중개사 보수 관련 안내</h3>
-                        <p>여기에 중개사 보수 관련 내용이 출력됩니다.</p>
-                    </div>
-                    <div id="premium" class="info-panel">
-                        <h3>권리금관련 안내</h3>
-                        <p>여기에 권리금 관련 내용이 출력됩니다.</p>
-                    </div>
-                      <div id="standard contract" class="info-panel">
-                        <h3>표준계약서 관련 안내</h3>
-                        <p>여기에 표준계약서 관련 내용이 출력됩니다.</p>
-                    </div>
+                    <div id="deposit-return" class="guide-panel"><h3>보증금 반환</h3></div>
+                    <div id="repair-obligations" class="guide-panel"><h3>유지수선 의무</h3></div>
+                    <div id="contract-analysis" class="guide-panel"><h3>계약이행/해석</h3></div>
+                    <div id="termination-contract" class="guide-panel"><h3>계약갱신/종료</h3></div>
+                    <div id="compensation-damages" class="guide-panel"><h3>손해배상</h3></div>
+                    <div id="broker-remuneration" class="guide-panel"><h3>중개사 보수</h3></div>
+                    <div id="premium-rights" class="guide-panel"><h3>권리금</h3></div>
+                    <div id="standard-contract" class="guide-panel"><h3>표준계약서</h3></div>
                 </div>
-        </div>
+            </div>
         <div id="result-area">
             <div id="rec-section"><p class="intro-msg">주소를 입력해주세요</p></div>
             
@@ -744,22 +574,19 @@ function searchAddress() {
     });
 }
 function selectItem(item) {
+    document.getElementById("keyword").value = item.address_name;
+    document.getElementById("rec-section").style.display = "none";
+    document.getElementById('category-container').style.display = 'block';
     if (!item) return;
     addressList.style.display = "none";
     keywordInput.value = item.address_name;
     lastSearchKeyword = item.address_name;
     
-  
-    document.getElementById("rec-section").style.display = "none";
-    
-document.getElementById('category-container').style.display = 'block';
-    const subInfoArea = document.getElementById("sub-info-area");
-    subInfoArea.style.display = "block";
-    
-  
-    subInfoArea.classList.remove("animate-update");
-    void subInfoArea.offsetWidth;
-    subInfoArea.classList.add("animate-update");
+   const subInfoArea = document.getElementById("sub-info-area");
+            subInfoArea.style.display = "block";
+            subInfoArea.classList.remove("animate-update");
+            void subInfoArea.offsetWidth;
+            subInfoArea.classList.add("animate-update");
     
    
     findNearest(parseFloat(item.y), parseFloat(item.x), item.address_name);
@@ -855,15 +682,13 @@ document.addEventListener("click", (e) => {
 });
    
 function showCategoryContent(contentId, clickedButton) {
-    
-    document.querySelectorAll('.info-panel').forEach(function(panel) {
-        panel.classList.remove('active');
-    });
-    
-   
-    document.querySelectorAll('.category-box .category-btn').forEach(function(btn) {
-        btn.classList.remove('active');
-    });
+        
+            document.querySelectorAll('.guide-panel').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.category-box .guide-btn').forEach(b => b.classList.remove('active'));
+            
+            document.getElementById(contentId).classList.add('active');
+            clickedButton.classList.add('active');
+        }
     
   
     document.getElementById(contentId).classList.add('active');

@@ -17,36 +17,12 @@
         
         .main-wrapper { display: flex; height: 100vh; width: 100vw; background: #f8fafc; }
         
-        /* 1. 사이드바(왼쪽 영역) 기준점 설정 */
-#sidebar-search { 
-    width: 40vw; 
-    min-width: 500px; 
-    max-width: 650px; 
-    border-right: 1px solid #e2e8f0; 
-    display: flex; 
-    flex-direction: column; 
-    position: relative; /* ★이 줄이 반드시 있어야 오른쪽 창이 제대로 붙습니다★ */
-    z-index: 10;
-}
-
-/* 2. 관할기관 안내 (왼쪽 출력 영역) */
-#result-area { 
-    flex: 1; 
-    overflow-y: auto; 
-    padding: 10px 15px; 
-    display: flex;
-    flex-direction: column; 
-    background: #fff;
-}
-
-/* 3. 카테고리 안내창 (오른쪽 출력 영역) */
-#category-container {
-    flex: 1; /* 화면 오른쪽 끝까지 넓이를 스스로 차지함 */
-    background: #fff;
-    display: none; /* 검색 전에는 숨김 */
-    flex-direction: column;
-    border-left: 1px solid #cbd5e1;
-}   
+        #sidebar-search { 
+            width: 40vw; min-width: 500px; max-width: 650px; 
+            border-right: 1px solid #e2e8f0; 
+            display: flex; flex-direction: column; background: #fff; height: 100%; position: relative;
+        }
+        
         .search-header { padding: 15px 20px 20px 20px; border-bottom: 1px solid #f1f5f9; flex-shrink: 0; position: relative; z-index: 1000; }
         h1 { font-size: 1.1rem; margin: 0 0 15px 0; color: var(--gov-blue); font-weight: 900; }
         
@@ -58,55 +34,6 @@
         }
         
         .search-container { flex: 1.8; }
-        .law-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 10px;
-    border: 1px solid #e2e8f0;
-    table-layout: fixed; /* 칸 너비를 고정하기 위해 필수 */
-}
-
-.law-table tr {
-    border-bottom: 1px solid #e2e8f0;
-}
-
-/* 왼쪽: 법조항 이름 칸 */
-.law-label {
-    width: 120px; /* 왼쪽 칸 너비 고정 */
-    background-color: #f8fafc;
-    padding: 12px 10px;
-    font-weight: 800;
-    color: var(--gov-blue);
-    text-align: center;
-    border-right: 1px solid #e2e8f0;
-    vertical-align: top; /* 내용이 많아져도 제목은 위에 고정 */
-}
-
-.law-label a {
-    color: var(--gov-blue);
-    text-decoration: underline;
-    font-size: 13px;
-}
-
-/* 오른쪽: 법 내용 칸 */
-.law-desc {
-    padding: 12px 15px;
-    line-height: 1.6;
-    color: #333;
-    font-size: 13.5px;
-    word-break: break-all; /* 내용이 많아지면 자동으로 줄바꿈 */
-    background-color: #ffffff;
-}
-
-/* 3. 오른쪽 안내창(카테고리 컨테이너) 위치 고정 */
-#category-container {
-    position: absolute;
-    left: calc(100% + 15px); /* 사이드바 바로 오른쪽에 붙임 */
-    top: 0; /* 상단 높이 조절 */
-    width: 650px;
-    z-index: 1000;
-    display: none; /* 검색 전에는 숨김 */
-}
         input#keyword { width: 100%; padding: 0 12px; font-size: 14px; border: none; outline: none; background: transparent; }
         
         #addressList { 
@@ -361,96 +288,16 @@
 
 
 .category-content-box {
-    margin: 10px 20px;
+    margin: 10px 5px;
     padding: 10px 0;
     background-color: transparent;
     border: none; 
-    flex: 1; /* 내용 영역을 아래로 끝까지 확장 */
+    min-height: 200px;
 }
 
 
 .info-panel { display: none; }
 .info-panel.active { display: block; }
-        
-.law-container {
-    display: flex;
-    flex-direction: column;
-    gap: 0; 
-    border: 1px solid #cbd5e1;
-    border-radius: 4px;
-    overflow: hidden;
-    margin-top: 10px;
-}
-
-.law-row {
-    display: flex;
-    border-bottom: 1px solid #e2e8f0;
-    background: #fff;
-}
-
-.law-row:last-child {
-    border-bottom: none;
-}
-
-
-.law-title-cell {
-    flex: 0 0 160px; 
-    background-color: #f1f5f9;
-    padding: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-right: 1px solid #e2e8f0;
-    font-size: 13px;
-    font-weight: 800;
-    text-align: center;
-}
-
-.law-title-cell a {
-    color: var(--gov-blue);
-    text-decoration: underline;
-    word-break: keep-all;
-}
-
-
-.law-content-cell {
-    flex: 1; 
-    padding: 12px 15px;
-    font-size: 13.5px;
-    line-height: 1.6;
-    color: #333;
-    background-color: #ffffff;
-    word-break: break-all; 
-}
-        /* 법조항 표 스타일 */
-.law-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 15px;
-    border: 1px solid #e2e8f0;
-    table-layout: fixed; 
-}
-.law-table tr { border-bottom: 1px solid #e2e8f0; }
-.law-table td { padding: 12px; font-size: 13.5px; vertical-align: top; }
-
-/* 왼쪽: 법조항 이름 칸 */
-.law-label {
-    width: 130px; 
-    background-color: #f8fafc;
-    font-weight: 800;
-    color: var(--gov-blue);
-    text-align: center;
-    border-right: 1px solid #e2e8f0;
-}
-.law-label a { color: var(--gov-blue); text-decoration: underline; }
-
-/* 오른쪽: 법 내용 칸 */
-.law-desc {
-    line-height: 1.6;
-    color: #333;
-    word-break: break-all;
-    background-color: #fff;
-}
     </style>
 </head>
 <body>
@@ -494,7 +341,69 @@
                         <span style="font-size:12px; color:#64748b;">년</span>
                     </div>
                 </div>
-                 <div id="result-area">
+                
+                <div id="date-visual-line"></div>
+                <div id="notice-detail-info"></div>
+            </div>
+</div> <div id="category-container" style="position: absolute; left: calc(100% + 10px); top: 180px; width: 700px; z-index: 1000; display: none;">
+                
+                <div class="category-box">
+                    <button class="category-btn active" onclick="showCategoryContent('charges/deposits increase/decrease', this)">차임/보증금 증감</button>
+                    <button class="category-btn" onclick="showCategoryContent('lease period', this)">임대차 기간</button>
+                    <button class="category-btn" onclick="showCategoryContent('deposit return', this)">보증금 반환</button>
+                    <button class="category-btn" onclick="showCategoryContent('crepair obligations', this)">유지수선 의무</button>
+                    <button class="category-btn" onclick="showCategoryContent('contract/ Analysis', this)">계약이행/해석</button>
+                    <button class="category-btn" onclick="showCategoryContent('termination of contract', this)">계약갱신/종료</button>
+                    <button class="category-btn" onclick="showCategoryContent('compensation for damages', this)">손해배상</button>
+                    <button class="category-btn" onclick="showCategoryContent('broker remuneration', this)">중개사 보수</button>
+                    <button class="category-btn" onclick="showCategoryContent('premium', this)">권리금</button>
+                    <button class="category-btn" onclick="showCategoryContent('standard contract', this)">표준계약서</button>
+                </div>
+
+                <div class="category-content-box">
+                    <div id="charges/deposits increase/decrease" class="info-panel active">
+                        <h3>차임/보증금 증감 안내</h3>
+                        <p>여기에 차임/보증금 증감 관련 내용 및 검색 결과가 출력됩니다.</p>
+                    </div>
+                    <div id="lease period" class="info-panel">
+                        <h3>임대차 기간 관련 안내</h3>
+                        <p>여기에 임대차 기간 관련 내용 및 검색 결과가 출력됩니다.</p>
+                    </div>
+                    <div id="deposit return" class="info-panel">
+                        <h3>보증금 반환 관련 안내</h3>
+                        <p>여기에 보증금 반환 관련 내용 및 검색 결과가 출력됩니다.</p>
+                    </div>
+                    <div id="crepair obligations" class="info-panel">
+                        <h3>유지수선 의무 관련 안내</h3>
+                        <p>여기에 유지수선 의무 관련 내용이 출력됩니다.</p>
+                    </div>
+                    <div id="contract/ Analysis" class="info-panel">
+                        <h3>계약이행/해석 관련 안내</h3>
+                        <p>여기에 계약이행/해석 관련 내용이 출력됩니다.</p>
+                    </div>
+                        <div id="termination of contract" class="info-panel">
+                        <h3>계약갱신/종료 안내</h3>
+                        <p>여기에 계약갱신/종료 관련 내용이 출력됩니다.</p>
+                    </div>
+                    <div id="compensation for damages" class="info-panel">
+                        <h3>손해배상 관련 안내</h3>
+                        <p>여기에 손해배상 관련 내용이 출력됩니다.</p>
+                    </div>
+                      <div id="broker remuneration" class="info-panel">
+                        <h3>중개사 보수 관련 안내</h3>
+                        <p>여기에 중개사 보수 관련 내용이 출력됩니다.</p>
+                    </div>
+                    <div id="premium" class="info-panel">
+                        <h3>권리금관련 안내</h3>
+                        <p>여기에 권리금 관련 내용이 출력됩니다.</p>
+                    </div>
+                      <div id="standard contract" class="info-panel">
+                        <h3>표준계약서 관련 안내</h3>
+                        <p>여기에 표준계약서 관련 내용이 출력됩니다.</p>
+                    </div>
+                </div>
+        </div>
+        <div id="result-area">
             <div id="rec-section"><p class="intro-msg">주소를 입력해주세요</p></div>
             
             <div id="sub-info-area" style="display:none;">
@@ -543,95 +452,7 @@
                             <a href="https://www.law.go.kr/LSW/main.html" target="_blank" style="color: var(--gov-red); text-decoration: none; font-weight: 900; font-size: 14px;">https://www.law.go.kr</a>
                         </div>
                     </div>
-                </div> </div> </div>
-                <div id="date-visual-line"></div>
-                <div id="notice-detail-info"></div>
-            </div>
-</div> <div id="category-container">
-                
-                <div class="category-box">
-                    <button class="category-btn active" onclick="showCategoryContent('charges/deposits increase/decrease', this)">차임/보증금 증감</button>
-                    <button class="category-btn" onclick="showCategoryContent('lease period', this)">임대차 기간</button>
-                    <button class="category-btn" onclick="showCategoryContent('deposit return', this)">보증금 반환</button>
-                    <button class="category-btn" onclick="showCategoryContent('crepair obligations', this)">유지수선 의무</button>
-                    <button class="category-btn" onclick="showCategoryContent('contract/ Analysis', this)">계약이행/해석</button>
-                    <button class="category-btn" onclick="showCategoryContent('termination of contract', this)">계약갱신/종료</button>
-                    <button class="category-btn" onclick="showCategoryContent('compensation for damages', this)">손해배상</button>
-                    <button class="category-btn" onclick="showCategoryContent('broker remuneration', this)">중개사 보수</button>
-                    <button class="category-btn" onclick="showCategoryContent('premium', this)">권리금</button>
-                    <button class="category-btn" onclick="showCategoryContent('standard contract', this)">표준계약서</button>
-                </div>
-
-                <div class="category-content-box">
-                <div id="charges/deposits increase/decrease" class="info-panel active">
-   <h3 class="section-title">차임/보증금 증감 안내</h3>
-    
-    <table class="law-table">
-        <tr>
-            <td class="law-label">
-                <a href="https://www.law.go.kr/법령/주택임대차보호법/제7조" target="_blank">주임법 제7조</a>
-            </td>
-            <td class="law-desc">
-                당사자는 약정한 차임이나 보증금이 임차주택에 관한 조세, 공과금, 그 밖의 부담의 증감이나 경제사정의 변동으로 인하여 적절하지 아니하게 된 때에는 장래에 대하여 그 증감을 청구할 수 있습니다.
-            </td>
-        </tr>
-        
-        <tr>
-            <td class="law-label">
-                <a href="https://www.law.go.kr/법령/주택임대차보호법/제7조의2" target="_blank">주임법 제7조의2</a>
-            </td>
-            <td class="law-desc">
-                보증금의 전부 또는 일부를 월 단위의 차임으로 전환하는 경우에는 대통령령으로 정하는 비율을 곱한 월차임의 범위를 초과할 수 없습니다.
-            </td>
-        </tr>
-
-        <tr>
-            <td class="law-label">안내/결과</td>
-            <td class="law-desc" style="color: #64748b;">
-                여기에 차임/보증금 증감 관련 내용 및 검색 결과가 출력됩니다. 내용이 길어져도 왼쪽 칸을 침범하지 않고 아래로 늘어납니다.
-            </td>
-        </tr>
-    </table>
-</div>
-                    <div id="lease period" class="info-panel">
-                        <h3>임대차 기간 관련 안내</h3>
-                        <p>여기에 임대차 기간 관련 내용 및 검색 결과가 출력됩니다.</p>
-                    </div>
-                    <div id="deposit return" class="info-panel">
-                        <h3>보증금 반환 관련 안내</h3>
-                        <p>여기에 보증금 반환 관련 내용 및 검색 결과가 출력됩니다.</p>
-                    </div>
-                    <div id="crepair obligations" class="info-panel">
-                        <h3>유지수선 의무 관련 안내</h3>
-                        <p>여기에 유지수선 의무 관련 내용이 출력됩니다.</p>
-                    </div>
-                    <div id="contract/ Analysis" class="info-panel">
-                        <h3>계약이행/해석 관련 안내</h3>
-                        <p>여기에 계약이행/해석 관련 내용이 출력됩니다.</p>
-                    </div>
-                        <div id="termination of contract" class="info-panel">
-                        <h3>계약갱신/종료 안내</h3>
-                        <p>여기에 계약갱신/종료 관련 내용이 출력됩니다.</p>
-                    </div>
-                    <div id="compensation for damages" class="info-panel">
-                        <h3>손해배상 관련 안내</h3>
-                        <p>여기에 손해배상 관련 내용이 출력됩니다.</p>
-                    </div>
-                      <div id="broker remuneration" class="info-panel">
-                        <h3>중개사 보수 관련 안내</h3>
-                        <p>여기에 중개사 보수 관련 내용이 출력됩니다.</p>
-                    </div>
-                    <div id="premium" class="info-panel">
-                        <h3>권리금관련 안내</h3>
-                        <p>여기에 권리금 관련 내용이 출력됩니다.</p>
-                    </div>
-                      <div id="standard contract" class="info-panel">
-                        <h3>표준계약서 관련 안내</h3>
-                        <p>여기에 표준계약서 관련 내용이 출력됩니다.</p>
-                    </div>
-                </div>
-        </div>
-        </div> </div> <script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=d791798c38589fc7cdc6bce91d9369be&libraries=services"></script>
+                </div> </div> </div> </div> </div> <script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=d791798c38589fc7cdc6bce91d9369be&libraries=services"></script>
 <script>
 const offices = [
     {name:"한국부동산원 서울동부지사", type:"부동산원", covers:["서울", "도봉구", "강북구", "노원구", "성북구", "중랑구", "동대문구", "성동구", "광진구", "강동구"], lat:37.557698, lng:127.079226, phone:"02-3394-9870~3", address:"서울시 광진구 천호대로 549, 지타워 10층"},
@@ -931,11 +752,7 @@ function selectItem(item) {
   
     document.getElementById("rec-section").style.display = "none";
     
-const categoryCont = document.getElementById('category-container');
-        if (categoryCont) {
-            categoryCont.style.display = 'flex'; 
-            showCategoryContent('charges/deposits increase/decrease'); 
-        }
+document.getElementById('category-container').style.display = 'block';
     const subInfoArea = document.getElementById("sub-info-area");
     subInfoArea.style.display = "block";
     

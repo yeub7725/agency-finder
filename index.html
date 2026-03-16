@@ -248,9 +248,9 @@
             gap: 5px !important; 
         }
 
-        /* 💡 3. 보증금과 월세 입력칸 크기 다이어트 */
+  
         .price-input-wrap {
-            flex: none !important; /* 멋대로 늘어나는 성질 차단 */
+            flex: none !important; 
         }
         
         .price-container #deposit {
@@ -262,31 +262,29 @@
             width: 30px !important; 
             text-align: right;
         }
-        /* ========================================= */
-/* 추가된 카테고리 전용 디자인 */
-/* ========================================= */
-
-/* 카테고리 메뉴 영역 (주소창처럼 얇고 은은한 테두리) */
-/* 카테고리 메뉴 영역 */
+#category-container {
+    position: absolute;
+    left: calc(100% + 10px);
+    top: 180px;
+    width: 700px;
+    z-index: 1000;
+    display: none;
+}
 .category-box {
     display: flex;
-    flex-wrap: wrap; /* 🌟 가로 스크롤 대신 아래로 줄바꿈 되도록 수정 */
+    flex-wrap: wrap;
     gap: 10px;
     padding: 12px 15px;
-    margin: 15px 20px 0 5px; 
-    border: 1px solid #e2e8f0; 
-    background-color: #f8fafc; 
+    margin: 15px 20px 0 5px;
+    border: 1px solid #e2e8f0;
+    background-color: #f8fafc;
     border-radius: 8px;
 }
-
-/* 카테고리 버튼 디자인 */
 .category-btn {
-    /* 🌟 핵심: 전체 너비에서 버튼 사이 간격(10px씩 4개=40px)을 빼고 정확히 5등분 */
-    flex: 1 1 calc((100% - 40px) / 5); 
-    box-sizing: border-box; /* 패딩 포함해서 크기 계산 */
-    text-align: center; /* 글자 가운데 정렬 */
-    
-    padding: 8px 10px; 
+    flex: 1 1 calc((100% - 40px) / 5);
+    box-sizing: border-box;
+    text-align: center;
+    padding: 8px 10px;
     border: 1px solid #cbd5e1;
     background-color: #ffffff;
     border-radius: 5px;
@@ -294,26 +292,20 @@
     font-weight: bold;
     color: #333;
     transition: all 0.2s;
-    white-space: nowrap; 
+    white-space: nowrap;
 }
-
-/* 선택된 카테고리 버튼 (기존과 동일) */
 .category-btn.active {
     background-color: var(--gov-blue);
     color: #ffffff;
     border-color: var(--gov-blue);
 }
-
-/* 카테고리 내용 표시 창 (테두리 없음!) */
 .category-content-box {
     margin: 10px 5px;
     padding: 10px 0;
     background-color: transparent;
-    border: none; /* 빨간 테두리 제거 */
+    border: none;
     min-height: 200px;
 }
-
-/* 내용 패널 숨김/표시 처리 */
 .info-panel { display: none; }
 .info-panel.active { display: block; }
     </style>
@@ -365,23 +357,23 @@
             </div>
 </div> <div id="category-container" style="position: absolute; left: calc(100% + 10px); top: 180px; width: 700px; z-index: 1000; display: none;">
                 
-                <div class="category-box">
-                    <button class="category-btn active" onclick="showCategoryContent('charges/deposits increase/decrease', this)">차임/보증금 증감</button>
-                    <button class="category-btn" onclick="showCategoryContent('lease period', this)">임대차 기간</button>
-                    <button class="category-btn" onclick="showCategoryContent('deposit return', this)">보증금 반환</button>
-                    <button class="category-btn" onclick="showCategoryContent('crepair obligations', this)">유지수선 의무</button>
-                    <button class="category-btn" onclick="showCategoryContent('contract/ Analysis', this)">계약이행/해석</button>
-                    <button class="category-btn" onclick="showCategoryContent('termination of contract', this)">계약갱신/종료</button>
-                    <button class="category-btn" onclick="showCategoryContent('compensation for damages', this)">손해배상</button>
-                    <button class="category-btn" onclick="showCategoryContent('broker remuneration', this)">중개사 보수</button>
-                    <button class="category-btn" onclick="showCategoryContent('premium', this)">권리금</button>
-                    <button class="category-btn" onclick="showCategoryContent('standard contract', this)">표준계약서</button>
-                </div>
+              <div class="category-box">
+        <button class="category-btn active" onclick="showCategoryContent('charges-deposits', this)">차임/보증금 증감</button>
+        <button class="category-btn" onclick="showCategoryContent('lease-period', this)">임대차 기간</button>
+        <button class="category-btn" onclick="showCategoryContent('deposit-return', this)">보증금 반환</button>
+        <button class="category-btn" onclick="showCategoryContent('repair-obligations', this)">유지수선 의무</button>
+        <button class="category-btn" onclick="showCategoryContent('contract-analysis', this)">계약이행/해석</button>
+        <button class="category-btn" onclick="showCategoryContent('termination-contract', this)">계약갱신/종료</button>
+        <button class="category-btn" onclick="showCategoryContent('compensation-damages', this)">손해배상</button>
+        <button class="category-btn" onclick="showCategoryContent('broker-remuneration', this)">중개사 보수</button>
+        <button class="category-btn" onclick="showCategoryContent('premium-rights', this)">권리금</button>
+        <button class="category-btn" onclick="showCategoryContent('standard-contract', this)">표준계약서</button>
+    </div>
 
                 <div class="category-content-box">
                     <div id="charges/deposits increase/decrease" class="info-panel active">
                         <h3>차임/보증금 증감 안내</h3>
-                        <p>여기에 차임/보증금 증감 관련 내용 및 검색 결과가 출력됩니다.</p>
+                        <p>주택임대차보호법 제7조 1항 당사자는 약정한 차임이나 보증금이 임차주택에 관한 조세, 공과금, 그 밖의 부담의 증감이나 경제사정의 변동으로 인하여 적절하지 아니하게 된 때에는 장래에 대하여 그 증감을 청구할 수 있다. 이 경우 증액청구는 임대차계약 또는 약정한 차임이나 보증금의 증액이 있은 후 1년 이내에는 하지 못한다.</p>
                     </div>
                     <div id="lease period" class="info-panel">
                         <h3>임대차 기간 관련 안내</h3>
@@ -865,22 +857,24 @@ keywordInput.addEventListener("input", () => {
 document.addEventListener("click", (e) => {
     if (!e.target.closest('.search-row')) addressList.style.display = "none";
 });
-    // 카테고리 버튼 클릭 시 호출되는 함수
+
 function showCategoryContent(contentId, clickedButton) {
-    // 1. 모든 내용 패널 숨기기
-    document.querySelectorAll('.info-panel').forEach(function(panel) {
-        panel.classList.remove('active');
-    });
+    document.querySelectorAll('.info-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.category-box .category-btn').forEach(b => b.classList.remove('active'));
     
-    // 2. 모든 카테고리 버튼의 활성화 상태(파란색 배경) 끄기
+    document.getElementById(contentId).classList.add('active');
+    clickedButton.classList.add('active');
+});
+    
+
     document.querySelectorAll('.category-box .category-btn').forEach(function(btn) {
         btn.classList.remove('active');
     });
     
-    // 3. 클릭한 버튼에 연결된 내용 패널만 켜기
+ 
     document.getElementById(contentId).classList.add('active');
     
-    // 4. 클릭한 버튼 자체에 활성화 색상(파란색) 입히기
+ 
     clickedButton.classList.add('active');
 }
 </script>
@@ -1022,9 +1016,9 @@ let formulaStr = "";
             
                 let detailFormulaText = "";
                 if (!isCom) {
-                    detailFormulaText = "전환할 금액 X (한국은행 기준금리+대통령령(2%)) / 12";
+                    detailFormulaText = "전환할 금액 X (한국은행 기준금리+대통령령(2%)) or 연 10% 중 작은 것 / 12";
                 } else {
-                    detailFormulaText = "전환할 금액 X (한국은행 기준금리×대통령령(4.5배)) / 12";
+                    detailFormulaText = "전환할 금액 X (한국은행 기준금리×대통령령(4.5배)) or 연 12% 중 작은 것 / 12";
                 }
                 document.getElementById("calc-conv-detail-formula").innerText = detailFormulaText;
             } 

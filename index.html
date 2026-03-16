@@ -262,6 +262,54 @@
             width: 30px !important; 
             text-align: right;
         }
+        /* ========================================= */
+/* 추가된 카테고리 전용 디자인 */
+/* ========================================= */
+
+/* 카테고리 메뉴 영역 (주소창처럼 얇고 은은한 테두리) */
+.category-box {
+    display: flex;
+    gap: 10px;
+    padding: 12px 15px;
+    margin: 15px 20px 0 20px; /* 우측 상단 탭 아래에 여백을 줌 */
+    border: 1px solid #e2e8f0; /* 주소창과 비슷한 얇은 테두리 */
+    background-color: #f8fafc; /* 연한 회파란색 배경 */
+    border-radius: 8px;
+    overflow-x: auto;
+}
+
+/* 카테고리 버튼 디자인 (기존의 훌륭한 디자인 유지) */
+.category-btn {
+    padding: 8px 16px;
+    border: 1px solid #cbd5e1;
+    background-color: #ffffff;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    color: #333;
+    transition: all 0.2s;
+    white-space: nowrap; /* 글씨 줄바꿈 방지 */
+}
+
+/* 선택된 카테고리 버튼 */
+.category-btn.active {
+    background-color: var(--gov-blue);
+    color: #ffffff;
+    border-color: var(--gov-blue);
+}
+
+/* 카테고리 내용 표시 창 (테두리 없음!) */
+.category-content-box {
+    margin: 10px 20px;
+    padding: 10px 0;
+    background-color: transparent;
+    border: none; /* 빨간 테두리 제거 */
+    min-height: 200px;
+}
+
+/* 내용 패널 숨김/표시 처리 */
+.info-panel { display: none; }
+.info-panel.active { display: block; }
     </style>
 </head>
 <body>
@@ -309,7 +357,43 @@
                 <div id="date-visual-line"></div>
                 <div id="notice-detail-info"></div>
             </div>
+</div> <div id="category-container" style="position: absolute; left: calc(100% + 40px); top: 220px; width: 700px; z-index: 1000;">
+                
+                <div class="category-box">
+                    <button class="category-btn active" onclick="showCategoryContent('content-court', this)">법원</button>
+                    <button class="category-btn" onclick="showCategoryContent('content-registry', this)">등기소</button>
+                    <button class="category-btn" onclick="showCategoryContent('content-police', this)">경찰서</button>
+                    <button class="category-btn" onclick="showCategoryContent('content-family', this)">가족관계등록</button>
+                    <button class="category-btn" onclick="showCategoryContent('content-tax', this)">세무서</button>
+                    <button class="category-btn" onclick="showCategoryContent('content-health', this)">보건소</button>
+                </div>
 
+                <div class="category-content-box">
+                    <div id="content-court" class="info-panel active">
+                        <h3>법원 관련 안내</h3>
+                        <p>여기에 법원 관련 내용 및 검색 결과가 출력됩니다.</p>
+                    </div>
+                    <div id="content-registry" class="info-panel">
+                        <h3>등기소 관련 안내</h3>
+                        <p>여기에 등기소 관련 내용 및 검색 결과가 출력됩니다.</p>
+                    </div>
+                    <div id="content-police" class="info-panel">
+                        <h3>경찰서 관련 안내</h3>
+                        <p>여기에 경찰서 관련 내용 및 검색 결과가 출력됩니다.</p>
+                    </div>
+                    <div id="content-family" class="info-panel">
+                        <h3>가족관계등록 관련 안내</h3>
+                        <p>여기에 가족관계등록 관련 내용이 출력됩니다.</p>
+                    </div>
+                    <div id="content-tax" class="info-panel">
+                        <h3>세무서 관련 안내</h3>
+                        <p>여기에 세무서 관련 내용이 출력됩니다.</p>
+                    </div>
+                    <div id="content-health" class="info-panel">
+                        <h3>보건소 관련 안내</h3>
+                        <p>여기에 보건소 관련 내용이 출력됩니다.</p>
+                    </div>
+                </div>
         </div>
         <div id="result-area">
             <div id="rec-section"><p class="intro-msg">주소를 입력해주세요</p></div>
@@ -754,6 +838,24 @@ keywordInput.addEventListener("input", () => {
 document.addEventListener("click", (e) => {
     if (!e.target.closest('.search-row')) addressList.style.display = "none";
 });
+    // 카테고리 버튼 클릭 시 호출되는 함수
+function showCategoryContent(contentId, clickedButton) {
+    // 1. 모든 내용 패널 숨기기
+    document.querySelectorAll('.info-panel').forEach(function(panel) {
+        panel.classList.remove('active');
+    });
+    
+    // 2. 모든 카테고리 버튼의 활성화 상태(파란색 배경) 끄기
+    document.querySelectorAll('.category-box .category-btn').forEach(function(btn) {
+        btn.classList.remove('active');
+    });
+    
+    // 3. 클릭한 버튼에 연결된 내용 패널만 켜기
+    document.getElementById(contentId).classList.add('active');
+    
+    // 4. 클릭한 버튼 자체에 활성화 색상(파란색) 입히기
+    clickedButton.classList.add('active');
+}
 </script>
     <div id="calculator-container">
        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 2px solid var(--gov-blue); padding-bottom: 10px;">

@@ -1025,10 +1025,19 @@ let formulaStr = "";
 
             depositInputLocal.addEventListener("input", updateCalculator);
             rentInputLocal.addEventListener("input", updateCalculator);
-            baseRateInput.addEventListener("input", updateCalculator);
-            typeRadiosLocal.forEach(r => r.addEventListener('change', updateCalculator)); 
+           typeRadiosLocal.forEach(r => r.addEventListener('change', updateCalculator)); 
         })();
-    </script>
 
+        function showCategoryContent(contentId, clickedButton) {
+      
+            document.querySelectorAll('.info-panel').forEach(p => p.classList.remove('active'));
+ 
+            document.querySelectorAll('.category-box .category-btn').forEach(b => b.classList.remove('active'));
+
+            document.getElementById(contentId).classList.add('active');
+            clickedButton.classList.add('active');
+        }
+        
+    </script>
 </body>
 </html>

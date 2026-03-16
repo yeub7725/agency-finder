@@ -273,7 +273,7 @@
     flex-wrap: wrap; /* 🌟 가로 스크롤 대신 아래로 줄바꿈 되도록 수정 */
     gap: 10px;
     padding: 12px 15px;
-    margin: 15px 20px 0 20px; 
+    margin: 15px 20px 0 5px; 
     border: 1px solid #e2e8f0; 
     background-color: #f8fafc; 
     border-radius: 8px;
@@ -306,7 +306,7 @@
 
 /* 카테고리 내용 표시 창 (테두리 없음!) */
 .category-content-box {
-    margin: 10px 20px;
+    margin: 10px 5px;
     padding: 10px 0;
     background-color: transparent;
     border: none; /* 빨간 테두리 제거 */
@@ -363,7 +363,7 @@
                 <div id="date-visual-line"></div>
                 <div id="notice-detail-info"></div>
             </div>
-</div> <div id="category-container" style="position: absolute; left: calc(100% + 40px); top: 200px; width: 700px; z-index: 1000;">
+</div> <div id="category-container" style="position: absolute; left: calc(100% + 10px); top: 180px; width: 700px; z-index: 1000;" display: none;">
                 
                 <div class="category-box">
                     <button class="category-btn active" onclick="showCategoryContent('charges/deposits increase/decrease', this)">차임/보증금 증감</button>
@@ -374,7 +374,7 @@
                     <button class="category-btn" onclick="showCategoryContent('termination of contract', this)">계약갱신/종료</button>
                     <button class="category-btn" onclick="showCategoryContent('compensation for damages', this)">손해배상</button>
                     <button class="category-btn" onclick="showCategoryContent('broker remuneration', this)">중개사 보수</button>
-                    <button class="category-btn" onclick="showCategoryContent('renewal of contract', this)">계약갱신/종료</button>
+                    <button class="category-btn" onclick="showCategoryContent('premium', this)">권리금</button>
                     <button class="category-btn" onclick="showCategoryContent('standard contract', this)">표준계약서</button>
                 </div>
 
@@ -399,6 +399,10 @@
                         <h3>계약이행/해석 관련 안내</h3>
                         <p>여기에 계약이행/해석 관련 내용이 출력됩니다.</p>
                     </div>
+                        <div id="termination of contract" class="info-panel">
+                        <h3>계약갱신/종료 안내</h3>
+                        <p>여기에 계약갱신/종료 관련 내용이 출력됩니다.</p>
+                    </div>
                     <div id="compensation for damages" class="info-panel">
                         <h3>손해배상 관련 안내</h3>
                         <p>여기에 손해배상 관련 내용이 출력됩니다.</p>
@@ -407,15 +411,14 @@
                         <h3>중개사 보수 관련 안내</h3>
                         <p>여기에 중개사 보수 관련 내용이 출력됩니다.</p>
                     </div>
-                    <div id="renewal of contract" class="info-panel">
-                        <h3>계약갱신/종료 관련 안내</h3>
-                        <p>여기에 계약갱신/종료 관련 내용이 출력됩니다.</p>
+                    <div id="premium" class="info-panel">
+                        <h3>권리금관련 안내</h3>
+                        <p>여기에 권리금 관련 내용이 출력됩니다.</p>
                     </div>
                       <div id="renewal of contract" class="info-panel">
                         <h3>표준계약서 관련 안내</h3>
                         <p>여기에 표준계약서 관련 내용이 출력됩니다.</p>
                     </div>
-                    
                 </div>
         </div>
         <div id="result-area">
@@ -761,6 +764,7 @@ function selectItem(item) {
   
     document.getElementById("rec-section").style.display = "none";
     
+document.getElementById('category-container').style.display = 'block';
     const subInfoArea = document.getElementById("sub-info-area");
     subInfoArea.style.display = "block";
     

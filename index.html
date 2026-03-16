@@ -357,42 +357,59 @@
                 <div id="date-visual-line"></div>
                 <div id="notice-detail-info"></div>
             </div>
-</div> <div id="category-container" style="position: absolute; left: calc(100% + 40px); top: 220px; width: 700px; z-index: 1000;">
+</div> <div id="category-container" style="position: absolute; left: calc(100% + 40px); top: 200px; width: 700px; z-index: 1000;">
                 
                 <div class="category-box">
-                    <button class="category-btn active" onclick="showCategoryContent('content-court', this)">법원</button>
-                    <button class="category-btn" onclick="showCategoryContent('content-registry', this)">등기소</button>
-                    <button class="category-btn" onclick="showCategoryContent('content-police', this)">경찰서</button>
-                    <button class="category-btn" onclick="showCategoryContent('content-family', this)">가족관계등록</button>
-                    <button class="category-btn" onclick="showCategoryContent('content-tax', this)">세무서</button>
-                    <button class="category-btn" onclick="showCategoryContent('content-health', this)">보건소</button>
+                    <button class="category-btn active" onclick="showCategoryContent('charges/deposits increase/decrease', this)">차임/보증금 증감</button>
+                    <button class="category-btn" onclick="showCategoryContent('lease period', this)">임대차 기간</button>
+                    <button class="category-btn" onclick="showCategoryContent('deposit return', this)">보증금 반환</button>
+                    <button class="category-btn" onclick="showCategoryContent('crepair obligations', this)">유지수선 의무</button>
+                    <button class="category-btn" onclick="showCategoryContent('contract/ Analysis', this)">계약이행/해석</button>
+                    <button class="category-btn" onclick="showCategoryContent('termination of contract', this)">계약갱신/종료</button>
+                    <button class="category-btn" onclick="showCategoryContent('compensation for damages', this)">손해배상</button>
+                    <button class="category-btn" onclick="showCategoryContent('broker remuneration', this)">중개사 보수</button>
+                    <button class="category-btn" onclick="showCategoryContent('renewal of contract', this)">계약갱신/종료</button>
+                    <button class="category-btn" onclick="showCategoryContent('standard contract', this)">표준계약서</button>
                 </div>
 
                 <div class="category-content-box">
-                    <div id="content-court" class="info-panel active">
-                        <h3>법원 관련 안내</h3>
-                        <p>여기에 법원 관련 내용 및 검색 결과가 출력됩니다.</p>
+                    <div id="charges/deposits increase/decrease" class="info-panel active">
+                        <h3>차임/보증금 증감 안내</h3>
+                        <p>여기에 차임/보증금 증감 관련 내용 및 검색 결과가 출력됩니다.</p>
                     </div>
-                    <div id="content-registry" class="info-panel">
-                        <h3>등기소 관련 안내</h3>
-                        <p>여기에 등기소 관련 내용 및 검색 결과가 출력됩니다.</p>
+                    <div id="lease period" class="info-panel">
+                        <h3>임대차 기간 관련 안내</h3>
+                        <p>여기에 임대차 기간 관련 내용 및 검색 결과가 출력됩니다.</p>
                     </div>
-                    <div id="content-police" class="info-panel">
-                        <h3>경찰서 관련 안내</h3>
-                        <p>여기에 경찰서 관련 내용 및 검색 결과가 출력됩니다.</p>
+                    <div id="deposit return" class="info-panel">
+                        <h3>보증금 반환 관련 안내</h3>
+                        <p>여기에 보증금 반환 관련 내용 및 검색 결과가 출력됩니다.</p>
                     </div>
-                    <div id="content-family" class="info-panel">
-                        <h3>가족관계등록 관련 안내</h3>
-                        <p>여기에 가족관계등록 관련 내용이 출력됩니다.</p>
+                    <div id="crepair obligations" class="info-panel">
+                        <h3>유지수선 의무 관련 안내</h3>
+                        <p>여기에 유지수선 의무 관련 내용이 출력됩니다.</p>
                     </div>
-                    <div id="content-tax" class="info-panel">
-                        <h3>세무서 관련 안내</h3>
-                        <p>여기에 세무서 관련 내용이 출력됩니다.</p>
+                    <div id="contract/ Analysis" class="info-panel">
+                        <h3>계약이행/해석 관련 안내</h3>
+                        <p>여기에 계약이행/해석 관련 내용이 출력됩니다.</p>
                     </div>
-                    <div id="content-health" class="info-panel">
-                        <h3>보건소 관련 안내</h3>
-                        <p>여기에 보건소 관련 내용이 출력됩니다.</p>
+                    <div id="compensation for damages" class="info-panel">
+                        <h3>손해배상 관련 안내</h3>
+                        <p>여기에 손해배상 관련 내용이 출력됩니다.</p>
                     </div>
+                      <div id="broker remuneration" class="info-panel">
+                        <h3>중개사 보수 관련 안내</h3>
+                        <p>여기에 중개사 보수 관련 내용이 출력됩니다.</p>
+                    </div>
+                    <div id="renewal of contract" class="info-panel">
+                        <h3>계약갱신/종료 관련 안내</h3>
+                        <p>여기에 계약갱신/종료 관련 내용이 출력됩니다.</p>
+                    </div>
+                      <div id="renewal of contract" class="info-panel">
+                        <h3>표준계약서 관련 안내</h3>
+                        <p>여기에 표준계약서 관련 내용이 출력됩니다.</p>
+                    </div>
+                    
                 </div>
         </div>
         <div id="result-area">

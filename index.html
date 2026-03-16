@@ -14,28 +14,28 @@
         }
 
         body, html { margin: 0; padding: 0; height: 100%; font-family: 'Noto Sans KR', sans-serif; overflow: hidden; background: #fff; }
-        
+
         .main-wrapper { display: flex; height: 100vh; width: 100vw; background: #f8fafc; }
-        
+
         #sidebar-search { 
             width: 40vw; min-width: 500px; max-width: 650px; 
             border-right: 1px solid #e2e8f0; 
             display: flex; flex-direction: column; background: #fff; height: 100%; position: relative;
         }
-        
+
         .search-header { padding: 15px 20px 20px 20px; border-bottom: 1px solid #f1f5f9; flex-shrink: 0; position: relative; z-index: 1000; }
         h1 { font-size: 1.1rem; margin: 0 0 15px 0; color: var(--gov-blue); font-weight: 900; }
-        
+
         .search-row { 
             display: flex; align-items: center; width: 100%; 
             border: 2px solid var(--gov-blue); border-radius: 4px; 
             background: #fff; box-sizing: border-box; height: 40px;
             position: relative; 
         }
-        
+
         .search-container { flex: 1.8; }
         input#keyword { width: 100%; padding: 0 12px; font-size: 14px; border: none; outline: none; background: transparent; }
-        
+
         #addressList { 
             position: absolute; top: calc(100%); left: -2px; width: calc(100% + 4px); 
             border: 2px solid var(--gov-blue); border-top: 1px solid #eee; border-radius: 0 0 4px 4px;
@@ -86,7 +86,7 @@
             align-items: center;
             position: relative;
         }
-        
+
         .timeline-node { width: 2px; height: 12px; background: var(--gov-blue); position: relative; flex-shrink: 0; }
         .timeline-segment { height: 2px; background: var(--gov-blue); transition: all 0.3s ease; position: relative; }
         .timeline-segment.past { flex: 1; opacity: 0.3; }
@@ -117,7 +117,7 @@
             box-sizing: border-box;
             z-index: 5;
         }
-        
+
         .notice-label {
             position: absolute;
             top: -18px;
@@ -210,16 +210,16 @@
 .animate-update {
     animation: fadeInUp 0.4s ease-out forwards;
 }
-     
+
 
         #calculator-container {
             visibility: hidden;
             position: absolute; 
             top: 20px;
-            
-            
+
+
             left: calc(clamp(500px, 40vw, 650px) + 780px); 
-            
+
             width: 440px;
             background: #fff;
             border: 2px solid var(--gov-blue);
@@ -242,17 +242,17 @@
             color: #94a3b8 !important;   
         }
 
-     
+
         .price-container {
             justify-content: flex-start !important; 
             gap: 5px !important; 
         }
 
-  
+        /* 💡 3. 보증금과 월세 입력칸 크기 다이어트 */
         .price-input-wrap {
-            flex: none !important; 
+            flex: none !important; /* 멋대로 늘어나는 성질 차단 */
         }
-        
+
         .price-container #deposit {
             width: 110px !important; 
             text-align: right;
@@ -262,29 +262,31 @@
             width: 30px !important; 
             text-align: right;
         }
-#category-container {
-    position: absolute;
-    left: calc(100% + 10px);
-    top: 180px;
-    width: 700px;
-    z-index: 1000;
-    display: none;
-}
+        /* ========================================= */
+/* 추가된 카테고리 전용 디자인 */
+/* ========================================= */
+
+/* 카테고리 메뉴 영역 (주소창처럼 얇고 은은한 테두리) */
+/* 카테고리 메뉴 영역 */
 .category-box {
     display: flex;
-    flex-wrap: wrap;
+    flex-wrap: wrap; /* 🌟 가로 스크롤 대신 아래로 줄바꿈 되도록 수정 */
     gap: 10px;
     padding: 12px 15px;
-    margin: 15px 20px 0 5px;
-    border: 1px solid #e2e8f0;
-    background-color: #f8fafc;
+    margin: 15px 20px 0 5px; 
+    border: 1px solid #e2e8f0; 
+    background-color: #f8fafc; 
     border-radius: 8px;
 }
+
+/* 카테고리 버튼 디자인 */
 .category-btn {
-    flex: 1 1 calc((100% - 40px) / 5);
-    box-sizing: border-box;
-    text-align: center;
-    padding: 8px 10px;
+    /* 🌟 핵심: 전체 너비에서 버튼 사이 간격(10px씩 4개=40px)을 빼고 정확히 5등분 */
+    flex: 1 1 calc((100% - 40px) / 5); 
+    box-sizing: border-box; /* 패딩 포함해서 크기 계산 */
+    text-align: center; /* 글자 가운데 정렬 */
+
+    padding: 8px 10px; 
     border: 1px solid #cbd5e1;
     background-color: #ffffff;
     border-radius: 5px;
@@ -292,20 +294,26 @@
     font-weight: bold;
     color: #333;
     transition: all 0.2s;
-    white-space: nowrap;
+    white-space: nowrap; 
 }
+
+/* 선택된 카테고리 버튼 (기존과 동일) */
 .category-btn.active {
     background-color: var(--gov-blue);
     color: #ffffff;
     border-color: var(--gov-blue);
 }
+
+/* 카테고리 내용 표시 창 (테두리 없음!) */
 .category-content-box {
     margin: 10px 5px;
     padding: 10px 0;
     background-color: transparent;
-    border: none;
+    border: none; /* 빨간 테두리 제거 */
     min-height: 200px;
 }
+
+/* 내용 패널 숨김/표시 처리 */
 .info-panel { display: none; }
 .info-panel.active { display: block; }
     </style>
@@ -340,7 +348,7 @@
                 </div>
                 <div id="addressList"></div>
             </div>
-            
+
             <div id="timeline-container">
                 <div class="contract-settings">
                     <label><input type="radio" name="bldgType" value="house" checked> 주택</label>
@@ -351,13 +359,14 @@
                         <span style="font-size:12px; color:#64748b;">년</span>
                     </div>
                 </div>
-                
+
                 <div id="date-visual-line"></div>
                 <div id="notice-detail-info"></div>
             </div>
+</div> <div id="category-container" style="position: absolute; left: calc(100% + 10px); top: 180px; width: 700px; z-index: 1000;" display: none;">
 </div> <div id="category-container" style="position: absolute; left: calc(100% + 10px); top: 180px; width: 700px; z-index: 1000; display: none;">
-                
-              <div class="category-box">
+
+             <div class="category-box">
         <button class="category-btn active" onclick="showCategoryContent('charges-deposits', this)">차임/보증금 증감</button>
         <button class="category-btn" onclick="showCategoryContent('lease-period', this)">임대차 기간</button>
         <button class="category-btn" onclick="showCategoryContent('deposit-return', this)">보증금 반환</button>
@@ -373,7 +382,7 @@
                 <div class="category-content-box">
                     <div id="charges/deposits increase/decrease" class="info-panel active">
                         <h3>차임/보증금 증감 안내</h3>
-                        <p>주택임대차보호법 제7조 1항 당사자는 약정한 차임이나 보증금이 임차주택에 관한 조세, 공과금, 그 밖의 부담의 증감이나 경제사정의 변동으로 인하여 적절하지 아니하게 된 때에는 장래에 대하여 그 증감을 청구할 수 있다. 이 경우 증액청구는 임대차계약 또는 약정한 차임이나 보증금의 증액이 있은 후 1년 이내에는 하지 못한다.</p>
+                        <p>주임법 제7조 차임 등의 증감청구권 : 당사자는 약정한 차임이나 보증금이 임차주택에 관한 조세, 공과금, 그 밖의 부담의 증감이나 경제사정의 변동으로 인하여 적절하지 아니하게 된 때에는 장래에 대하여 그 증감을 청구할 수 있다. 이 경우 증액청구는 임대차계약 또는 약정한 차임이나 보증금의 증액이 있은 후 1년 이내에는 하지 못한다.</p>
                     </div>
                     <div id="lease period" class="info-panel">
                         <h3>임대차 기간 관련 안내</h3>
@@ -415,10 +424,10 @@
         </div>
         <div id="result-area">
             <div id="rec-section"><p class="intro-msg">주소를 입력해주세요</p></div>
-            
+
             <div id="sub-info-area" style="display:none;">
                 <div id="office-list"></div>
-                
+
                 <div id="bottom-static-info">
                     <div class="section-title">신청 시 필요 서류</div>
                     <div class="info-box">
@@ -541,7 +550,7 @@ function renderAdvancedTimeline(startDate) {
     timelineContainer.style.visibility = "visible";
     visualLine.innerHTML = '';
     detailInfoBox.style.display = "none";
-    
+
     let isCom = document.querySelector('input[name="bldgType"]:checked').value === 'com';
     let initYears = parseInt(initYearsInput.value) || 1;
     let noticeEndMonth = isCom ? 1 : 2; 
@@ -555,7 +564,7 @@ function renderAdvancedTimeline(startDate) {
 
     let current = new Date(startDate);
     current.setFullYear(current.getFullYear() + initYears);
-    
+
     if (isCom && current > maxComDate) current = new Date(maxComDate);
     dates.push(new Date(current));
 
@@ -572,11 +581,11 @@ function renderAdvancedTimeline(startDate) {
 
         let next = new Date(current);
         next.setFullYear(next.getFullYear() + 2);
-        
+
         if (isCom && next > maxComDate) {
             next = new Date(maxComDate);
         }
-        
+
         dates.push(new Date(next));
         current = new Date(next);
     }
@@ -594,10 +603,10 @@ function renderAdvancedTimeline(startDate) {
     for (let i = 0; i < totalNodes; i++) {
         let node = document.createElement('div');
         node.className = 'timeline-node';
-        
+
         let label = document.createElement('div');
         label.className = 'timeline-date-label';
-        
+
         if (i === activeIndex || i === activeIndex + 1) {
             label.innerText = formatDate(dates[i]); 
             label.style.fontWeight = '900';
@@ -613,23 +622,23 @@ function renderAdvancedTimeline(startDate) {
             label.style.textAlign = 'center';
             label.style.top = '14px';
         }
-        
+
         node.appendChild(label);
         visualLine.appendChild(node);
 
         if (i < totalNodes - 1) {
             let segment = document.createElement('div');
             segment.className = 'timeline-segment';
-            
+
             if (i === activeIndex) {
                 segment.classList.add('current');
-                
+
                 let periodStart = dates[i];
                 let periodEnd = dates[i+1];
-                
+
                 let noticeStart = new Date(periodEnd);
                 noticeStart.setMonth(noticeStart.getMonth() - 6);
-                
+
                 let noticeEnd = new Date(periodEnd);
                 noticeEnd.setMonth(noticeEnd.getMonth() - noticeEndMonth);
 
@@ -644,7 +653,7 @@ function renderAdvancedTimeline(startDate) {
                 noticeBox.className = 'notice-box';
                 noticeBox.style.left = `${leftPct}%`;
                 noticeBox.style.width = `${widthPct}%`;
-                
+
                 let noticeLabel = document.createElement('div');
                 noticeLabel.className = 'notice-label';
                 noticeLabel.innerText = '갱신의사 표시기간';
@@ -676,7 +685,7 @@ function renderAdvancedTimeline(startDate) {
             } else {
                 segment.classList.add('future');
             }
-            
+
             let durationYears = (dates[i+1].getTime() - dates[i].getTime()) / (365.25 * 24 * 60 * 60 * 1000);
             if (durationYears > 1.5) {
                 let totalMs = dates[i+1].getTime() - dates[i].getTime();
@@ -733,7 +742,7 @@ function searchAddress() {
                 const div = document.createElement("div");
                 div.className = "search-item";
                 div.innerText = item.address_name;
-                
+
                 div.onmouseenter = () => {
                     focusedIndex = idx;
                     Array.from(addressList.children).forEach((child, i) => {
@@ -752,20 +761,20 @@ function selectItem(item) {
     addressList.style.display = "none";
     keywordInput.value = item.address_name;
     lastSearchKeyword = item.address_name;
-    
-  
+
+
     document.getElementById("rec-section").style.display = "none";
-    
+
 document.getElementById('category-container').style.display = 'block';
     const subInfoArea = document.getElementById("sub-info-area");
     subInfoArea.style.display = "block";
-    
-  
+
+
     subInfoArea.classList.remove("animate-update");
     void subInfoArea.offsetWidth;
     subInfoArea.classList.add("animate-update");
-    
-   
+
+
     findNearest(parseFloat(item.y), parseFloat(item.x), item.address_name);
 }
 
@@ -823,7 +832,7 @@ keywordInput.addEventListener("keydown", (e) => {
         if (items.length === 0) return;
         e.preventDefault();
         isNavigating = true; 
-        
+
         if (e.key === "ArrowDown") {
             focusedIndex = (focusedIndex + 1) % items.length;
         } else {
@@ -833,7 +842,7 @@ keywordInput.addEventListener("keydown", (e) => {
         Array.from(items).forEach((item, i) => {
             item.classList.toggle("active", i === focusedIndex);
         });
-        
+
         if(focusedIndex > -1) {
             keywordInput.value = currentAddressResults[focusedIndex].address_name;
         }
@@ -857,48 +866,46 @@ keywordInput.addEventListener("input", () => {
 document.addEventListener("click", (e) => {
     if (!e.target.closest('.search-row')) addressList.style.display = "none";
 });
-
+    // 카테고리 버튼 클릭 시 호출되는 함수
 function showCategoryContent(contentId, clickedButton) {
-    document.querySelectorAll('.info-panel').forEach(p => p.classList.remove('active'));
-    document.querySelectorAll('.category-box .category-btn').forEach(b => b.classList.remove('active'));
-    
-    document.getElementById(contentId).classList.add('active');
-    clickedButton.classList.add('active');
-});
-    
+    // 1. 모든 내용 패널 숨기기
+    document.querySelectorAll('.info-panel').forEach(function(panel) {
+        panel.classList.remove('active');
+    });
 
+    // 2. 모든 카테고리 버튼의 활성화 상태(파란색 배경) 끄기
     document.querySelectorAll('.category-box .category-btn').forEach(function(btn) {
         btn.classList.remove('active');
     });
-    
- 
+
+    // 3. 클릭한 버튼에 연결된 내용 패널만 켜기
     document.getElementById(contentId).classList.add('active');
-    
- 
+
+    // 4. 클릭한 버튼 자체에 활성화 색상(파란색) 입히기
     clickedButton.classList.add('active');
 }
 </script>
     <div id="calculator-container">
        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 2px solid var(--gov-blue); padding-bottom: 10px;">
-            
+
             <div style="font-size: 14px; font-weight: 900; color: var(--gov-blue);">보증금/월차임 상한 & 전환 계산기</div>
-            
+
             <div style="display: flex; align-items: center; gap: 3px;">
                 <span style="font-size: 11px; color: var(--gov-gray);">기준금리:</span>
                 <input type="number" id="baseRateInput" value="2.5" step="0.1" style="width: 45px; padding: 2px; text-align: center; border: 1px solid #cbd5e1; border-radius: 3px; font-weight: bold; color: var(--gov-red); outline: none;">
                 <span style="font-size: 11px; color: var(--gov-gray);">%</span>
             </div>
-            
+
         </div>
-        
+
        <div class="calc-box">
             <div class="calc-subtitle">1. 5% 증액 범위 (합의 시)</div>
-            
+
             <div class="calc-row">
                 <span>보증금 증액: <span style="font-size:11px; color:#64748b; font-weight:normal;"></span></span> 
                 <b id="calc-max-deposit">-</b>
             </div>
-            
+
             <div class="calc-row">
                 <span>월차임 증액: <span style="font-size:11px; color:#64748b; font-weight:normal;"></span></span> 
                 <b id="calc-max-rent">-</b>
@@ -912,20 +919,20 @@ function showCategoryContent(contentId, clickedButton) {
                     전환 보증금: <input type="text" id="convDepositInput" value="0" style="width: 55px; text-align: right; border: 1px solid #cbd5e1; border-radius: 3px; font-weight: 900; color: var(--gov-blue); outline: none; padding: 2px;"> 만원
                 </span>
             </div>
-            
+
             <div class="calc-row"><span>적용 전환율:</span> <b id="calc-conv-rate" style="color:var(--gov-red);">-</b></div>
             <div class="calc-row" style="font-size:11px; color:#64748b; margin-top:-4px; margin-bottom:6px;" id="calc-conv-formula"></div>
-            
+
           <div style="background:#f8fafc; padding:10px; border-radius:4px; border: 1px solid #e2e8f0;">
-                
+
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
                     <span style="font-size: 12px; font-weight: 700;">보증금 <b id="calc-conv-target-text" style="color:var(--gov-gray);">0원</b> 월세 전환 시</span>
                     <span style="font-size: 13px; font-weight: 900;">➔ 월 <b id="calc-conv-example" style="color:var(--gov-blue); font-size:15px;">-</b></span>
                 </div>
-                
+
                 <div id="calc-conv-detail-formula" style="font-size: 11px; color: #94a3b8; text-align: right; letter-spacing: -0.5px;">
                     </div>
-                
+
             </div>
         </div>
     </div>
@@ -937,11 +944,11 @@ function showCategoryContent(contentId, clickedButton) {
             const depositInputLocal = document.getElementById("deposit");
             const rentInputLocal = document.getElementById("rent");
             const typeRadiosLocal = document.querySelectorAll('input[name="bldgType"]');
-            
-       
+
+
             const convDepositInput = document.getElementById("convDepositInput");
 
-           
+
             if(convDepositInput) {
                 convDepositInput.addEventListener("input", function(e) {
                     let value = e.target.value.replace(/,/g, '').replace(/[^0-9]/g, '');
@@ -957,7 +964,7 @@ function showCategoryContent(contentId, clickedButton) {
             function updateCalculator() {
                 let depositVal = parseInt(depositInputLocal.value.replace(/,/g, '')) || 0;
                 let rentVal = parseInt(rentInputLocal.value.replace(/,/g, '')) || 0;
-                
+
                 if (depositVal > 0 || rentVal > 0) {
                     calcContainer.style.visibility = "visible";
                 } else {
@@ -968,7 +975,7 @@ function showCategoryContent(contentId, clickedButton) {
                 let baseRate = parseFloat(baseRateInput.value) || 0;
                 let isCom = document.querySelector('input[name="bldgType"]:checked').value === 'com';
 
-      
+
 let maxDep = Math.floor(depositVal * 0.05);
 let maxRent = rentVal * 0.05;
 
@@ -986,8 +993,8 @@ if (document.getElementById("calc-max-rent")) {
 
 let conversionRate = 0;
 let formulaStr = "";
-                
-            
+
+
                 if (!isCom) { 
                     let r2 = baseRate + 2.0;
                     conversionRate = Math.min(10, r2);
@@ -1001,43 +1008,34 @@ let formulaStr = "";
                 document.getElementById("calc-conv-rate").innerText = `${Number(conversionRate.toFixed(2))}%`;
                 document.getElementById("calc-conv-formula").innerText = formulaStr;
 
-            
+
                 let convDepStr = convDepositInput.value.replace(/,/g, '');
                 let convDepVal = parseInt(convDepStr) || 0; // 단위: 만 원
-                
-               
+
+
                 document.getElementById("calc-conv-target-text").innerText = convDepVal > 0 ? convDepVal.toLocaleString() + "만 원" : "0원";
 
-              
-            
+
+
                 let monthlyAdd = (convDepVal * 10000) * (conversionRate / 100) / 12;
                 document.getElementById("calc-conv-example").innerText = Math.floor(monthlyAdd).toLocaleString() + "원";
-                
-            
+
+
                 let detailFormulaText = "";
                 if (!isCom) {
                     detailFormulaText = "전환할 금액 X (한국은행 기준금리+대통령령(2%)) or 연 10% 중 작은 것 / 12";
                 } else {
-                    detailFormulaText = "전환할 금액 X (한국은행 기준금리×대통령령(4.5배)) or 연 12% 중 작은 것 / 12";
+                    detailFormulaText = "전환할 금액 X (한국은행 기준금리×대통령령(4.5배)) or 연 12% 중 작은 것/ 12";
                 }
                 document.getElementById("calc-conv-detail-formula").innerText = detailFormulaText;
             } 
 
             depositInputLocal.addEventListener("input", updateCalculator);
             rentInputLocal.addEventListener("input", updateCalculator);
-           typeRadiosLocal.forEach(r => r.addEventListener('change', updateCalculator)); 
+            baseRateInput.addEventListener("input", updateCalculator);
+            typeRadiosLocal.forEach(r => r.addEventListener('change', updateCalculator)); 
         })();
-
-        function showCategoryContent(contentId, clickedButton) {
-      
-            document.querySelectorAll('.info-panel').forEach(p => p.classList.remove('active'));
- 
-            document.querySelectorAll('.category-box .category-btn').forEach(b => b.classList.remove('active'));
-
-            document.getElementById(contentId).classList.add('active');
-            clickedButton.classList.add('active');
-        }
-        
     </script>
+
 </body>
 </html>

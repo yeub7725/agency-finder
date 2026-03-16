@@ -436,14 +436,20 @@
                                 <span class="contact-label">한국부동산원</span>
                                 <span class="sub-desc" style="margin-left: 6px;">홈페이지 - 4번째 배너 - 분쟁조정 신청하기</span>
                             </div>
-                            <a href="https://www.reb.or.kr/" target="_blank" style="color: var(--gov-red); text-decoration: none; font-weight: 900; font-size: 14px;">https://www.reb.or.kr/</a>
+                            <a href="https://www.reb.or.kr/" target="_blank" style="color: var(--gov-red); text-decoration: none; font-weight: 900; font-size: 14px;">https://www.reb.or.kr</a>
                         </div>
                         <div class="contact-item">
                             <div style="display: flex; align-items: center;">
-                                <span class="contact-label">대한법률구조공단</span>
+                                <span class="contact-label">법률구조공단</span>
                                 <span class="sub-desc" style="margin-left: 6px;">공단 소개 - 전국 사무소 이용 안내 - 조정위원회</span>
                             </div>
-                            <a href="https://www.klac.or.kr/" target="_blank" style="color: var(--gov-red); text-decoration: none; font-weight: 900; font-size: 14px;">https://www.klac.or.kr/</a>
+                            <a href="https://www.klac.or.kr/" target="_blank" style="color: var(--gov-red); text-decoration: none; font-weight: 900; font-size: 14px;">https://www.klac.or.kr</a>
+                        </div>
+                        <div class="contact-item">
+                            <div style="display: flex; align-items: center;">
+                                <span class="contact-label">법령정보센터</span>
+                            </div>
+                            <a href="https://www.law.go.kr/LSW/main.html" target="_blank" style="color: var(--gov-red); text-decoration: none; font-weight: 900; font-size: 14px;">https://https://www.law.go.kr</a>
                         </div>
                     </div>
                 </div> </div> </div> </div> </div> <script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=d791798c38589fc7cdc6bce91d9369be&libraries=services"></script>
@@ -541,7 +547,7 @@ function renderAdvancedTimeline(startDate) {
 
     let dates = [new Date(startDate)];
     let maxComDate = new Date(startDate);
-    maxComDate.setFullYear(maxComDate.getFullYear() + 10); // 상가 한정 10년 캡
+    maxComDate.setFullYear(maxComDate.getFullYear() + 10); 
 
     let current = new Date(startDate);
     current.setFullYear(current.getFullYear() + initYears);
@@ -549,13 +555,13 @@ function renderAdvancedTimeline(startDate) {
     if (isCom && current > maxComDate) current = new Date(maxComDate);
     dates.push(new Date(current));
 
-    // 배열에 2년씩 더해가며 구간 날짜들을 채움
+    
     while (true) {
-        // ✨ 주택 로직: current(현재 구간의 끝)가 오늘보다 뒤에 있다면, 우리가 렌더링해야 할 '미래 만기 구간'까지 도달한 것이므로 스톱
+       
         if (!isCom && current.getTime() >= today.getTime()) {
             break; 
         }
-        // ✨ 상가 로직: 정확히 10년이 될 때 스톱
+    
         if (isCom && current.getTime() >= maxComDate.getTime()) {
             break; 
         }
@@ -847,22 +853,22 @@ keywordInput.addEventListener("input", () => {
 document.addEventListener("click", (e) => {
     if (!e.target.closest('.search-row')) addressList.style.display = "none";
 });
-    // 카테고리 버튼 클릭 시 호출되는 함수
+   
 function showCategoryContent(contentId, clickedButton) {
-    // 1. 모든 내용 패널 숨기기
+    
     document.querySelectorAll('.info-panel').forEach(function(panel) {
         panel.classList.remove('active');
     });
     
-    // 2. 모든 카테고리 버튼의 활성화 상태(파란색 배경) 끄기
+   
     document.querySelectorAll('.category-box .category-btn').forEach(function(btn) {
         btn.classList.remove('active');
     });
     
-    // 3. 클릭한 버튼에 연결된 내용 패널만 켜기
+  
     document.getElementById(contentId).classList.add('active');
     
-    // 4. 클릭한 버튼 자체에 활성화 색상(파란색) 입히기
+  
     clickedButton.classList.add('active');
 }
 </script>
@@ -979,11 +985,11 @@ let formulaStr = "";
                 if (!isCom) { 
                     let r2 = baseRate + 2.0;
                     conversionRate = Math.min(10, r2);
-                    formulaStr = `기준금리(${baseRate}%) + 2% = ${Number(r2.toFixed(2))}% or (연 10%중 낮은 값 적용)`;
+                    formulaStr = `기준금리(${baseRate}%) + 2% = ${Number(r2.toFixed(2))}% or 10%중 낮은 값 적용`;
                 } else { 
                     let r2 = baseRate * 4.5;
                     conversionRate = Math.min(12, r2);
-                    formulaStr = `기준금리(${baseRate}%) × 4.5배 = ${Number(r2.toFixed(2))}% or (연 12%중 낮은 값 적용)`;
+                    formulaStr = `기준금리(${baseRate}%) × 4.5배 = ${Number(r2.toFixed(2))}% or 12%중 낮은 값 적용`;
                 }
 
                 document.getElementById("calc-conv-rate").innerText = `${Number(conversionRate.toFixed(2))}%`;
@@ -991,7 +997,7 @@ let formulaStr = "";
 
             
                 let convDepStr = convDepositInput.value.replace(/,/g, '');
-                let convDepVal = parseInt(convDepStr) || 0; // 단위: 만 원
+                let convDepVal = parseInt(convDepStr) || 0;
                 
                
                 document.getElementById("calc-conv-target-text").innerText = convDepVal > 0 ? convDepVal.toLocaleString() + "만 원" : "0원";
@@ -1004,9 +1010,9 @@ let formulaStr = "";
             
                 let detailFormulaText = "";
                 if (!isCom) {
-                    detailFormulaText = "전환할 금액 X (한국은행 기준금리+대통령령(2%)) / 12";
+                    detailFormulaText = "전환할 금액 X (한국은행 기준금리+대통령령(2%) or 10% 중 작은 것) / 12";
                 } else {
-                    detailFormulaText = "전환할 금액 X (한국은행 기준금리×대통령령(4.5배)) / 12";
+                    detailFormulaText = "전환할 금액 X (한국은행 기준금리×대통령령(4.5배) or 12% 중 작은 것) / 12";
                 }
                 document.getElementById("calc-conv-detail-formula").innerText = detailFormulaText;
             } 

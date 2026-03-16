@@ -298,6 +298,38 @@
 
 .info-panel { display: none; }
 .info-panel.active { display: block; }
+        .law-section {
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    background-color: #fff;
+    margin-bottom: 12px;
+    overflow: hidden;
+}
+
+.law-header {
+    background-color: var(--gov-blue);
+    color: white;
+    padding: 6px 12px;
+    font-weight: 800;
+    font-size: 13px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.law-header a {
+    color: #fff;
+    text-decoration: underline;
+    font-size: 11px;
+}
+
+.law-content {
+    padding: 10px 15px;
+    font-size: 13px;
+    line-height: 1.6;
+    color: #333;
+    word-break: keep-all; /* 단어 단위로 줄바꿈되어 깔끔함 */
+}
     </style>
 </head>
 <body>
@@ -361,10 +393,15 @@
                 </div>
 
                 <div class="category-content-box">
-                    <div id="charges/deposits increase/decrease" class="info-panel active">
-                        <h3>차임/보증금 증감 안내</h3>
-                        <p>여기에 차임/보증금 증감 관련 내용 및 검색 결과가 출력됩니다.</p>
-                    </div>
+                  <div class="law-section">
+        <div class="law-header">
+            <span>주택임대차보호법 제7조</span>
+            <a href="https://www.law.go.kr/법령/주택임대차보호법/제7조" target="_blank">조문보기</a>
+        </div>
+        <div class="law-content">
+            당사자는 약정한 차임이나 보증금이 임차주택에 관한 조세, 공과금, 그 밖의 부담의 증감이나 경제사정의 변동으로 인하여 적절하지 아니하게 된 때에는 장래에 대하여 그 증감을 청구할 수 있다. 이 경우 증액청구는 임대차계약 또는 약정한 차임등의 증액이 있은 후 1년 이내에는 하지 못한다.
+        </div>
+    </div>
                     <div id="lease period" class="info-panel">
                         <h3>임대차 기간 관련 안내</h3>
                         <p>여기에 임대차 기간 관련 내용 및 검색 결과가 출력됩니다.</p>

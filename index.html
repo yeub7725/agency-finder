@@ -301,7 +301,7 @@
 /* 출력되는 내용 영역은 오른쪽 끝까지 꽉 차게! */
 /* 1. 카테고리 탭(버튼들) 영역: 화면 끝까지 늘어나지 못하게 꽉 잡아줌! */
 .category-box {
-    max-width: 760px; /* 기존 버튼들이 차지하던 폭까지만 허용 */
+    max-width: 820px; /* 기존 버튼들이 차지하던 폭까지만 허용 */
     display: flex;
     flex-wrap: wrap; 
     gap: 10px;
@@ -313,7 +313,7 @@
 }
 /* 2. 내용 출력 틀: 공간을 100% 쓸 수 있게 허락 */
 .category-content-box {
-    width: 100%; 
+    width: calc(100% + 0px); 
     box-sizing: border-box; 
     padding: 10px 5px;
 }

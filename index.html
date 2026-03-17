@@ -299,26 +299,11 @@
 
 .info-panel { display: none; }
 .info-panel.active { display: block; }
-    /* 1. 오른쪽 창 전체 틀 (화면 끝까지 쓰되 탭이 늘어나는 건 방지) */
-#category-container {
-    flex: 1; /* 오른쪽 남은 화면 끝까지 사용 */
-    display: none; 
-    flex-direction: column;
-    height: 100vh;
-    border-left: 1px solid #cbd5e1;
-    background: #fff;
-}
-
-/* ★ 카테고리 버튼(탭) 영역은 기존 너비까지만 커지도록 제한! ★ */
-.category-box {
-    max-width: 830px; /* 버튼들이 화면 끝까지 늘어나지 않게 고정 */
-    /* 필요 시 padding 추가 */
-}
 
 /* 출력되는 내용 영역은 오른쪽 끝까지 꽉 차게! */
 /* 1. 카테고리 탭(버튼들) 영역: 화면 끝까지 늘어나지 못하게 꽉 잡아줌! */
 .category-box {
-    max-width: 830px; /* 기존 버튼들이 차지하던 폭까지만 허용 */
+    max-width: 760px; /* 기존 버튼들이 차지하던 폭까지만 허용 */
     display: flex;
     flex-wrap: wrap; 
     gap: 10px;
@@ -328,7 +313,6 @@
     background-color: #f8fafc; 
     border-radius: 8px;
 }
-
 /* 2. 내용 출력 틀: 공간을 100% 쓸 수 있게 허락 */
 .category-content-box {
     width: 100%; 
@@ -416,7 +400,7 @@
                 <div id="date-visual-line"></div>
                 <div id="notice-detail-info"></div>
             </div>
-</div> <div id="category-container" style="position: absolute; left: calc(100% + 0px); top: 180px; width: 760px; z-index: 1000; display: none;">
+</div> <div id="category-container" style="position: absolute; left: calc(100% + 0px); top: 180px; width: calc(100% - 30px); z-index: 1000; display: none;">
                 
                 <div class="category-box">
                     <button class="category-btn active" onclick="showCategoryContent('charges/deposits increase/decrease', this)">차임/보증금 증감</button>

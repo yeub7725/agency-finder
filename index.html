@@ -59,20 +59,17 @@
         .price-input-wrap input { width: 55px; border: none; outline: none; font-size: 12px; font-weight: 700; color: var(--gov-gray); text-align: right; background: transparent; }
         .price-unit { font-size: 12px; color: var(--gov-gray); font-weight: 700; white-space: nowrap; flex-shrink: 0; }
         .price-slash { color: #e2e8f0; margin: 0 6px; flex-shrink: 0; }
-/* 1. 타임라인(갱신의사 표시기간) 박스 수정 [cite: 465, 466, 467] */
-#timeline-container {
-    visibility: hidden;
-    position: absolute;
-    left: calc(40vw + 10px); /* 사이드바 바로 옆 고정 */
-    top: 20px;
-    /* 계산기(440px) 전 10px 여백까지 확장 */
-    width: calc(100vw - 40vw - 440px - 40px); 
-    min-width: 400px;
-    z-index: 1000;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start; /* 왼쪽 정렬 */
-}
+
+        #timeline-container {
+            visibility: hidden;
+            position: absolute;
+            left: calc(100% + 10px);
+            top: 20px; 
+            width: 740px;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+        }
 
         .contract-settings {
             display: flex; align-items: center; gap: 15px; margin-bottom: 25px; font-size: 13px; color: var(--gov-gray); font-weight: 700;
@@ -252,35 +249,36 @@
             width: 30px !important; 
             text-align: right;
         }
-#category-container {
-    position: absolute;
-    left: calc(40vw + 10px) !important; /* 강제 왼쪽 정렬 */
-    top: 180px !important;
-    width: calc(100vw - 40vw - 440px - 40px) !important; /* 상단 너비 제한 */
-    z-index: 1000;
-    display: none;
-}
+
 .category-box {
     display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    padding: 10px 0;
-    justify-content: flex-start; /* 왼쪽 정렬 */
-    width: 100%;
+    left: calc(100% + 10px); 
+    gap: 10px;
+    padding: 12px 15px;
+    margin: 15px 20px 0 5px; 
+    border: 1px solid #e2e8f0; 
+    background-color: #f8fafc; 
+    border-radius: 8px;
 }
 
 
 .category-btn {
    
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    padding: 12px 0; /* 왼쪽 여백 제거하여 정렬 맞춤 */
-    margin: 15px 0 0 0; 
-    border: none; /* 필요시 외곽선 조정 */
-    background-color: transparent;
-    justify-content: flex-start; /* 왼쪽 정렬 */
+    flex:calc((100% - 10px) / 5); 
+    box-sizing: border-box; 
+    text-align: center; 
+    
+    padding: 8px 10px; 
+    border: 1px solid #cbd5e1;
+    background-color: #ffffff;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    color: #333;
+    transition: all 0.2s;
+    white-space: nowrap; 
 }
+
 
 .category-btn.active {
     background-color: var(--gov-blue);
@@ -290,21 +288,11 @@
 
 
 .category-content-box {
-    margin: 10px 0;
-    padding: 20px;
-    background-color: #ffffff;
-    border: 1px solid #e2e8f0;
-    border-radius: 8px;
-    /* 상단 200px까지는 위쪽 너비를 따름 */
-    min-height: 200px; 
-    box-sizing: border-box;
-}
-
-/* 5. 200px 이후 화면 끝까지 활용하기 위한 하단 영역 */
-.full-width-content {
-    width: calc(100vw - 40vw - 40px); /* 계산기 영역까지 확장 */
-    margin-left: 0;
-    transition: width 0.3s ease;
+    margin: 10px 5px;
+    padding: 10px 0;
+    background-color: transparent;
+    border: none; 
+    min-height: 200px;
 }
 
 
@@ -357,16 +345,7 @@
                 <div id="date-visual-line"></div>
                 <div id="notice-detail-info"></div>
             </div>
-</div> <div id="category-container">
-    <div class="category-box">
-        </div>
-    <div class="category-content-box">
-        <div class="info-panel active"> ... </div>
-        
-        <div class="full-width-content">
-            </div>
-    </div>
-</div>
+</div> <div id="category-container" style="position: absolute; left: calc(100% + 10px); top: 180px; width: 700px; z-index: 1000; display: none;">
                 
                 <div class="category-box">
                     <button class="category-btn active" onclick="showCategoryContent('charges/deposits increase/decrease', this)">차임/보증금 증감</button>

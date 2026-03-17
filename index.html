@@ -369,6 +369,47 @@
     color: #333;
     word-break: break-all;
 }
+        /* 최우선 변제금 분석 박스 (자연스러운 테마 적용) */
+.priority-box {
+    margin-top: 20px;
+    padding: 15px;
+    border: 1px solid #e2e8f0; /* 연한 회색 테두리 */
+    border-radius: 8px;
+    background-color: #f8fafc;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.priority-content .calc-row {
+    border-bottom: 1px dotted #e2e8f0;
+    padding: 6px 0;
+    margin: 0;
+}
+.priority-content .calc-row:last-child {
+    border-bottom: none;
+}
+
+.priority-content .highlight {
+    color: var(--gov-blue);
+    font-weight: 900;
+}
+
+.priority-content .highlight-red {
+    color: var(--gov-red);
+    font-weight: 900;
+}
+
+.priority-warning {
+    margin-top: 10px;
+    padding: 8px;
+    background-color: #fff;
+    border: 1px solid #e2e8f0;
+    color: var(--gov-light-gray);
+    font-size: 11px;
+    border-radius: 4px;
+    line-height: 1.4;
+    font-weight: 700;
+}
     </style>
 </head>
 <body>
@@ -416,6 +457,34 @@
                 <div id="date-visual-line"></div>
                 <div id="notice-detail-info"></div>
             </div>
+            <div id="priority-repayment-container" class="priority-box" style="display: none;">
+    <h3 id="priority-title" class="calc-title" style="border-bottom:none; margin-bottom:5px;">권리 분석 요약 (주택)</h3>
+    <div class="priority-content">
+        <div class="calc-row" id="calc-converted-deposit" style="display: none;">
+            <span>환산보증금</span>
+            <span class="highlight">0원</span>
+        </div>
+        <div class="calc-row">
+            <span>적용 기준일</span>
+            <span id="priority-date" style="font-weight:900; color:var(--gov-gray);">-</span>
+        </div>
+        <div class="calc-row">
+            <span>지역 분류</span>
+            <span id="priority-region" style="font-weight:900; color:var(--gov-blue);">-</span>
+        </div>
+        <div class="calc-row">
+            <span>소액임차인 보증금 범위</span>
+            <span id="priority-range-max" class="highlight">-</span>
+        </div>
+        <div class="calc-row">
+            <span>최우선 변제금</span>
+            <span id="priority-amount" class="highlight-red">-</span>
+        </div>
+    </div>
+    <div class="priority-warning">
+        ※ 선순위 담보물권 없이 단순히 계약일을 기준으로 출력한 범위입니다. 정확한 권리분석은 반드시 대법공(132)의 자문을 받으시기 바랍니다.
+    </div>
+</div>
 </div> <div id="category-container" style="position: absolute; left: calc(100% + 0px); top: 180px; width: 1248px; z-index: 1000; display: none;">
                 
                 <div class="category-box">
@@ -1119,6 +1188,110 @@ let formulaStr = "";
             baseRateInput.addEventListener("input", updateCalculator);
             typeRadiosLocal.forEach(r => r.addEventListener('change', updateCalculator)); 
         })();
+       // 1. 법령 데이터 기준 설정 (단위: 만원)
+const housingLawData = [
+    {
+        startDate: '2023-02-21',
+        regions: {
+            '서울': { maxDeposit: 16500, priorityAmt: 5500 },
+            '과밀억제권역': { maxDeposit: 14500, priorityAmt: 4800 },
+            '광역시': { maxDeposit: 8500, priorityAmt: 2800 },
+            '기타': { maxDeposit: 6000, priorityAmt: 2000 }
+        }
+    }
+];
+
+const commercialLawData = [
+    {
+        startDate: '2014-01-01', 
+        regions: {
+            '서울': { maxDeposit: 6500, priorityAmt: 2200 },
+            '과밀억제권역': { maxDeposit: 5500, priorityAmt: 1900 },
+            '광역시': { maxDeposit: 3800, priorityAmt: 1300 },
+            '기타': { maxDeposit: 3000, priorityAmt: 1000 }
+        }
+    }
+];
+
+// 2. 지역 분류 함수
+function classifyRegion(address) {
+    if (!address) return '기타';
+    if (address.includes('서울')) return '서울';
+    if (address.match(/인천|수원|용인|화성|세종|김포|성남|고양|안양|부천|광명/)) return '과밀억제권역';
+    if (address.match(/부산|대구|광주|대전|울산/)) return '광역시';
+    return '기타';
+}
+
+// 3. 분석 및 출력 실행 함수
+function analyzePriorityRepayment() {
+    // 1) 입력값 가져오기
+    const isCommercial = document.querySelector('input[name="bldgType"]:checked').value === 'com';
+    const address = document.getElementById('keyword').value.trim();
+    const yy = document.getElementById('yy').value.trim();
+    const mm = document.getElementById('mm').value.trim();
+    const dd = document.getElementById('dd').value.trim();
+    
+    // 2) 날짜와 주소가 없으면 숨기기
+    const container = document.getElementById('priority-repayment-container');
+    if (!address || !yy || !mm || !dd) {
+        container.style.display = 'none';
+        return;
+    }
+    
+    // 연도 2자리 처리 (예: 24 -> 2024)
+    const fullYear = yy.length === 2 ? '20' + yy : yy;
+    const contractDate = `${fullYear}년 ${mm}월 ${dd}일`;
+
+    container.style.display = 'block';
+
+    // 3) 금액 파싱 (단위: 만원)
+    let deposit = parseInt(document.getElementById('deposit').value.replace(/,/g, '')) || 0;
+    let rent = parseInt(document.getElementById('rent').value.replace(/,/g, '')) || 0;
+
+    const regionCategory = classifyRegion(address);
+    document.getElementById('priority-region').innerText = `${regionCategory}`;
+    document.getElementById('priority-date').innerText = contractDate;
+
+    let targetDepositForCheck = deposit;
+
+    // 4) 상가 / 주택 분기 처리
+    if (isCommercial) {
+        let convertedDeposit = deposit + (rent * 100);
+        targetDepositForCheck = convertedDeposit; 
+        
+        document.getElementById('priority-title').innerText = "권리 분석 요약 (상가)";
+        document.getElementById('calc-converted-deposit').style.display = 'flex';
+        document.querySelector('#calc-converted-deposit .highlight').innerText = convertedDeposit.toLocaleString() + "만 원";
+    } else {
+        document.getElementById('priority-title').innerText = "권리 분석 요약 (주택)";
+        document.getElementById('calc-converted-deposit').style.display = 'none';
+    }
+
+    // 5) 결과 출력 (최신 법령 기준)
+    const lawData = isCommercial ? commercialLawData[0] : housingLawData[0]; 
+    const regionalLimit = lawData.regions[regionCategory];
+
+    document.getElementById('priority-range-max').innerText = `최대 ${regionalLimit.maxDeposit.toLocaleString()}만 원 이하`;
+    
+    if (targetDepositForCheck <= regionalLimit.maxDeposit && targetDepositForCheck > 0) {
+        document.getElementById('priority-amount').innerText = `최대 ${regionalLimit.priorityAmt.toLocaleString()}만 원 보장`;
+        document.getElementById('priority-amount').className = 'highlight-red';
+    } else {
+        document.getElementById('priority-amount').innerText = `범위 초과 (소액임차인 미해당)`;
+        document.getElementById('priority-amount').className = ''; 
+        document.getElementById('priority-amount').style.color = 'var(--gov-light-gray)';
+    }
+}
+
+// 4. 입력창에 이벤트 리스너(감지기) 달기
+const inputIds = ['keyword', 'yy', 'mm', 'dd', 'deposit', 'rent'];
+inputIds.forEach(id => {
+    const el = document.getElementById(id);
+    if(el) el.addEventListener('input', analyzePriorityRepayment);
+});
+document.querySelectorAll('input[name="bldgType"]').forEach(radio => {
+    radio.addEventListener('change', analyzePriorityRepayment);
+});
     </script>
 </body>
 </html>

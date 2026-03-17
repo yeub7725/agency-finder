@@ -59,17 +59,22 @@
         .price-input-wrap input { width: 55px; border: none; outline: none; font-size: 12px; font-weight: 700; color: var(--gov-gray); text-align: right; background: transparent; }
         .price-unit { font-size: 12px; color: var(--gov-gray); font-weight: 700; white-space: nowrap; flex-shrink: 0; }
         .price-slash { color: #e2e8f0; margin: 0 6px; flex-shrink: 0; }
-
-        #timeline-container {
-            visibility: hidden;
-            position: absolute;
-            left: calc(100% + 40px);
-            top: 20px; 
-            width: 700px;
-            z-index: 1000;
-            display: flex;
-            flex-direction: column;
-        }
+/* 1. 타임라인 컨테이너 수정 */
+#timeline-container {
+    visibility: hidden;
+    position: absolute;
+    /* 왼쪽 정렬을 위해 sidebar-search 바로 옆(10px 여백)으로 고정 */
+    left: calc(40vw + 10px); 
+    top: 20px;
+    /* 계산기 전 10px까지 늘리기: (계산기 시작 위치) - (현재 시작 위치) - 10px */
+    /* 계산기 위치가 고정값이 아니므로, 계산기 폭(440px)을 제외한 영역만큼 설정 */
+    width: calc(100vw - 40vw - 440px - 40px); 
+    min-width: 400px;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* 내부 요소 왼쪽 정렬 */
+}
 
         .contract-settings {
             display: flex; align-items: center; gap: 15px; margin-bottom: 25px; font-size: 13px; color: var(--gov-gray); font-weight: 700;
@@ -251,34 +256,27 @@
         }
 
 .category-box {
-    display: flex;
-    flex-wrap: wrap; 
-    gap: 10px;
-    padding: 12px 15px;
-    margin: 15px 20px 0 5px; 
-    border: 1px solid #e2e8f0; 
-    background-color: #f8fafc; 
-    border-radius: 8px;
+position: absolute;
+    left: calc(40vw + 10px); /* 타임라인과 왼쪽 라인 맞춤 */
+    top: 180px;
+    /* 상단 부분(카테고리 버튼들) 너비 설정 */
+    width: calc(100vw - 40vw - 440px - 40px); 
+    z-index: 1000;
+    display: none;
 }
 
 
 .category-btn {
    
-    flex: 1 1 calc((100% - 40px) / 5); 
-    box-sizing: border-box; 
-    text-align: center; 
-    
-    padding: 8px 10px; 
-    border: 1px solid #cbd5e1;
-    background-color: #ffffff;
-    border-radius: 5px;
-    cursor: pointer;
-    font-weight: bold;
-    color: #333;
-    transition: all 0.2s;
-    white-space: nowrap; 
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 12px 0; /* 왼쪽 여백 제거하여 정렬 맞춤 */
+    margin: 15px 0 0 0; 
+    border: none; /* 필요시 외곽선 조정 */
+    background-color: transparent;
+    justify-content: flex-start; /* 왼쪽 정렬 */
 }
-
 
 .category-btn.active {
     background-color: var(--gov-blue);
@@ -288,11 +286,17 @@
 
 
 .category-content-box {
-    margin: 10px 5px;
-    padding: 10px 0;
-    background-color: transparent;
-    border: none; 
+    margin: 10px 0;
+    padding: 20px;
+    background-color: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    /* 상단 200px은 카테고리 박스 너비 유지, 그 밑은 전체 활용을 위해 아래 속성 추가 */
     min-height: 200px;
+}
+        .full-width-section {
+    width: calc(100vw - 40vw - 40px); /* 계산기 영역까지 침범하여 화면 끝까지 활용 */
+    transition: width 0.3s ease;
 }
 
 

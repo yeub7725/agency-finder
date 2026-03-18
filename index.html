@@ -447,42 +447,59 @@
                 <div id="addressList"></div>
             </div>
             
-              <div id="priority-repayment-container" class="priority-box-compact" style="display: none;">
-                <div class="priority-content-compact">
-                    <span id="priority-title" style="font-weight:900; color:var(--gov-blue); margin-right:8px;">권리 분석 요약 (주택)</span>
-                    
-                    <div class="calc-row-compact" id="calc-converted-deposit" style="display: none;">
-                        <span class="label">환산보증금</span><span class="value highlight">0원</span>
-                    </div>
-                    <div class="calc-row-compact">
-                        <span class="label">기준일</span><span class="value" id="priority-date">-</span>
-                    </div>
-                    <div class="calc-row-compact">
-                        <span class="label">지역</span><span class="value" id="priority-region">-</span>
-                    </div>
-                    <div class="calc-row-compact">
-                        <span class="label">보증금범위</span><span class="value highlight" id="priority-range-max">-</span>
-                    </div>
-                    <div class="calc-row-compact">
-                        <span class="label">최우선변제</span><span class="value highlight-red" id="priority-amount">-</span>
-                    </div>
-                </div>
-                <div class="priority-warning-compact">
-</div></div> 
-            <div id="timeline-container">
-                <div class="contract-settings">
-                    <label><input type="radio" name="bldgType" value="house" checked> 주택</label>
-                    <label><input type="radio" name="bldgType" value="com"> 상가 (최대 10년)</label>
-                    <div class="year-input-wrap">
-                        <span style="font-size:12px; color:#64748b; margin-right:4px;">최초계약</span>
-                        <input type="number" id="initYears" value="2" min="1" max="10">
-                        <span style="font-size:12px; color:#64748b;">년</span>
-                    </div>
+<div id="timeline-container">
+    <div class="contract-settings">
+        <label><input type="radio" name="bldgType" value="house" checked> 주택</label>
+        <label><input type="radio" name="bldgType" value="com"> 상가 (최대 10년)</label>
+        <div class="year-input-wrap">
+            <span style="font-size:12px; color:#64748b; margin-right:4px;">최초계약</span>
+            <input type="number" id="initYears" value="2" min="1" max="10">
+            <span style="font-size:12px; color:#64748b;">년</span>
+        </div>
+    </div>
+    
+    <div style="display: flex; align-items: flex-start; gap: 20px; width: 100%;">
+        
+        <div style="flex: 1; min-width: 0;">
+            <div id="date-visual-line"></div>
+            <div id="notice-detail-info"></div>
+        </div>
+
+        <div id="priority-repayment-container" class="priority-box" style="display: none; width: 260px; margin-top: 0; flex-shrink: 0; padding: 12px;">
+            
+            <h3 id="priority-title" class="calc-title" style="display:none;">권리 분석 요약 (주택)</h3>
+            
+            <div class="priority-content">
+                <div class="calc-row" id="calc-converted-deposit" style="display: none;">
+                    <span>환산보증금</span>
+                    <span class="highlight">0원</span>
                 </div>
                 
-                <div id="date-visual-line"></div>
-                <div id="notice-detail-info"></div>
+                <div class="calc-row" style="display: none;">
+                    <span>적용 기준일</span>
+                    <span id="priority-date" style="font-weight:900; color:var(--gov-gray);">-</span>
+                </div>
+                
+                <div class="calc-row">
+                    <span>지역 분류</span>
+                    <span id="priority-region" style="font-weight:900; color:var(--gov-blue);">-</span>
+                </div>
+                <div class="calc-row">
+                    <span>소액임차인 보증금 범위</span>
+                    <span id="priority-range-max" class="highlight">-</span>
+                </div>
+                <div class="calc-row">
+                    <span>최우선 변제금</span>
+                    <span id="priority-amount" class="highlight-red">-</span>
+                </div>
             </div>
+            <div class="priority-warning" style="font-size: 10px; padding: 6px; margin-top: 8px;">
+                ※ 선순위 담보물권 없이 단순히 계약일을 기준으로 출력한 범위입니다. 정확한 권리분석은 대법공(132)의 자문을 받으시기 바랍니다.
+            </div>
+        </div>
+        
+    </div>
+    </div>
 
           <div id="category-container" style="position: absolute; left: calc(100% + 0px); top: 180px; width: 1248px; z-index: 1000; display: none;">
                 

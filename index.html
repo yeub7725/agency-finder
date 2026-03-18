@@ -1335,14 +1335,15 @@ function analyzePriorityRepayment() {
     document.getElementById('priority-region').innerText = regionCategory;
     document.getElementById('priority-date').innerText = `${fullYear}년 ${mm}월 ${dd}일`;
 
-    let targetDepositForCheck = deposit;
+  // --- 5) 상가/주택별 처리 섹션 ---
+    let targetDepositForCheck = deposit; // 기본적으로 '순수 보증금'을 기준으로 함 (주택+상가 최우선변제 공통)
     const convertedRow = document.getElementById('calc-converted-deposit');
-    
- if (isCommercial) {
-        let convertedDeposit = deposit + (rent * 100); 
-        targetDepositForCheck = convertedDeposit; 
 
-        // 1) 날짜에 맞는 상임법 전체 보호 범위(9억 등) 찾기
+    if (isCommercial) {
+        // 상가의 경우 환산보증금은 '상임법 전체 적용 범위'를 따질 때만 사용함
+        let convertedDeposit = deposit + (rent * 100); 
+
+        // [상임법 적용 범위 데이터 찾기]
         let targetProtectData = commercialProtectionData[commercialProtectionData.length - 1];
         for (let i = 0; i < commercialProtectionData.length; i++) {
             if (inputDateForCompare >= commercialProtectionData[i].startDate) {
@@ -1354,24 +1355,28 @@ function analyzePriorityRepayment() {
 
         if (convertedRow) {
             convertedRow.style.display = 'flex';
+            const limitText = `적용범위 ${protectionLimit.toLocaleString()}만원`;
+            const myConvertedText = `${convertedDeposit.toLocaleString()}만원`;
             
-            // 스타일 적용: "적용범위 지역:한도 / 내 환산보증금"
-            const limitText = `상임법 적용범위 ${protectionLimit.toLocaleString()}만원`;
-            const myDepositText = `${convertedDeposit.toLocaleString()}만원`;
-            
-            // 한도 초과 시 붉은색 표시 로직
+            // 환산보증금이 상임법 적용 한도를 초과하는지 체크
             const isOverLimit = convertedDeposit > protectionLimit;
-            const myDepositHtml = isOverLimit 
-                ? `<span style="color: var(--gov-red); font-weight: bold;">${myDepositText}</span>` 
-                : `<span>${myDepositText}</span>`;
+            const myConvertedHtml = isOverLimit 
+                ? `<span style="color: var(--gov-red); font-weight: bold;">${myConvertedText}</span>` 
+                : `<span>${myConvertedText}</span>`;
 
-            // .highlight 요소에 내용 삽입
-            convertedRow.querySelector('.highlight').innerHTML = `${limitText} / ${myDepositHtml}`;
+            convertedRow.querySelector('.highlight').innerHTML = `${limitText} / ${myConvertedHtml}`;
         }
-    } else {
-        if (convertedRow) convertedRow.style.display = 'none';
-    }
 
+        // ⭐ 핵심: 상가 소액임차인 판단은 '환산보증금'이 아니라 '순수 보증금'으로 해야 함
+        // 따라서 targetDepositForCheck를 convertedDeposit으로 바꾸지 않고 그대로 deposit 유지함
+        targetDepositForCheck = deposit; 
+
+    } else {
+        // 주택인 경우 환산보증금 행 숨김
+        if (convertedRow) convertedRow.style.display = 'none';
+        targetDepositForCheck = deposit;
+    }
+    // --------------------------------
     // 날짜 매칭 로직
     const dataArray = isCommercial ? commercialLawData : housingLawData;
     let targetLawData = dataArray[dataArray.length - 1]; 

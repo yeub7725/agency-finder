@@ -1343,7 +1343,7 @@ function analyzePriorityRepayment() {
     const lawData = isCommercial ? commercialLawData[0] : housingLawData[0]; 
     const regionalLimit = lawData.regions[regionCategory];
 
-    document.getElementById('priority-range-max').innerText = `최대 ${regionalLimit.maxDeposit.toLocaleString()}만 원 이하`;
+    document.getElementById('priority-range-max').innerText = `${regionalLimit.maxDeposit.toLocaleString()}만 원 이하`;
     
     if (targetDepositForCheck <= regionalLimit.maxDeposit && targetDepositForCheck > 0) {
         document.getElementById('priority-amount').innerText = `최대 ${regionalLimit.priorityAmt.toLocaleString()}만 원 보장`;

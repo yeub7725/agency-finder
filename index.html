@@ -1226,11 +1226,9 @@ function analyzePriorityRepayment() {
         let convertedDeposit = deposit + (rent * 100);
         targetDepositForCheck = convertedDeposit; 
         
-        document.getElementById('priority-title').innerText = "권리 분석 요약 (상가)";
         document.getElementById('calc-converted-deposit').style.display = 'flex';
         document.querySelector('#calc-converted-deposit .highlight').innerText = convertedDeposit.toLocaleString() + "만 원";
     } else {
-        document.getElementById('priority-title').innerText = "권리 분석 요약 (주택)";
         document.getElementById('calc-converted-deposit').style.display = 'none';
     }
 

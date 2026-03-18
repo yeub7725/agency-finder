@@ -447,21 +447,7 @@
                 <div id="addressList"></div>
             </div>
             
-            <div id="timeline-container">
-                <div class="contract-settings">
-                    <label><input type="radio" name="bldgType" value="house" checked> 주택</label>
-                    <label><input type="radio" name="bldgType" value="com"> 상가 (최대 10년)</label>
-                    <div class="year-input-wrap">
-                        <span style="font-size:12px; color:#64748b; margin-right:4px;">최초계약</span>
-                        <input type="number" id="initYears" value="2" min="1" max="10">
-                        <span style="font-size:12px; color:#64748b;">년</span>
-                    </div>
-                </div>
-                
-                <div id="date-visual-line"></div>
-                <div id="notice-detail-info"></div>
-            </div>
-      <div id="priority-repayment-container" class="priority-box-compact" style="display: none;">
+              <div id="priority-repayment-container" class="priority-box-compact" style="display: none;">
                 <div class="priority-content-compact">
                     <span id="priority-title" style="font-weight:900; color:var(--gov-blue); margin-right:8px;">권리 분석 요약 (주택)</span>
                     
@@ -482,7 +468,23 @@
                     </div>
                 </div>
                 <div class="priority-warning-compact">
-</div> <div id="category-container" style="position: absolute; left: calc(100% + 0px); top: 180px; width: 1248px; z-index: 1000; display: none;">
+</div></div> 
+            <div id="timeline-container">
+                <div class="contract-settings">
+                    <label><input type="radio" name="bldgType" value="house" checked> 주택</label>
+                    <label><input type="radio" name="bldgType" value="com"> 상가 (최대 10년)</label>
+                    <div class="year-input-wrap">
+                        <span style="font-size:12px; color:#64748b; margin-right:4px;">최초계약</span>
+                        <input type="number" id="initYears" value="2" min="1" max="10">
+                        <span style="font-size:12px; color:#64748b;">년</span>
+                    </div>
+                </div>
+                
+                <div id="date-visual-line"></div>
+                <div id="notice-detail-info"></div>
+            </div>
+
+          <div id="category-container" style="position: absolute; left: calc(100% + 0px); top: 180px; width: 1248px; z-index: 1000; display: none;">
                 
                 <div class="category-box">
                     <button class="category-btn active" onclick="showCategoryContent('charges/deposits increase/decrease', this)">차임/보증금 증감</button>

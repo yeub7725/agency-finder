@@ -1356,7 +1356,7 @@ function analyzePriorityRepayment() {
             convertedRow.style.display = 'flex';
             
             // 스타일 적용: "적용범위 지역:한도 / 내 환산보증금"
-            const limitText = `적용범위 ${regionCategory}:${protectionLimit.toLocaleString()}만원`;
+            const limitText = `상임법 적용범위 ${protectionLimit.toLocaleString()}만원`;
             const myDepositText = `${convertedDeposit.toLocaleString()}만원`;
             
             // 한도 초과 시 붉은색 표시 로직

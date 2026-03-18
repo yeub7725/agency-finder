@@ -1298,62 +1298,45 @@ function classifyRegion(address) {
 
 // 3. 분석 및 출력 실행 함수
 function analyzePriorityRepayment() {
-    // 1) 기본 입력값 가져오기
     const bldgTypeElement = document.querySelector('input[name="bldgType"]:checked');
     const isCommercial = bldgTypeElement ? bldgTypeElement.value === 'com' : false;
     const address = document.getElementById('keyword').value.trim();
     const yy = document.getElementById('yy').value.trim();
     const mm = document.getElementById('mm').value.trim();
     const dd = document.getElementById('dd').value.trim();
-    
     const container = document.getElementById('priority-repayment-container');
-    
-    // 필수 값이 없으면 숨기고 종료
+
     if (!address || !yy || !mm || !dd) {
         if (container) container.style.display = 'none';
         return;
     }
-    
     if (container) container.style.display = 'block';
 
-    // 2) 날짜 데이터 생성
     const fullYear = yy.length === 2 ? '20' + yy : yy;
-    const padMm = mm.padStart(2, '0');
-    const padDd = dd.padStart(2, '0');
-    const inputDateForCompare = `${fullYear}-${padMm}-${padDd}`;
-    const contractDateText = `${fullYear}년 ${mm}월 ${dd}일`;
-
-    // 3) 보증금 및 월세 파싱
+    const inputDateForCompare = `${fullYear}-${mm.padStart(2, '0')}-${dd.padStart(2, '0')}`;
     let deposit = parseInt(document.getElementById('deposit').value.replace(/,/g, '')) || 0;
     let rent = parseInt(document.getElementById('rent').value.replace(/,/g, '')) || 0;
 
-    // 4) 지역 분류 및 날짜 표시
     const regionCategory = classifyRegion(address);
-    const regionDisplay = document.getElementById('priority-region');
-    const dateDisplay = document.getElementById('priority-date');
-    if (regionDisplay) regionDisplay.innerText = regionCategory;
-    if (dateDisplay) dateDisplay.innerText = contractDateText;
+    document.getElementById('priority-region').innerText = regionCategory;
+    document.getElementById('priority-date').innerText = `${fullYear}년 ${mm}월 ${dd}일`;
 
     let targetDepositForCheck = deposit;
-
-    // 5) 상가/주택별 환산보증금 처리
     const convertedRow = document.getElementById('calc-converted-deposit');
+    
     if (isCommercial) {
-        let convertedDeposit = deposit + (rent * 100);
-        targetDepositForCheck = convertedDeposit; 
+        targetDepositForCheck = deposit + (rent * 100); // 환산보증금
         if (convertedRow) {
             convertedRow.style.display = 'flex';
-            const highlightSpec = convertedRow.querySelector('.highlight');
-            if (highlightSpec) highlightSpec.innerText = convertedDeposit.toLocaleString() + "만 원";
+            convertedRow.querySelector('.highlight').innerText = targetDepositForCheck.toLocaleString() + "만 원";
         }
     } else {
         if (convertedRow) convertedRow.style.display = 'none';
     }
 
-    // 6) ⭐ 날짜에 맞는 데이터 배열 찾기 (가장 중요)
+    // 날짜 매칭 로직
     const dataArray = isCommercial ? commercialLawData : housingLawData;
-    let targetLawData = dataArray[dataArray.length - 1]; // 기본값: 가장 오래된 데이터
-
+    let targetLawData = dataArray[dataArray.length - 1]; 
     for (let i = 0; i < dataArray.length; i++) {
         if (inputDateForCompare >= dataArray[i].startDate) {
             targetLawData = dataArray[i];
@@ -1361,39 +1344,36 @@ function analyzePriorityRepayment() {
         }
     }
 
-    // 7) 결과 출력
-    const regionalLimit = targetLawData.regions[regionCategory];
+    const regionalLimit = targetLawData.regions[regionCategory] || targetLawData.regions['기타'];
     const rangeMaxDisplay = document.getElementById('priority-range-max');
     const amountDisplay = document.getElementById('priority-amount');
 
-    if (regionalLimit && rangeMaxDisplay && amountDisplay) {
+    if (regionalLimit) {
         rangeMaxDisplay.innerText = `${regionalLimit.maxDeposit.toLocaleString()}만 원 이하`;
-        
         const priorityAmtText = `최대 ${regionalLimit.priorityAmt.toLocaleString()}만 원 보장`;
 
         if (targetDepositForCheck <= regionalLimit.maxDeposit && targetDepositForCheck > 0) {
-            // 소액임차인 해당
             amountDisplay.innerText = priorityAmtText;
             amountDisplay.className = 'highlight-red';
             amountDisplay.style.color = ''; 
         } else {
-            // 소액임차인 미해당 (하지만 금액은 표시)
             amountDisplay.innerText = `${priorityAmtText} (소액임차인 미해당)`;
             amountDisplay.className = ''; 
-            amountDisplay.style.color = 'var(--gov-light-gray)';
+            amountDisplay.style.color = 'rgb(100, 116, 139)'; // 회색처리
         }
     }
 }
 
-// 4. 입력창에 이벤트 리스너(감지기) 달기
-const inputIds = ['keyword', 'yy', 'mm', 'dd', 'deposit', 'rent'];
-inputIds.forEach(id => {
+// 5. 이벤트 바인딩
+const inputFields = ['keyword', 'yy', 'mm', 'dd', 'deposit', 'rent'];
+inputFields.forEach(id => {
     const el = document.getElementById(id);
-    if(el) el.addEventListener('input', analyzePriorityRepayment);
+    if (el) el.addEventListener('input', analyzePriorityRepayment);
 });
 document.querySelectorAll('input[name="bldgType"]').forEach(radio => {
     radio.addEventListener('change', analyzePriorityRepayment);
 });
+
     </script>
 </body>
 </html>

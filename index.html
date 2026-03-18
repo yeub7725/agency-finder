@@ -149,10 +149,28 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.05);
             margin-top: 30px;
         }
-        .detail-row { display: flex; align-items: center; font-size: 13px; }
+       .detail-row { 
+    display: flex; 
+    align-items: center; 
+    font-size: 12px; /* 13px -> 12px로 축소 */
+    white-space: nowrap; /* ★ 핵심: 강제 줄바꿈 방지 */
+}
         .detail-badge.red { background: rgba(228,3,45,0.1); color: var(--gov-red); font-weight: 800; padding: 3px 8px; border-radius: 4px; margin-right: 10px; font-size: 12px; }
-        .detail-text { font-weight: 800; display: flex; align-items: baseline; gap: 5px; color: var(--gov-red); }
-        .detail-sub { font-size: 11px; color: var(--gov-light-gray); font-weight: 700; margin-left: 2px; }
+      .detail-text { 
+    font-weight: 800; 
+    display: flex;
+    align-items: baseline; 
+    gap: 3px; /* 5px -> 3px로 공백 축소 */
+    color: var(--gov-red); 
+    font-size: 12px; /* 폰트 크기 지정 */
+    white-space: nowrap; /* ★ 핵심: 강제 줄바꿈 방지 */
+      .detail-sub { 
+    font-size: 10px; /* 11px -> 10px로 축소 */
+    color: var(--gov-light-gray);
+    font-weight: 700; 
+    margin-left: 1px; /* 공백 축소 */
+    letter-spacing: -0.5px; /* 글자 사이 간격(자간) 좁힘 */
+}
 
 #result-area { 
     flex: 1; 

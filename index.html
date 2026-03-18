@@ -1250,12 +1250,39 @@ const housingLawData = [
 ];
 const commercialLawData = [
     {
-        startDate: '2014-01-01', 
+        startDate: '2014-01-01', // 2014.01.01 ~ 현재 (최우선변제 범위 기준)
         regions: {
             '서울': { maxDeposit: 6500, priorityAmt: 2200 },
             '과밀억제권역': { maxDeposit: 5500, priorityAmt: 1900 },
             '광역시': { maxDeposit: 3800, priorityAmt: 1300 },
             '기타': { maxDeposit: 3000, priorityAmt: 1000 }
+        }
+    },
+    {
+        startDate: '2010-07-26', // 2010.07.26 ~ 2013.12.31
+        regions: {
+            '서울': { maxDeposit: 5000, priorityAmt: 1500 },
+            '과밀억제권역': { maxDeposit: 4500, priorityAmt: 1350 },
+            '광역시': { maxDeposit: 3000, priorityAmt: 900 },
+            '기타': { maxDeposit: 2500, priorityAmt: 750 }
+        }
+    },
+    {
+        startDate: '2008-08-21', // 2008.08.21 ~ 2010.07.25
+        regions: {
+            '서울': { maxDeposit: 4500, priorityAmt: 1350 },
+            '과밀억제권역': { maxDeposit: 3900, priorityAmt: 1170 },
+            '광역시': { maxDeposit: 2500, priorityAmt: 750 },
+            '기타': { maxDeposit: 2000, priorityAmt: 600 }
+        }
+    },
+    {
+        startDate: '2002-11-01', // 2002.11.01 ~ 2008.08.20
+        regions: {
+            '서울': { maxDeposit: 4500, priorityAmt: 1350 },
+            '과밀억제권역': { maxDeposit: 3900, priorityAmt: 1170 },
+            '광역시': { maxDeposit: 2500, priorityAmt: 750 },
+            '기타': { maxDeposit: 2000, priorityAmt: 600 }
         }
     }
 ];

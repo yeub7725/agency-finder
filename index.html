@@ -1338,18 +1338,23 @@ function analyzePriorityRepayment() {
     } else {
         document.getElementById('calc-converted-deposit').style.display = 'none';
     }
-
-    // 5) 결과 출력 (최신 법령 기준)
-    const lawData = isCommercial ? commercialLawData[0] : housingLawData[0]; 
-    const regionalLimit = lawData.regions[regionCategory];
+    
+    // 이전 단계에서 찾은 targetLawData를 사용합니다.
+    const regionalLimit = targetLawData.regions[regionCategory];
 
     document.getElementById('priority-range-max').innerText = `${regionalLimit.maxDeposit.toLocaleString()}만 원 이하`;
     
+    // 6) 금액 비교 및 최종 텍스트 생성
+    const priorityAmtText = `최대 ${regionalLimit.priorityAmt.toLocaleString()}만 원 보장`;
+
     if (targetDepositForCheck <= regionalLimit.maxDeposit && targetDepositForCheck > 0) {
-        document.getElementById('priority-amount').innerText = `최대 ${regionalLimit.priorityAmt.toLocaleString()}만 원 보장`;
+        // 범위 안일 때: 빨간색 강조
+        document.getElementById('priority-amount').innerText = priorityAmtText;
         document.getElementById('priority-amount').className = 'highlight-red';
+        document.getElementById('priority-amount').style.color = ''; // 기존 컬러 유지
     } else {
-        document.getElementById('priority-amount').innerText = `범위 초과 (소액임차인 미해당)`;
+        // 범위 초과일 때: 회색 처리 + 괄호 안내 추가
+        document.getElementById('priority-amount').innerText = `${priorityAmtText} (소액임차인 미해당)`;
         document.getElementById('priority-amount').className = ''; 
         document.getElementById('priority-amount').style.color = 'var(--gov-light-gray)';
     }

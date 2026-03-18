@@ -1286,6 +1286,20 @@ const commercialLawData = [
         }
     }
 ];
+       const commercialProtectionData = [
+    {
+        startDate: '2019-04-02',
+        regions: { '서울': 90000, '과밀억제권역': 69000, '광역시': 54000, '기타': 37000 }
+    },
+    {
+        startDate: '2018-01-26',
+        regions: { '서울': 61000, '과밀억제권역': 50000, '광역시': 39000, '기타': 27000 }
+    },
+    {
+        startDate: '2014-01-01',
+        regions: { '서울': 40000, '과밀억제권역': 30000, '광역시': 24000, '기타': 18000 }
+    }
+];
 
 // 2. 지역 분류 함수
 function classifyRegion(address) {
@@ -1324,11 +1338,35 @@ function analyzePriorityRepayment() {
     let targetDepositForCheck = deposit;
     const convertedRow = document.getElementById('calc-converted-deposit');
     
-    if (isCommercial) {
-        targetDepositForCheck = deposit + (rent * 100); // 환산보증금
+ if (isCommercial) {
+        let convertedDeposit = deposit + (rent * 100); 
+        targetDepositForCheck = convertedDeposit; 
+
+        // 1) 날짜에 맞는 상임법 전체 보호 범위(9억 등) 찾기
+        let targetProtectData = commercialProtectionData[commercialProtectionData.length - 1];
+        for (let i = 0; i < commercialProtectionData.length; i++) {
+            if (inputDateForCompare >= commercialProtectionData[i].startDate) {
+                targetProtectData = commercialProtectionData[i];
+                break;
+            }
+        }
+        const protectionLimit = targetProtectData.regions[regionCategory] || targetProtectData.regions['기타'];
+
         if (convertedRow) {
             convertedRow.style.display = 'flex';
-            convertedRow.querySelector('.highlight').innerText = targetDepositForCheck.toLocaleString() + "만 원";
+            
+            // 스타일 적용: "적용범위 지역:한도 / 내 환산보증금"
+            const limitText = `적용범위 ${regionCategory}:${protectionLimit.toLocaleString()}만원`;
+            const myDepositText = `${convertedDeposit.toLocaleString()}만원`;
+            
+            // 한도 초과 시 붉은색 표시 로직
+            const isOverLimit = convertedDeposit > protectionLimit;
+            const myDepositHtml = isOverLimit 
+                ? `<span style="color: var(--gov-red); font-weight: bold;">${myDepositText}</span>` 
+                : `<span>${myDepositText}</span>`;
+
+            // .highlight 요소에 내용 삽입
+            convertedRow.querySelector('.highlight').innerHTML = `${limitText} / ${myDepositHtml}`;
         }
     } else {
         if (convertedRow) convertedRow.style.display = 'none';

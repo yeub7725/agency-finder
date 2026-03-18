@@ -1159,6 +1159,15 @@ let formulaStr = "";
 const housingLawData = [
     {
         startDate: '2023-02-21',
+        mapping: {
+            overcrowded: [
+                '인천', '의정부', '하남', '고양', '수원', '성남', '안양', '부천', '광명', '과천', '의왕', '군포', '시흥',
+                { city: '남양주', districts: ['호평', '평내', '금곡', '일패', '이패', '삼패', '다산', '수석', '지금', '도농'] }
+            ],
+            excludeFromOvercrowded: ['백령', '자월','강화', '옹진', '인천 서구 대곡', '인천 서구 불로', '인천 서구 마전', '인천 서구 금곡', '인천 서구 오류', '인천 서구 왕길', '인천 서구 당하', '인천 서구 원당',
+                                     '인천 서구 경서', '인천 서구 연희', '인천 서구 원창', '인천 중구 운서', '인천 중구 영종', '인천 중구 용유', '인천 연수구 송도', '인천 남동구 논현', '인천 남동구 남촌', '인천 남동구 고잔'],
+            metropolitan: ['부산', '대구', '광주', '대전', '울산', '세종', '용인', '화성', '김포', '안산', '광주', '파주', '이천', '평택']
+        },
         regions: {
             '서울': { maxDeposit: 16500, priorityAmt: 5500 },
             '과밀억제권역': { maxDeposit: 14500, priorityAmt: 4800 },
@@ -1302,11 +1311,48 @@ const commercialLawData = [
 ];
 
 // 2. 지역 분류 함수
-function classifyRegion(address) {
-    if (!address) return '기타';
+function classifyRegion(address, targetLaw) {
+    if (!address || !targetLaw || !targetLaw.mapping) return '기타';
+
+    // 1. 서울특별시 (항상 1순위)
     if (address.includes('서울')) return '서울';
-    if (address.match(/인천|수원|용인|화성|세종|김포|성남|고양|안양|부천|광명/)) return '과밀억제권역';
-    if (address.match(/부산|대구|광주|대전|울산/)) return '광역시';
+
+    // 2. 과밀억제권역 판정
+    const ocList = targetLaw.mapping.overcrowded;
+    if (ocList) {
+        for (let item of ocList) {
+            // A. 시 전체 포함 방식 (예: 인천, 수원 등)
+            if (typeof item === 'string' && address.includes(item)) {
+                // [특수] 인천광역시 예외 처리: 제외 리스트에 있으면 '광역시'로 리턴
+                if (item === '인천') {
+                    const excludes = targetLaw.mapping.excludeFromOvercrowded;
+                    if (excludes) {
+                        for (let ex of excludes) {
+                            if (address.includes(ex)) return '광역시'; 
+                        }
+                    }
+                }
+                return '과밀억제권역';
+            }
+            // B. 특정 동네만 포함 방식 (예: 남양주 객체)
+            if (typeof item === 'object' && address.includes(item.city)) {
+                for (let dist of item.districts) {
+                    if (address.includes(dist)) return '과밀억제권역';
+                }
+                // 시 이름은 '남양주'지만 동네가 리스트에 없으면 다음 단계로 패스
+            }
+        }
+    }
+
+    // 3. 광역시 및 특례 지역 판정
+    const metroList = targetLaw.mapping.metropolitan;
+    if (metroList) {
+        for (let city of metroList) {
+            if (address.includes(city)) return '광역시';
+        }
+    }
+
+    // 4. 모두 해당 없으면 기타 지역
     return '기타';
 }
 
@@ -1316,14 +1362,39 @@ function analyzePriorityRepayment() {
     const isCommercial = bldgTypeElement ? bldgTypeElement.value === 'com' : false;
     const address = document.getElementById('keyword').value.trim();
     const yy = document.getElementById('yy').value.trim();
-    const mm = document.getElementById('mm').value.trim();
-    const dd = document.getElementById('dd').value.trim();
+    const mm = document.getElementById('mm').value.trim().padStart(2, '0');
+    const dd = document.getElementById('dd').value.trim().padStart(2, '0');
     const container = document.getElementById('priority-repayment-container');
 
+    // 1. 입력 유효성 검사
     if (!address || !yy || !mm || !dd) {
         if (container) container.style.display = 'none';
         return;
     }
+
+    const inputDateForCompare = `${yy}-${mm}-${dd}`;
+    const deposit = parseInt(document.getElementById('deposit').value) || 0;
+    const rent = parseInt(document.getElementById('rent').value) || 0;
+
+    // 2. [날짜 매칭] 입력된 날짜에 맞는 법령 데이터셋(targetLawData) 찾기
+    const dataArray = isCommercial ? commercialLawData : housingLawData;
+    let targetLawData = dataArray[dataArray.length - 1]; // 기본값: 가장 오래된 데이터
+    
+    for (let i = 0; i < dataArray.length; i++) {
+        if (inputDateForCompare >= dataArray[i].startDate) {
+            targetLawData = dataArray[i];
+            break; 
+        }
+    }
+
+    // 3. [지역 분류] 찾은 targetLawData의 맵핑 정보를 사용해 지역 카테고리 결정
+    // 이 함수가 '인천 서구 오류' -> '광역시', '남양주 다산' -> '과밀억제권역'을 반환합니다.
+    const regionCategory = classifyRegion(address, targetLawData);
+
+    // 4. [데이터 추출] 결정된 지역 카테고리의 금액 정보 가져오기
+    const regionData = targetLawData.regions[regionCategory];
+    
+    // --- 이후부터는 기존의 UI 출력(innerText 변경 등) 로직을 그대로 사용하시면 됩니다 ---
     if (container) container.style.display = 'block';
 
     const fullYear = yy.length === 2 ? '20' + yy : yy;

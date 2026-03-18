@@ -1145,7 +1145,7 @@ let formulaStr = "";
                 if (!isCom) {
                     detailFormulaText = "전환할 금액 X (한국은행 기준금리+대통령령(2%) or 10% 중 작은 것) / 12";
                 } else {
-                    detailFormulaText = "전환할 금액 X (한국은행 기준금리×대통령령(4.5배) or 12% 중 작은 것) / 12";
+                    detailFormulaText = "전환할 금액 X (한국은행 기준금리×대통령령(4.5배) or 12% 작은 것) / 12";
                 }
                 document.getElementById("calc-conv-detail-formula").innerText = detailFormulaText;
             } 
@@ -1165,7 +1165,76 @@ const housingLawData = [
             '광역시': { maxDeposit: 8500, priorityAmt: 2800 },
             '기타': { maxDeposit: 6000, priorityAmt: 2000 }
         }
-    }
+    },
+    {
+        startDate: '2021-05-11', // 2021.05.11 ~ 2023.02.20
+        regions: {
+            '서울': { maxDeposit: 15000, priorityAmt: 5000 },
+            '과밀억제권역': { maxDeposit: 13000, priorityAmt: 4300 },
+            '광역시': { maxDeposit: 7000, priorityAmt: 2300 },
+            '기타': { maxDeposit: 6000, priorityAmt: 2000 }
+        },
+    {
+        startDate: '2018-09-18', // 2018.09.18 ~ 2021.05.10
+        regions: {
+            '서울': { maxDeposit: 11000, priorityAmt: 3700 },
+            '과밀억제권역': { maxDeposit: 10000, priorityAmt: 3700 },
+            '광역시': { maxDeposit: 6000, priorityAmt: 2000 },
+            '기타': { maxDeposit: 5000, priorityAmt: 1700 }
+        },
+    {
+        startDate: '2016-03-31', // 2016.03.31 ~ 2018.09.17
+        regions: {
+            '서울': { maxDeposit: 10000, priorityAmt: 3400 },
+            '과밀억제권역': { maxDeposit: 8000, priorityAmt: 2700 },
+            '광역시': { maxDeposit: 6000, priorityAmt: 2000 },
+            '기타': { maxDeposit: 5000, priorityAmt: 1700 }
+        },
+    {
+        startDate: '2014-01-01', // 2014.01.01 ~ 2016.01.30
+        regions: {
+            '서울': { maxDeposit: 9500, priorityAmt: 3200 },
+            '과밀억제권역': { maxDeposit: 8000, priorityAmt: 2700 },
+            '광역시': { maxDeposit: 6000, priorityAmt: 2000 },
+            '기타': { maxDeposit: 4500, priorityAmt: 1500 }
+        },
+    {
+        startDate: '2010-07-26', // 2010.07.26 ~ 2013.12.31
+        regions: {
+            '서울': { maxDeposit: 7500, priorityAmt: 2500 },
+            '과밀억제권역': { maxDeposit: 6500, priorityAmt: 2200 },
+            '광역시': { maxDeposit: 5500, priorityAmt: 1900 },
+            '기타': { maxDeposit: 4000, priorityAmt: 1400 }
+        },
+    {
+        startDate: '2008-08-21', // 2008.08.21 ~ 2010.07.25
+        regions: {
+            '서울': { maxDeposit: 6000, priorityAmt: 2000 },
+            '과밀억제권역': { maxDeposit: 6000, priorityAmt: 2000 },
+            '광역시': { maxDeposit: 5000, priorityAmt: 1700 },
+            '기타': { maxDeposit: 4000, priorityAmt: 1400 }
+        },
+    {
+        startDate: '2001-09-15', // 2001.09.15 ~ 2008.08.20
+        regions: {
+            '서울': { maxDeposit: 4000, priorityAmt: 1600 },
+            '과밀억제권역': { maxDeposit: 4000, priorityAmt: 1600 },
+            '광역시': { maxDeposit: 3500, priorityAmt: 1400 },
+            '기타': { maxDeposit: 3000, priorityAmt: 1200 }
+        },
+    {
+        startDate: '1995-10-19', // 1995.10.19 ~ 2001.09.14
+        regions: {
+            '서울': { maxDeposit: 3000, priorityAmt: 1200 },
+            '광역시': { maxDeposit: 3000, priorityAmt: 1200 },
+            '기타': { maxDeposit: 2000, priorityAmt: 800 }
+        },
+    {
+        startDate: '1990-02-19', // 1990.02.19 ~ 1995.10.18
+        regions: {
+            '서울': { maxDeposit: 2000, priorityAmt: 700 },
+            '기타': { maxDeposit: 1500, priorityAmt: 500 }
+        }
 ];
 
 const commercialLawData = [

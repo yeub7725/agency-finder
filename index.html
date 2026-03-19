@@ -1904,38 +1904,47 @@ const commercialLawData = [
 ];
 
 // 2. 지역 분류 함수
-function classifyRegion(address, targetLawData) {
-    const mapping = targetLawData.mapping;
+function getProtectionLimit(address, targetLawData) {
+    let topRegion = '기타';
 
-    // 1. 서울특별시 확인
-    if (address.includes('서울')) return '서울';
+    if (address.includes('서울')) topRegion = '서울';
+    else if (address.includes('부산')) topRegion = '부산';
+    else if (address.includes('인천')) topRegion = '인천';
+    else if (address.includes('대구')) topRegion = '대구';
+    else if (address.includes('대전')) topRegion = '대전';
+    else if (address.includes('울산')) topRegion = '울산';
+    else if (address.includes('세종')) topRegion = '세종';
+    else if (address.includes('경기')) topRegion = '경기'; 
+    else if (address.includes('광주')) topRegion = '광주'; 
+    else if (address.includes('강원')) topRegion = '강원';
+    else if (address.includes('충북') || address.includes('충청북도')) topRegion = '충북';
+    else if (address.includes('충남') || address.includes('충청남도')) topRegion = '충남';
+    else if (address.includes('전북') || address.includes('전라북도') || address.includes('전북특별자치도')) topRegion = '전북';
+    else if (address.includes('전남') || address.includes('전라남도')) topRegion = '전남';
+    else if (address.includes('경북') || address.includes('경상북도')) topRegion = '경북';
+    else if (address.includes('경남') || address.includes('경상남도')) topRegion = '경남';
+    else if (address.includes('제주')) topRegion = '제주';
 
-    // 2. 과밀억제권역 예외 확인 (인천 강화, 옹진 등) -> '기타'로 분류
-    if (mapping.excludeFromOvercrowded) {
-        if (mapping.excludeFromOvercrowded.some(exc => address.includes(exc))) {
-            return '기타'; 
+    const provinceData = targetLawData.regions[topRegion];
+    if (!provinceData) {
+        return { label: '기타', maxDeposit: 0, priorityAmt: 0 }; 
+    }
+
+    if (provinceData.exceptions) {
+        for (let exc of provinceData.exceptions) {
+            for (let kw of exc.keywords) {
+                if (address.includes(kw)) {
+                    return { label: exc.label, maxDeposit: exc.maxDeposit, priorityAmt: exc.priorityAmt };
+                }
+            }
         }
     }
 
-    // 3. ⭐ 광역시 예외 확인 (부산 기장군 등) -> '기타'로 분류
-    if (mapping.excludeFromMetropolitan) {
-        if (mapping.excludeFromMetropolitan.some(exc => address.includes(exc))) {
-            return '기타';
-        }
-    }
-
-    // 4. 과밀억제권역 확인
-    // (기존 overcrowded 검사 로직 - 남양주 객체 처리 및 일반 문자열 처리)
-    
-    // 5. 광역시 확인
-    if (mapping.metropolitan) {
-        if (mapping.metropolitan.some(metro => address.includes(metro))) {
-            return '광역시급';
-        }
-    }
-
-    // 6. 위 어디에도 해당하지 않으면
-    return '기타';
+    return { 
+        label: provinceData.default.label, 
+        maxDeposit: provinceData.default.maxDeposit, 
+        priorityAmt: provinceData.default.priorityAmt 
+    };
 }
 
 // 3. 분석 및 출력 실행 함수
@@ -2018,16 +2027,23 @@ function analyzePriorityRepayment() {
         // 따라서 targetDepositForCheck를 convertedDeposit으로 바꾸지 않고 그대로 deposit 유지함
         targetDepositForCheck = deposit; 
 
-    } else {
+  } else {
         // 주택인 경우 환산보증금 행 숨김
         if (convertedRow) convertedRow.style.display = 'none';
         targetDepositForCheck = deposit;
     }
-    const regionalLimit = targetLawData.regions[regionCategory] || targetLawData.regions['기타'];
+    
+    // ⭐ 새로 만든 함수로 한 방에 데이터(라벨, 최대보증금, 최우선변제금)를 가져옵니다.
+    const regionalLimit = getProtectionLimit(address, targetLawData);
+    
+    // ⭐ 화면의 '지역 분류' 칸에 올바른 지역 이름(라벨)이 찍히도록 수정
+    document.getElementById('priority-region').innerText = regionalLimit.label;
+    
     const rangeMaxDisplay = document.getElementById('priority-range-max');
     const amountDisplay = document.getElementById('priority-amount');
-
-    if (regionalLimit) {
+    
+    // 이하 로직은 그대로 두시면 됩니다!
+    if (regionalLimit && regionalLimit.maxDeposit > 0) {
         rangeMaxDisplay.innerText = `${regionalLimit.maxDeposit.toLocaleString()}만 원 이하`;
         const priorityAmtText = `최대 ${regionalLimit.priorityAmt.toLocaleString()}만 원 보장`;
 

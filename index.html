@@ -1428,7 +1428,7 @@ function classifyRegion(address, targetLawData) {
     // 5. 광역시 확인
     if (mapping.metropolitan) {
         if (mapping.metropolitan.some(metro => address.includes(metro))) {
-            return '광역시';
+            return '광역시급';
         }
     }
 

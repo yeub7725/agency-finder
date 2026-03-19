@@ -2555,52 +2555,55 @@ const commercialLawData = [
 // 2. 지역 분류 함수
 function getProtectionLimit(address, targetLawData) {
     if (!address || !targetLawData || !targetLawData.regions) {
-        return { label: '기타', maxDeposit: 0, priorityAmt: 0 };
+        return { label: '-', maxDeposit: 0, priorityAmt: 0 };
     }
 
-    let topRegion = '기타';
-    if (address.includes('서울')) topRegion = '서울';
-    else if (address.includes('부산')) topRegion = '부산';
-    else if (address.includes('인천')) topRegion = '인천';
-    else if (address.includes('대구')) topRegion = '대구';
-    else if (address.includes('대전')) topRegion = '대전';
-    else if (address.includes('울산')) topRegion = '울산';
-    else if (address.includes('세종')) topRegion = '세종';
-    else if (address.includes('경기')) topRegion = '경기'; 
-    else if (address.includes('광주')) topRegion = '광주'; 
-    else if (address.includes('강원')) topRegion = '강원';
+    // 1단계: '도/시' 이름을 안 치고 "수원", "용인" 등만 쳤을 때를 대비해 예외(exceptions) 키워드부터 모조리 뒤져봅니다.
+    for (let regionName in targetLawData.regions) {
+        const provinceData = targetLawData.regions[regionName];
+        if (provinceData.exceptions) {
+            for (let exc of provinceData.exceptions) {
+                for (let kw of exc.keywords) {
+                    if (address.includes(kw)) {
+                        return { label: exc.label, maxDeposit: exc.maxDeposit, priorityAmt: exc.priorityAmt };
+                    }
+                }
+            }
+        }
+    }
+
+    // 2단계: 예외 키워드에 안 걸렸다면, 큰 지역 이름이 주소에 있는지 확인합니다. (풀네임도 인식하도록 추가)
+    let topRegion = null;
+    if (address.includes('서울') || address.includes('서울특별시')) topRegion = '서울';
+    else if (address.includes('부산') || address.includes('부산광역시')) topRegion = '부산';
+    else if (address.includes('인천') || address.includes('인천광역시')) topRegion = '인천';
+    else if (address.includes('대구') || address.includes('대구광역시')) topRegion = '대구';
+    else if (address.includes('대전') || address.includes('대전광역시')) topRegion = '대전';
+    else if (address.includes('광주') || address.includes('광주광역시')) topRegion = '광주';
+    else if (address.includes('울산') || address.includes('울산광역시')) topRegion = '울산';
+    else if (address.includes('세종') || address.includes('세종특별자치시')) topRegion = '세종';
+    else if (address.includes('경기') || address.includes('경기도')) topRegion = '경기'; 
+    else if (address.includes('강원') || address.includes('강원특별자치도')) topRegion = '강원';
     else if (address.includes('충북') || address.includes('충청북도')) topRegion = '충북';
     else if (address.includes('충남') || address.includes('충청남도')) topRegion = '충남';
     else if (address.includes('전북') || address.includes('전라북도') || address.includes('전북특별자치도')) topRegion = '전북';
     else if (address.includes('전남') || address.includes('전라남도')) topRegion = '전남';
     else if (address.includes('경북') || address.includes('경상북도')) topRegion = '경북';
     else if (address.includes('경남') || address.includes('경상남도')) topRegion = '경남';
-    else if (address.includes('제주')) topRegion = '제주';
+    else if (address.includes('제주') || address.includes('제주특별자치도')) topRegion = '제주';
 
-    const provinceData = targetLawData.regions[topRegion];
-    if (!provinceData) {
-        return { label: '기타', maxDeposit: 0, priorityAmt: 0 }; 
+    if (topRegion && targetLawData.regions[topRegion] && targetLawData.regions[topRegion].default) {
+        const def = targetLawData.regions[topRegion].default;
+        return { label: def.label, maxDeposit: def.maxDeposit, priorityAmt: def.priorityAmt };
     }
 
-    if (provinceData.exceptions) {
-        for (let exc of provinceData.exceptions) {
-            for (let kw of exc.keywords) {
-                if (address.includes(kw)) {
-                    return { label: exc.label, maxDeposit: exc.maxDeposit, priorityAmt: exc.priorityAmt };
-                }
-            }
-        }
+    // 3단계: 주소를 대충 쳐서(예: '평화동' 등) 아예 못 찾았을 경우, 가장 기본값인 '기타' 지역으로 처리하여 보호해줍니다.
+    if (targetLawData.regions['강원'] && targetLawData.regions['강원'].default) {
+        const fallback = targetLawData.regions['강원'].default;
+        return { label: '기타', maxDeposit: fallback.maxDeposit, priorityAmt: fallback.priorityAmt };
     }
 
-    if (provinceData.default) {
-        return { 
-            label: provinceData.default.label, 
-            maxDeposit: provinceData.default.maxDeposit, 
-            priorityAmt: provinceData.default.priorityAmt 
-        };
-    }
-    
-    return { label: '기타', maxDeposit: 0, priorityAmt: 0 };
+    return { label: '-', maxDeposit: 0, priorityAmt: 0 };
 }
 
 // ========================================================

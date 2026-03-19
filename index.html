@@ -1427,9 +1427,11 @@ function analyzePriorityRepayment() {
         return;
     }
 
-    const inputDateForCompare = `${yy}-${mm}-${dd}`;
-    const deposit = parseInt(document.getElementById('deposit').value) || 0;
-    const rent = parseInt(document.getElementById('rent').value) || 0;
+// 1. [변수 선언 및 세팅] 날짜 포맷 맞춤 및 보증금/월세 콤마 제거
+    const fullYear = yy.length === 2 ? '20' + yy : yy;
+    const inputDateForCompare = `${fullYear}-${mm.padStart(2, '0')}-${dd.padStart(2, '0')}`;
+    let deposit = parseInt(document.getElementById('deposit').value.replace(/,/g, '')) || 0;
+    let rent = parseInt(document.getElementById('rent').value.replace(/,/g, '')) || 0;
 
     // 2. [날짜 매칭] 입력된 날짜에 맞는 법령 데이터셋(targetLawData) 찾기
     const dataArray = isCommercial ? commercialLawData : housingLawData;
@@ -1441,23 +1443,19 @@ function analyzePriorityRepayment() {
             break; 
         }
     }
+    
+    // 3. [지역 분류]
     const regionCategory = classifyRegion(address, targetLawData);
 
-    // 4. [데이터 추출] 결정된 지역 카테고리의 금액 정보 가져오기
+    // 4. [데이터 추출 및 UI 출력] 결정된 지역 카테고리의 금액 정보 가져오기
     const regionData = targetLawData.regions[regionCategory];
     
-    // --- 이후부터는 기존의 UI 출력(innerText 변경 등) 로직을 그대로 사용하시면 됩니다 ---
     if (container) container.style.display = 'block';
-
-    const fullYear = yy.length === 2 ? '20' + yy : yy;
-    const inputDateForCompare = `${fullYear}-${mm.padStart(2, '0')}-${dd.padStart(2, '0')}`;
-    let deposit = parseInt(document.getElementById('deposit').value.replace(/,/g, '')) || 0;
-    let rent = parseInt(document.getElementById('rent').value.replace(/,/g, '')) || 0;
 
     document.getElementById('priority-region').innerText = regionCategory;
     document.getElementById('priority-date').innerText = `${fullYear}년 ${mm}월 ${dd}일`;
 
-  // --- 5) 상가/주택별 처리 섹션 ---
+    // --- 5) 상가/주택별 환산보증금 처리 섹션 ---
     let targetDepositForCheck = deposit; // 기본적으로 '순수 보증금'을 기준으로 함 (주택+상가 최우선변제 공통)
     const convertedRow = document.getElementById('calc-converted-deposit');
 
@@ -1489,7 +1487,7 @@ function analyzePriorityRepayment() {
             convertedRow.querySelector('.highlight').innerHTML = `${limitText} / ${myConvertedHtml}`;
         }
 
-        // 핵심: 상가 소액임차인 판단은 '환산보증금'이 아니라 '순수 보증금'으로 해야 함
+        // 핵심: 상가 최우선변제 소액임차인 판단은 '환산보증금'이 아니라 '순수 보증금'으로 해야 함
         // 따라서 targetDepositForCheck를 convertedDeposit으로 바꾸지 않고 그대로 deposit 유지함
         targetDepositForCheck = deposit; 
 
@@ -1498,17 +1496,6 @@ function analyzePriorityRepayment() {
         if (convertedRow) convertedRow.style.display = 'none';
         targetDepositForCheck = deposit;
     }
-    // --------------------------------
-    // 날짜 매칭 로직
-    const dataArray = isCommercial ? commercialLawData : housingLawData;
-    let targetLawData = dataArray[dataArray.length - 1]; 
-    for (let i = 0; i < dataArray.length; i++) {
-        if (inputDateForCompare >= dataArray[i].startDate) {
-            targetLawData = dataArray[i];
-            break; 
-        }
-    }
-
     const regionalLimit = targetLawData.regions[regionCategory] || targetLawData.regions['기타'];
     const rangeMaxDisplay = document.getElementById('priority-range-max');
     const amountDisplay = document.getElementById('priority-amount');

@@ -2609,13 +2609,6 @@ function getProtectionLimit(address, targetLawData) {
 // ========================================================
 // 2. 입력값을 읽어서 화면에 뿌려주는 메인 계산 로직
 // ========================================================
-기존에 만드신 박스 숨김 처리나 만능 함수(getProtectionLimit), 결과 출력 로직은 단 하나도 건드리지 않고 그대로 유지했습니다.
-
-요청하신 두 가지(① 90년도 1990년 변환, ② 환산보증금 기준금액/입력금액 표시 및 색상 변경)를 적용하기 위해 코드의 일부 순서를 살짝 조정했습니다. (환산보증금을 화면에 출력하려면 '기준금액'을 알아야 해서, 만능 함수 호출을 환산보증금 화면 출력보다 위쪽으로 올렸습니다.)
-
-아래 코드를 복사해서 기존 analyzePriorityRepayment 함수 전체를 교체해 주시면 됩니다.
-
-JavaScript
 function analyzePriorityRepayment() {
     const bldgType = document.querySelector('input[name="bldgType"]:checked').value;
     const address = document.getElementById('keyword').value.trim();

@@ -1441,9 +1441,6 @@ function analyzePriorityRepayment() {
             break; 
         }
     }
-
-    // 3. [지역 분류] 찾은 targetLawData의 맵핑 정보를 사용해 지역 카테고리 결정
-    // 이 함수가 '인천 서구 오류' -> '광역시', '남양주 다산' -> '과밀억제권역'을 반환합니다.
     const regionCategory = classifyRegion(address, targetLawData);
 
     // 4. [데이터 추출] 결정된 지역 카테고리의 금액 정보 가져오기
@@ -1493,7 +1490,7 @@ function analyzePriorityRepayment() {
             convertedRow.querySelector('.highlight').innerHTML = `${limitText} / ${myConvertedHtml}`;
         }
 
-        // ⭐ 핵심: 상가 소액임차인 판단은 '환산보증금'이 아니라 '순수 보증금'으로 해야 함
+        // 핵심: 상가 소액임차인 판단은 '환산보증금'이 아니라 '순수 보증금'으로 해야 함
         // 따라서 targetDepositForCheck를 convertedDeposit으로 바꾸지 않고 그대로 deposit 유지함
         targetDepositForCheck = deposit; 
 

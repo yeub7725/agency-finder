@@ -1173,7 +1173,8 @@ const housingLawData = [
             ],
             excludeFromOvercrowded: ['백령', '자월','강화', '옹진', '인천 서구 대곡', '인천 서구 불로', '인천 서구 마전', '인천 서구 금곡', '인천 서구 오류', '인천 서구 왕길', '인천 서구 당하', '인천 서구 원당',
                                      '인천 서구 경서', '인천 서구 연희', '인천 서구 원창', '인천 중구 운서', '인천 중구 영종', '인천 중구 용유', '인천 연수구 송도', '인천 남동구 논현', '인천 남동구 남촌', '인천 남동구 고잔', '인천 남동구 도림'],
-            metropolitan: ['부산', '대구', '광주', '대전', '울산', '안산', '경기도 광주', '경기도 파주', '경기도 이천', '경기도 평택']
+            metropolitan: ['부산', '대구', '광주', '대전', '울산', '안산', '경기도 광주', '경기도 파주', '경기도 이천', '경기도 평택'],
+            excludeFromMetropolitan: ['부산 기장', '대구 달성', '대구 군위', '울산 울주']
         },
         regions: {
             '서울': { maxDeposit: 16500, priorityAmt: 5500 },
@@ -1191,8 +1192,9 @@ const housingLawData = [
             ],
             excludeFromOvercrowded: ['백령', '자월','강화', '옹진', '인천 서구 대곡', '인천 서구 불로', '인천 서구 마전', '인천 서구 금곡', '인천 서구 오류', '인천 서구 왕길', '인천 서구 당하', '인천 서구 원당',
                                      '인천 서구 경서', '인천 서구 연희', '인천 서구 원창', '인천 중구 운서', '인천 중구 영종', '인천 중구 용유', '인천 연수구 송도', '인천 남동구 논현', '인천 남동구 남촌', '인천 남동구 고잔', '인천 남동구 도림'],
-            metropolitan: ['부산', '대구', '광주', '대전', '울산', '안산', '경기도 광주', '경기도 파주', '경기도 이천', '경기도 평택']
-        },
+            metropolitan: ['부산', '대구', '광주', '대전', '울산', '안산', '경기도 광주', '경기도 파주', '경기도 이천', '경기도 평택'],
+            excludeFromMetropolitan: ['부산 기장', '대구 달성', '대구 군위', '울산 울주']
+         },
         regions: {
             '서울': { maxDeposit: 15000, priorityAmt: 5000 },
             '과밀억제권역급': { maxDeposit: 13000, priorityAmt: 4300 },
@@ -1373,48 +1375,37 @@ const commercialLawData = [
 ];
 
 // 2. 지역 분류 함수
-function classifyRegion(address, targetLaw) {
-    if (!address || !targetLaw || !targetLaw.mapping) return '기타';
+function classifyRegion(address, targetLawData) {
+    const mapping = targetLawData.mapping;
 
-    // 1. 서울특별시 (항상 1순위)
+    // 1. 서울특별시 확인
     if (address.includes('서울')) return '서울';
 
-    // 2. 과밀억제권역 판정
-    const ocList = targetLaw.mapping.overcrowded;
-    if (ocList) {
-        for (let item of ocList) {
-            // A. 시 전체 포함 방식 (예: 인천, 수원 등)
-            if (typeof item === 'string' && address.includes(item)) {
-                // [특수] 인천광역시 예외 처리: 제외 리스트에 있으면 '광역시급'로 리턴
-                if (item === '인천') {
-                    const excludes = targetLaw.mapping.excludeFromOvercrowded;
-                    if (excludes) {
-                        for (let ex of excludes) {
-                            if (address.includes(ex)) return '광역시급'; 
-                        }
-                    }
-                }
-                return '과밀억제권역급';
-            }
-            // B. 특정 동네만 포함 방식 (예: 남양주 객체)
-            if (typeof item === 'object' && address.includes(item.city)) {
-                for (let dist of item.districts) {
-                    if (address.includes(dist)) return '과밀억제권역급';
-                }
-                // 시 이름은 '남양주'지만 동네가 리스트에 없으면 다음 단계로 패스
-            }
+    // 2. 과밀억제권역 예외 확인 (인천 강화, 옹진 등) -> '기타'로 분류
+    if (mapping.excludeFromOvercrowded) {
+        if (mapping.excludeFromOvercrowded.some(exc => address.includes(exc))) {
+            return '기타'; 
         }
     }
 
-    // 3. 광역시 및 특례 지역 판정
-    const metroList = targetLaw.mapping.metropolitan;
-    if (metroList) {
-        for (let city of metroList) {
-            if (address.includes(city)) return '광역시급';
+    // 3. ⭐ 광역시 예외 확인 (부산 기장군 등) -> '기타'로 분류
+    if (mapping.excludeFromMetropolitan) {
+        if (mapping.excludeFromMetropolitan.some(exc => address.includes(exc))) {
+            return '기타';
         }
     }
 
-    // 4. 모두 해당 없으면 기타 지역
+    // 4. 과밀억제권역 확인
+    // (기존 overcrowded 검사 로직 - 남양주 객체 처리 및 일반 문자열 처리)
+    
+    // 5. 광역시 확인
+    if (mapping.metropolitan) {
+        if (mapping.metropolitan.some(metro => address.includes(metro))) {
+            return '광역시';
+        }
+    }
+
+    // 6. 위 어디에도 해당하지 않으면
     return '기타';
 }
 

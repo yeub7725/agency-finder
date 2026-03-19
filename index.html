@@ -2609,6 +2609,13 @@ function getProtectionLimit(address, targetLawData) {
 // ========================================================
 // 2. 입력값을 읽어서 화면에 뿌려주는 메인 계산 로직
 // ========================================================
+기존에 만드신 박스 숨김 처리나 만능 함수(getProtectionLimit), 결과 출력 로직은 단 하나도 건드리지 않고 그대로 유지했습니다.
+
+요청하신 두 가지(① 90년도 1990년 변환, ② 환산보증금 기준금액/입력금액 표시 및 색상 변경)를 적용하기 위해 코드의 일부 순서를 살짝 조정했습니다. (환산보증금을 화면에 출력하려면 '기준금액'을 알아야 해서, 만능 함수 호출을 환산보증금 화면 출력보다 위쪽으로 올렸습니다.)
+
+아래 코드를 복사해서 기존 analyzePriorityRepayment 함수 전체를 교체해 주시면 됩니다.
+
+JavaScript
 function analyzePriorityRepayment() {
     const bldgType = document.querySelector('input[name="bldgType"]:checked').value;
     const address = document.getElementById('keyword').value.trim();
@@ -2642,8 +2649,12 @@ function analyzePriorityRepayment() {
     // 주택 vs 상가 데이터 선택
     const dataArray = (bldgType === 'house') ? housingLawData : commercialProtectionData;
 
-    // 날짜 비교
-    const inputDateForCompare = yy + '-' + mm.padStart(2, '0') + '-' + dd.padStart(2, '0');
+    // ★ [수정 1] 연도 2자리를 4자리로 변환 (50 초과면 1900년대, 이하면 2000년대)
+    const yyInt = parseInt(yy, 10);
+    const fullYear = yyInt > 50 ? 1900 + yyInt : 2000 + yyInt;
+
+    // 날짜 비교 (수정된 4자리 연도 사용)
+    const inputDateForCompare = fullYear + '-' + mm.padStart(2, '0') + '-' + dd.padStart(2, '0');
     let targetLawData = dataArray[dataArray.length - 1]; 
     for (let i = 0; i < dataArray.length; i++) {
         if (inputDateForCompare >= dataArray[i].startDate) {
@@ -2652,19 +2663,37 @@ function analyzePriorityRepayment() {
         }
     }
 
-    // 환산보증금 처리
+    // 환산보증금 처리 (금액 계산만 먼저 수행)
     let targetDepositForCheck = deposit;
+    let convertedDeposit = 0; // 상가 환산보증금 담을 변수 추가
+
+    if (bldgType === 'com') {
+        convertedDeposit = deposit + (rent * 100);
+        targetDepositForCheck = convertedDeposit;
+    }
+
+    // ★ 만능 함수로 금액 가져오기 (환산보증금 화면 출력 시 기준금액이 필요하므로 위로 올림!)
+    const limitInfo = getProtectionLimit(address, targetLawData);
+
+    // ★ [수정 2] 환산보증금 UI 출력 (기준금액 / 입력된 금액 및 색상 처리)
     const convertedRow = document.getElementById('calc-converted-deposit'); 
     const convertedAmountSpan = convertedRow ? convertedRow.querySelector('.highlight') : null;
 
     if (bldgType === 'com') {
-        const convertedDeposit = deposit + (rent * 100);
-        targetDepositForCheck = convertedDeposit;
-        
         if (convertedRow) {
             convertedRow.style.display = 'flex';
-            if (convertedAmountSpan) {
-                convertedAmountSpan.innerText = convertedDeposit.toLocaleString() + '만 원';
+            if (convertedAmountSpan && limitInfo) {
+                const maxDeposit = limitInfo.maxDeposit || 0;
+                
+                // 텍스트 출력: 기준금액 / 입력금액
+                convertedAmountSpan.innerText = `${maxDeposit.toLocaleString()}만 원 / ${convertedDeposit.toLocaleString()}만 원`;
+                
+                // 글자 색상 변경 로직 (범위 내: 검정, 범위 밖: 빨강)
+                if (convertedDeposit <= maxDeposit) {
+                    convertedAmountSpan.style.color = 'black'; 
+                } else {
+                    convertedAmountSpan.style.color = 'red';
+                }
             }
         }
     } else {
@@ -2672,13 +2701,10 @@ function analyzePriorityRepayment() {
         if (convertedRow) convertedRow.style.display = 'none';
     }
 
-    // 만능 함수로 금액 가져오기
-    const limitInfo = getProtectionLimit(address, targetLawData);
-
     // ★ 계산이 모두 끝났으니 숨겨뒀던 박스를 화면에 짠! 하고 나타나게 합니다!
     if (container) container.style.display = 'block';
 
-    // 결과 출력
+    // 결과 출력 (기존 로직 100% 동일)
     if (regionDisplay) regionDisplay.innerText = limitInfo.label;
 
     if (limitInfo && limitInfo.maxDeposit > 0) {

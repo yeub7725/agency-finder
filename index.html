@@ -2613,16 +2613,21 @@ function analyzePriorityRepayment() {
     const mm = document.getElementById('mm').value.trim();
     const dd = document.getElementById('dd').value.trim();
     
+    // 금액 입력값 가져오기 (콤마 제거)
     const depositStr = document.getElementById('deposit').value.replace(/,/g, '');
     const rentStr = document.getElementById('rent').value.replace(/,/g, '');
     const deposit = parseInt(depositStr) || 0;
     const rent = parseInt(rentStr) || 0;
 
+    // 화면 출력 요소들
     const rangeMaxDisplay = document.getElementById('priority-range-max');
     const amountDisplay = document.getElementById('priority-amount');
     const regionDisplay = document.getElementById('priority-region');
+    const container = document.getElementById('priority-repayment-container'); // ★ 박스 요소 찾기
 
+    // 날짜나 주소가 덜 입력되었으면 박스를 숨기고 대기
     if (!yy || !mm || !dd || !address) {
+        if (container) container.style.display = 'none'; // ★ 값이 없으면 숨김
         if(rangeMaxDisplay) rangeMaxDisplay.innerText = '-';
         if(amountDisplay) {
             amountDisplay.innerText = '-';
@@ -2632,10 +2637,12 @@ function analyzePriorityRepayment() {
         return;
     }
 
+    // 주택 vs 상가 데이터 선택
     const dataArray = (bldgType === '주택') ? housingLawData : commercialProtectionData;
 
+    // 날짜 비교 로직
     const inputDateForCompare = yy + '-' + mm.padStart(2, '0') + '-' + dd.padStart(2, '0');
-   let targetLawData = dataArray[dataArray.length - 1]; 
+    let targetLawData = dataArray[dataArray.length - 1]; 
     for (let i = 0; i < dataArray.length; i++) {
         if (inputDateForCompare >= dataArray[i].startDate) {
             targetLawData = dataArray[i];
@@ -2643,9 +2650,10 @@ function analyzePriorityRepayment() {
         }
     }
 
- let targetDepositForCheck = 0;
-    const convertedRow = document.getElementById('converted-deposit-row');
-    const convertedAmountSpan = document.getElementById('converted-amount');
+    // 환산보증금 계산 로직 (상가일 때만)
+    let targetDepositForCheck = 0;
+    const convertedRow = document.getElementById('calc-converted-deposit'); // 아이디 확인 필요 (calc-converted-deposit 또는 converted-deposit-row)
+    const convertedAmountSpan = document.querySelector('#calc-converted-deposit .highlight'); // 환산보증금 금액 표시 부분
 
     if (bldgType === '상가') {
         const convertedDeposit = deposit + (rent * 100);
@@ -2661,14 +2669,18 @@ function analyzePriorityRepayment() {
         targetDepositForCheck = deposit;
     }
 
-    // ⭐ 문제의 classifyRegion을 완전히 없애고, 새로운 만능 함수로 교체했습니다!
+    // 만능 함수로 지역 및 금액 가져오기
     const limitInfo = getProtectionLimit(address, targetLawData);
 
-    // 결과를 화면에 적용
+    // ★ 계산이 모두 끝났으니, 이제 화면에 결과 박스를 보여줍니다!
+    if (container) container.style.display = 'block'; 
+
+    // 결과를 텍스트로 적용
     if (regionDisplay) regionDisplay.innerText = limitInfo.label;
 
     if (limitInfo && limitInfo.maxDeposit > 0) {
         if (rangeMaxDisplay) rangeMaxDisplay.innerText = `${limitInfo.maxDeposit.toLocaleString()}만 원 이하`;
+        
         const priorityAmtText = `최대 ${limitInfo.priorityAmt.toLocaleString()}만 원 보장`;
 
         if (amountDisplay) {

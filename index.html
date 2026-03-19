@@ -2626,9 +2626,13 @@ function analyzePriorityRepayment() {
     const rangeMaxDisplay = document.getElementById('priority-range-max');
     const amountDisplay = document.getElementById('priority-amount');
     const regionDisplay = document.getElementById('priority-region');
+    
+    // ★ 박스 전체를 숨기고 나타나게 할 요소 찾기
+    const container = document.getElementById('priority-repayment-container') || document.querySelector('.priority-content');
 
-    // 입력값이 덜 채워졌으면 빈칸 대기
+    // 입력값이 덜 채워졌으면 빈칸 대기 및 박스 숨김
     if (!yy || !mm || !dd || !address) {
+        if (container) container.style.display = 'none'; // ★ 값이 모자라면 숨김
         if(rangeMaxDisplay) rangeMaxDisplay.innerText = '-';
         if(amountDisplay) { amountDisplay.innerText = '-'; amountDisplay.className = 'highlight-red'; }
         if(regionDisplay) regionDisplay.innerText = '-';
@@ -2648,7 +2652,7 @@ function analyzePriorityRepayment() {
         }
     }
 
-    // ★ HTML 이름표 완벽 적용: 환산보증금 처리
+    // 환산보증금 처리
     let targetDepositForCheck = deposit;
     const convertedRow = document.getElementById('calc-converted-deposit'); 
     const convertedAmountSpan = convertedRow ? convertedRow.querySelector('.highlight') : null;
@@ -2660,7 +2664,6 @@ function analyzePriorityRepayment() {
         if (convertedRow) {
             convertedRow.style.display = 'flex';
             if (convertedAmountSpan) {
-                // 0원 대신 계산된 금액 넣기
                 convertedAmountSpan.innerText = convertedDeposit.toLocaleString() + '만 원';
             }
         }
@@ -2669,8 +2672,11 @@ function analyzePriorityRepayment() {
         if (convertedRow) convertedRow.style.display = 'none';
     }
 
-    // 만능 함수로 금액 가져오기 (getProtectionLimit 함수는 기존 그대로 두시면 됩니다!)
+    // 만능 함수로 금액 가져오기
     const limitInfo = getProtectionLimit(address, targetLawData);
+
+    // ★ 계산이 모두 끝났으니 숨겨뒀던 박스를 화면에 짠! 하고 나타나게 합니다!
+    if (container) container.style.display = 'block';
 
     // 결과 출력
     if (regionDisplay) regionDisplay.innerText = limitInfo.label;

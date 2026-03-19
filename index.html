@@ -2640,7 +2640,7 @@ function analyzePriorityRepayment() {
     }
 
     // 주택 vs 상가 데이터 선택
-    const dataArray = (bldgType === '주택') ? housingLawData : commercialProtectionData;
+    const dataArray = (bldgType === 'house') ? housingLawData : commercialProtectionData;
 
     // 날짜 비교
     const inputDateForCompare = yy + '-' + mm.padStart(2, '0') + '-' + dd.padStart(2, '0');
@@ -2657,7 +2657,7 @@ function analyzePriorityRepayment() {
     const convertedRow = document.getElementById('calc-converted-deposit'); 
     const convertedAmountSpan = convertedRow ? convertedRow.querySelector('.highlight') : null;
 
-    if (bldgType === '상가') {
+    if (bldgType === 'com') {
         const convertedDeposit = deposit + (rent * 100);
         targetDepositForCheck = convertedDeposit;
         

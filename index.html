@@ -1454,7 +1454,6 @@ function analyzePriorityRepayment() {
     let deposit = parseInt(document.getElementById('deposit').value.replace(/,/g, '')) || 0;
     let rent = parseInt(document.getElementById('rent').value.replace(/,/g, '')) || 0;
 
-    const regionCategory = classifyRegion(address);
     document.getElementById('priority-region').innerText = regionCategory;
     document.getElementById('priority-date').innerText = `${fullYear}년 ${mm}월 ${dd}일`;
 

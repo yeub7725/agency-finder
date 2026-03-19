@@ -2680,35 +2680,44 @@ function analyzePriorityRepayment() {
         // 주택인 경우 환산보증금 행 숨김
         if (convertedRow) convertedRow.style.display = 'none';
         targetDepositForCheck = deposit;
+    }
+    
+    // ⭐ 주택/상가 구분할 필요 없이, 새로 만든 통합 함수 하나로 끝!
+    const limitInfo = getProtectionLimit(address, targetLawData);
 
-        // 👇 여기서부터 완전히 새로운 로직 적용!
-        const regionalLimit = getProtectionLimit(address, targetLawData);
-        
-        // 화면에 지역 이름 띄우기
-        const regionDisplay = document.getElementById('priority-region');
-        if (regionDisplay) regionDisplay.innerText = regionalLimit.label;
+    // ==========================================
+    // 화면에 결과 출력하기
+    // ==========================================
+    const regionDisplay = document.getElementById('priority-region');
+    if (regionDisplay) regionDisplay.innerText = limitInfo.label;
 
-        const rangeMaxDisplay = document.getElementById('priority-range-max');
-        const amountDisplay = document.getElementById('priority-amount');
+    const rangeMaxDisplay = document.getElementById('priority-range-max');
+    const amountDisplay = document.getElementById('priority-amount');
 
-        if (regionalLimit && regionalLimit.maxDeposit > 0) {
-            rangeMaxDisplay.innerText = `${regionalLimit.maxDeposit.toLocaleString()}만 원 이하`;
-            const priorityAmtText = `최대 ${regionalLimit.priorityAmt.toLocaleString()}만 원 보장`;
+    if (limitInfo && limitInfo.maxDeposit > 0) {
+        rangeMaxDisplay.innerText = `${limitInfo.maxDeposit.toLocaleString()}만 원 이하`;
+        const priorityAmtText = `최대 ${limitInfo.priorityAmt.toLocaleString()}만 원 보장`;
 
-            if (targetDepositForCheck <= regionalLimit.maxDeposit && targetDepositForCheck > 0) {
-                amountDisplay.innerText = priorityAmtText;
-                amountDisplay.className = 'highlight-red';
-                amountDisplay.style.color = ''; 
-            } else {
-                amountDisplay.innerText = `${priorityAmtText} (소액임차인 미해당)`;
-                amountDisplay.className = ''; 
-                amountDisplay.style.color = 'rgb(100, 116, 139)'; // 회색처리
-            }
+        if (targetDepositForCheck <= limitInfo.maxDeposit && targetDepositForCheck > 0) {
+            amountDisplay.innerText = priorityAmtText;
+            amountDisplay.className = 'highlight-red';
+            amountDisplay.style.color = ''; 
+        } else {
+            amountDisplay.innerText = `${priorityAmtText} (소액임차인 미해당)`;
+            amountDisplay.className = ''; 
+            amountDisplay.style.color = 'rgb(100, 116, 139)';
+        }
+    } else {
+        // 검색된 데이터가 없거나 예외적인 경우 빈칸 처리
+        if (rangeMaxDisplay) rangeMaxDisplay.innerText = '-';
+        if (amountDisplay) {
+            amountDisplay.innerText = '-';
+            amountDisplay.className = '';
         }
     }
 }
 
-// 5. 이벤트 바인딩
+// 5. 이벤트 바인딩 (이 부분은 기존 그대로 두시면 됩니다)
 const inputFields = ['keyword', 'yy', 'mm', 'dd', 'deposit', 'rent'];
 inputFields.forEach(id => {
     const el = document.getElementById(id);
@@ -2717,7 +2726,6 @@ inputFields.forEach(id => {
 document.querySelectorAll('input[name="bldgType"]').forEach(radio => {
     radio.addEventListener('change', analyzePriorityRepayment);
 });
-
     </script>
 </body>
 </html>

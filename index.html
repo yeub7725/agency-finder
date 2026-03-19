@@ -1851,40 +1851,689 @@ const housingLawData = [
     }
 ];
 const commercialLawData = [
-    {
-        startDate: '2014-01-01', // 2014.01.01 ~ 현재 (최우선변제 범위 기준)
+   {
+        startDate: '2023-02-21',
         regions: {
-            '서울': { maxDeposit: 6500, priorityAmt: 2200 },
-            '과밀억제권역급': { maxDeposit: 5500, priorityAmt: 1900 },
-            '광역시급': { maxDeposit: 3800, priorityAmt: 1300 },
-            '기타': { maxDeposit: 3000, priorityAmt: 1000 }
+            '서울': { 
+                default: { label: '서울', maxDeposit: 16500, priorityAmt: 5500 } 
+            },
+            '부산': { 
+                default: { label: '광역시급', maxDeposit: 8500, priorityAmt: 2800 },
+                exceptions: [
+                    { keywords: ['기장'], label: '기타', maxDeposit: 7500, priorityAmt: 2500 }
+                ]
+            },
+            '대구': { 
+                default: { label: '광역시급', maxDeposit: 8500, priorityAmt: 2800 },
+                exceptions: [
+                    { keywords: ['달성', '군위'], label: '기타', maxDeposit: 7500, priorityAmt: 2500 }
+                ]
+            },
+            '인천': { 
+                default: { label: '과밀억제권역급', maxDeposit: 14500, priorityAmt: 4800 },
+                exceptions: [
+                    // 인천 내 기타 지역 (기존에 '인천' 글자가 중복되던 것을 깔끔하게 키워드만 남김)
+                    { keywords: [
+                        '백령', '자월', '강화', '옹진', 
+                        '서구 대곡', '서구 불로', '서구 마전', '서구 금곡', '서구 오류', '서구 왕길', '서구 당하', '서구 원당', '서구 경서', '서구 연희', '서구 원창', 
+                        '중구 운서', '중구 영종', '중구 용유', 
+                        '연수구 송도', 
+                        '남동구 논현', '남동구 남촌', '남동구 고잔', '남동구 도림'
+                    ], label: '기타', maxDeposit: 7500, priorityAmt: 2500 }
+                ]
+            },
+            '광주': { 
+                default: { label: '광역시급', maxDeposit: 8500, priorityAmt: 2800 } 
+            },
+            '대전': { 
+                default: { label: '광역시급', maxDeposit: 8500, priorityAmt: 2800 } 
+            },
+            '울산': { 
+                default: { label: '광역시급', maxDeposit: 8500, priorityAmt: 2800 },
+                exceptions: [
+                    { keywords: ['울주'], label: '기타', maxDeposit: 7500, priorityAmt: 2500 }
+                ]
+            },
+            '세종': { 
+                // 세종시는 전체가 과밀억제권역급 대우를 받음
+                default: { label: '과밀억제권역급', maxDeposit: 14500, priorityAmt: 4800 } 
+            },
+            '경기': { 
+                // 경기도는 기본적으로 '기타' 지역으로 세팅하고, 과밀/광역시급을 예외로 위로 올림
+                default: { label: '기타', maxDeposit: 7500, priorityAmt: 2500 },
+                exceptions: [
+                    // 1. 과밀억제권역급 예외
+                    { keywords: [
+                        '의정부', '하남', '구리', '고양', '수원', '성남', '안양', '부천', '광명', '과천', '의왕', '군포', '시흥', '용인', '화성', '김포',
+                        '남양주 호평', '남양주 평내', '남양주 금곡', '남양주 일패', '남양주 이패', '남양주 삼패', '남양주 다산', '남양주 수석', '남양주 지금', '남양주 도농'
+                    ], label: '과밀억제권역급', maxDeposit: 14500, priorityAmt: 4800 },
+                    
+                    // 2. 광역시급 예외
+                    { keywords: [
+                        '안산', '광주', '파주', '이천', '평택'
+                    ], label: '광역시급', maxDeposit: 8500, priorityAmt: 2800 }
+                ]
+            },
+            // 나머지 도(道) 단위는 전부 기본값(기타)만 가짐
+            '강원': { default: { label: '기타', maxDeposit: 7500, priorityAmt: 2500 } },
+            '충북': { default: { label: '기타', maxDeposit: 7500, priorityAmt: 2500 } },
+            '충남': { default: { label: '기타', maxDeposit: 7500, priorityAmt: 2500 } },
+            '전북': { default: { label: '기타', maxDeposit: 7500, priorityAmt: 2500 } },
+            '전남': { default: { label: '기타', maxDeposit: 7500, priorityAmt: 2500 } },
+            '경북': { default: { label: '기타', maxDeposit: 7500, priorityAmt: 2500 } },
+            '경남': { default: { label: '기타', maxDeposit: 7500, priorityAmt: 2500 } },
+            '제주': { default: { label: '기타', maxDeposit: 7500, priorityAmt: 2500 } }
+        }
+    },
+ {
+        startDate: '2021-05-11',
+        regions: {
+            '서울': { 
+                default: { label: '서울', maxDeposit: 15000, priorityAmt: 5000 } 
+            },
+            '부산': { 
+                default: { label: '광역시급', maxDeposit: 7000, priorityAmt: 2300 },
+                exceptions: [
+                    { keywords: ['기장'], label: '기타', maxDeposit: 6000, priorityAmt: 2000 }
+                ]
+            },
+            '대구': { 
+                default: { label: '광역시급', maxDeposit: 7000, priorityAmt: 2300 },
+                exceptions: [
+                    { keywords: ['달성', '군위'], label: '기타', maxDeposit: 6000, priorityAmt: 2000 }
+                ]
+            },
+            '인천': { 
+                default: { label: '과밀억제권역급', maxDeposit: 13000, priorityAmt: 4300 },
+                exceptions: [
+                    { keywords: [
+                        '백령', '자월', '강화', '옹진', 
+                        '서구 대곡', '서구 불로', '서구 마전', '서구 금곡', '서구 오류', '서구 왕길', '서구 당하', '서구 원당', '서구 경서', '서구 연희', '서구 원창', 
+                        '중구 운서', '중구 영종', '중구 용유', 
+                        '연수구 송도', 
+                        '남동구 논현', '남동구 남촌', '남동구 고잔', '남동구 도림'
+                    ], label: '기타', maxDeposit: 6000, priorityAmt: 2000 }
+                ]
+            },
+            '광주': { 
+                default: { label: '광역시급', maxDeposit: 7000, priorityAmt: 2300 } 
+            },
+            '대전': { 
+                default: { label: '광역시급', maxDeposit: 7000, priorityAmt: 2300 } 
+            },
+            '울산': { 
+                default: { label: '광역시급', maxDeposit: 7000, priorityAmt: 2300 },
+                exceptions: [
+                    { keywords: ['울주'], label: '기타', maxDeposit: 6000, priorityAmt: 2000 }
+                ]
+            },
+            '세종': { 
+                default: { label: '과밀억제권역급', maxDeposit: 13000, priorityAmt: 4300 } 
+            },
+            '경기': { 
+                default: { label: '기타', maxDeposit: 6000, priorityAmt: 2000 },
+                exceptions: [
+                    // 1. 과밀억제권역급 예외
+                    { keywords: [
+                        '의정부', '하남', '구리', '고양', '수원', '성남', '안양', '부천', '광명', '과천', '의왕', '군포', '시흥', '용인', '화성', '김포',
+                        '남양주 호평', '남양주 평내', '남양주 금곡', '남양주 일패', '남양주 이패', '남양주 삼패', '남양주 다산', '남양주 수석', '남양주 지금', '남양주 도농'
+                    ], label: '과밀억제권역급', maxDeposit: 13000, priorityAmt: 4300 },
+                    
+                    // 2. 광역시급 예외
+                    { keywords: [
+                        '안산', '광주', '파주', '이천', '평택'
+                    ], label: '광역시급', maxDeposit: 7000, priorityAmt: 2300 }
+                ]
+            },
+            '강원': { default: { label: '기타', maxDeposit: 6000, priorityAmt: 2000 } },
+            '충북': { default: { label: '기타', maxDeposit: 6000, priorityAmt: 2000 } },
+            '충남': { default: { label: '기타', maxDeposit: 6000, priorityAmt: 2000 } },
+            '전북': { default: { label: '기타', maxDeposit: 6000, priorityAmt: 2000 } },
+            '전남': { default: { label: '기타', maxDeposit: 6000, priorityAmt: 2000 } },
+            '경북': { default: { label: '기타', maxDeposit: 6000, priorityAmt: 2000 } },
+            '경남': { default: { label: '기타', maxDeposit: 6000, priorityAmt: 2000 } },
+            '제주': { default: { label: '기타', maxDeposit: 6000, priorityAmt: 2000 } }
+        }
+    },
+  {
+        startDate: '2018-09-18',
+        regions: {
+            '서울': { 
+                default: { label: '서울', maxDeposit: 11000, priorityAmt: 3700 } 
+            },
+            '부산': { 
+                default: { label: '광역시급', maxDeposit: 6000, priorityAmt: 2000 },
+                exceptions: [
+                    { keywords: ['기장'], label: '기타', maxDeposit: 5000, priorityAmt: 1700 }
+                ]
+            },
+            '대구': { 
+                default: { label: '광역시급', maxDeposit: 6000, priorityAmt: 2000 },
+                exceptions: [
+                    { keywords: ['달성', '군위'], label: '기타', maxDeposit: 5000, priorityAmt: 1700 }
+                ]
+            },
+            '인천': { 
+                default: { label: '과밀억제권역급', maxDeposit: 10000, priorityAmt: 3400 },
+                exceptions: [
+                    { keywords: [
+                        '백령', '자월', '강화', '옹진', 
+                        '서구 대곡', '서구 불로', '서구 마전', '서구 금곡', '서구 오류', '서구 왕길', '서구 당하', '서구 원당', '서구 경서', '서구 연희', '서구 원창', 
+                        '중구 운서', '중구 영종', '중구 용유', 
+                        '연수구 송도', 
+                        '남동구 논현', '남동구 남촌', '남동구 고잔', '남동구 도림'
+                    ], label: '기타', maxDeposit: 5000, priorityAmt: 1700 }
+                ]
+            },
+            '광주': { 
+                default: { label: '광역시급', maxDeposit: 6000, priorityAmt: 2000 } 
+            },
+            '대전': { 
+                default: { label: '광역시급', maxDeposit: 6000, priorityAmt: 2000 } 
+            },
+            '울산': { 
+                default: { label: '광역시급', maxDeposit: 6000, priorityAmt: 2000 },
+                exceptions: [
+                    { keywords: ['울주'], label: '기타', maxDeposit: 5000, priorityAmt: 1700 }
+                ]
+            },
+            '세종': { 
+                default: { label: '과밀억제권역급', maxDeposit: 10000, priorityAmt: 3400 } 
+            },
+            '경기': { 
+                default: { label: '기타', maxDeposit: 5000, priorityAmt: 1700 },
+                exceptions: [
+                    // 1. 과밀억제권역급 예외
+                    { keywords: [
+                        '의정부', '하남', '구리', '고양', '수원', '성남', '안양', '부천', '광명', '과천', '의왕', '군포', '시흥', '용인', '화성',
+                        '남양주 호평', '남양주 평내', '남양주 금곡', '남양주 일패', '남양주 이패', '남양주 삼패', '남양주 다산', '남양주 수석', '남양주 지금', '남양주 도농'
+                    ], label: '과밀억제권역급', maxDeposit: 10000, priorityAmt: 3400 },
+                    
+                    // 2. 광역시급 예외 (이 시기에는 '김포'가 광역시급에 포함됩니다)
+                    { keywords: [
+                        '안산', '김포', '광주', '파주'
+                    ], label: '광역시급', maxDeposit: 6000, priorityAmt: 2000 }
+                ]
+            },
+            '강원': { default: { label: '기타', maxDeposit: 5000, priorityAmt: 1700 } },
+            '충북': { default: { label: '기타', maxDeposit: 5000, priorityAmt: 1700 } },
+            '충남': { default: { label: '기타', maxDeposit: 5000, priorityAmt: 1700 } },
+            '전북': { default: { label: '기타', maxDeposit: 5000, priorityAmt: 1700 } },
+            '전남': { default: { label: '기타', maxDeposit: 5000, priorityAmt: 1700 } },
+            '경북': { default: { label: '기타', maxDeposit: 5000, priorityAmt: 1700 } },
+            '경남': { default: { label: '기타', maxDeposit: 5000, priorityAmt: 1700 } },
+            '제주': { default: { label: '기타', maxDeposit: 5000, priorityAmt: 1700 } }
+        }
+    },
+   {
+        startDate: '2016-03-31',
+        regions: {
+            '서울': { 
+                default: { label: '서울', maxDeposit: 10000, priorityAmt: 3400 } 
+            },
+            '부산': { 
+                default: { label: '광역시급', maxDeposit: 6000, priorityAmt: 2000 },
+                exceptions: [
+                    { keywords: ['기장'], label: '기타', maxDeposit: 5000, priorityAmt: 1700 }
+                ]
+            },
+            '대구': { 
+                default: { label: '광역시급', maxDeposit: 6000, priorityAmt: 2000 },
+                exceptions: [
+                    { keywords: ['달성', '군위'], label: '기타', maxDeposit: 5000, priorityAmt: 1700 }
+                ]
+            },
+            '인천': { 
+                default: { label: '과밀억제권역급', maxDeposit: 8000, priorityAmt: 2700 },
+                exceptions: [
+                    { keywords: [
+                        '백령', '자월', '강화', '옹진', 
+                        '서구 대곡', '서구 불로', '서구 마전', '서구 금곡', '서구 오류', '서구 왕길', '서구 당하', '서구 원당', '서구 경서', '서구 연희', '서구 원창', 
+                        '중구 운서', '중구 영종', '중구 용유', 
+                        '연수구 송도', 
+                        '남동구 논현', '남동구 남촌', '남동구 고잔', '남동구 도림'
+                    ], label: '기타', maxDeposit: 5000, priorityAmt: 1700 }
+                ]
+            },
+            '광주': { 
+                default: { label: '광역시급', maxDeposit: 6000, priorityAmt: 2000 } 
+            },
+            '대전': { 
+                default: { label: '광역시급', maxDeposit: 6000, priorityAmt: 2000 } 
+            },
+            '울산': { 
+                default: { label: '광역시급', maxDeposit: 6000, priorityAmt: 2000 },
+                exceptions: [
+                    { keywords: ['울주'], label: '기타', maxDeposit: 5000, priorityAmt: 1700 }
+                ]
+            },
+            '세종': { 
+                // 이 시기에는 세종시가 과밀억제권역급이 아닌 광역시급에 포함됩니다.
+                default: { label: '광역시급', maxDeposit: 6000, priorityAmt: 2000 } 
+            },
+            '경기': { 
+                default: { label: '기타', maxDeposit: 5000, priorityAmt: 1700 },
+                exceptions: [
+                    // 1. 과밀억제권역급 예외
+                    { keywords: [
+                        '의정부', '하남', '고양', '수원', '성남', '안양', '부천', '광명', '과천', '의왕', '군포', '시흥',
+                        '남양주 호평', '남양주 평내', '남양주 금곡', '남양주 일패', '남양주 이패', '남양주 삼패', '남양주 다산', '남양주 수석', '남양주 지금', '남양주 도농'
+                    ], label: '과밀억제권역급', maxDeposit: 8000, priorityAmt: 2700 },
+                    
+                    // 2. 광역시급 예외 (이 시기에는 '용인', '김포'가 광역시급에 포함됩니다.)
+                    { keywords: [
+                        '안산', '용인', '김포', '광주'
+                    ], label: '광역시급', maxDeposit: 6000, priorityAmt: 2000 }
+                ]
+            },
+            '강원': { default: { label: '기타', maxDeposit: 5000, priorityAmt: 1700 } },
+            '충북': { default: { label: '기타', maxDeposit: 5000, priorityAmt: 1700 } },
+            '충남': { default: { label: '기타', maxDeposit: 5000, priorityAmt: 1700 } },
+            '전북': { default: { label: '기타', maxDeposit: 5000, priorityAmt: 1700 } },
+            '전남': { default: { label: '기타', maxDeposit: 5000, priorityAmt: 1700 } },
+            '경북': { default: { label: '기타', maxDeposit: 5000, priorityAmt: 1700 } },
+            '경남': { default: { label: '기타', maxDeposit: 5000, priorityAmt: 1700 } },
+            '제주': { default: { label: '기타', maxDeposit: 5000, priorityAmt: 1700 } }
         }
     },
     {
-        startDate: '2010-07-26', // 2010.07.26 ~ 2013.12.31
+        startDate: '2014-01-01',
         regions: {
-            '서울': { maxDeposit: 5000, priorityAmt: 1500 },
-            '과밀억제권역급': { maxDeposit: 4500, priorityAmt: 1350 },
-            '광역시급': { maxDeposit: 3000, priorityAmt: 900 },
-            '기타': { maxDeposit: 2500, priorityAmt: 750 }
+            '서울': { 
+                default: { label: '서울', maxDeposit: 9500, priorityAmt: 3200 } 
+            },
+            '부산': { 
+                default: { label: '광역시급', maxDeposit: 6000, priorityAmt: 2000 },
+                exceptions: [
+                    { keywords: ['기장'], label: '기타', maxDeposit: 4500, priorityAmt: 1500 }
+                ]
+            },
+            '대구': { 
+                default: { label: '광역시급', maxDeposit: 6000, priorityAmt: 2000 },
+                exceptions: [
+                    { keywords: ['달성', '군위'], label: '기타', maxDeposit: 4500, priorityAmt: 1500 }
+                ]
+            },
+            '인천': { 
+                default: { label: '과밀억제권역급', maxDeposit: 8000, priorityAmt: 2700 },
+                exceptions: [
+                    { keywords: [
+                        '백령', '자월', '강화', '옹진', 
+                        '서구 대곡', '서구 불로', '서구 마전', '서구 금곡', '서구 오류', '서구 왕길', '서구 당하', '서구 원당', '서구 경서', '서구 연희', '서구 원창', 
+                        '중구 운서', '중구 영종', '중구 용유', 
+                        '연수구 송도', 
+                        '남동구 논현', '남동구 남촌', '남동구 고잔', '남동구 도림'
+                    ], label: '기타', maxDeposit: 4500, priorityAmt: 1500 }
+                ]
+            },
+            '광주': { 
+                default: { label: '광역시급', maxDeposit: 6000, priorityAmt: 2000 } 
+            },
+            '대전': { 
+                default: { label: '광역시급', maxDeposit: 6000, priorityAmt: 2000 } 
+            },
+            '울산': { 
+                default: { label: '광역시급', maxDeposit: 6000, priorityAmt: 2000 },
+                exceptions: [
+                    { keywords: ['울주'], label: '기타', maxDeposit: 4500, priorityAmt: 1500 }
+                ]
+            },
+            '세종': { 
+                // 이 시기에는 세종시가 법령상 명시되지 않아 '기타' 지역으로 들어갑니다.
+                default: { label: '기타', maxDeposit: 4500, priorityAmt: 1500 } 
+            },
+            '경기': { 
+                default: { label: '기타', maxDeposit: 4500, priorityAmt: 1500 },
+                exceptions: [
+                    // 1. 과밀억제권역급 예외
+                    { keywords: [
+                        '의정부', '하남', '고양', '수원', '성남', '안양', '부천', '광명', '과천', '의왕', '군포', '시흥',
+                        '남양주 호평', '남양주 평내', '남양주 금곡', '남양주 일패', '남양주 이패', '남양주 삼패', '남양주 다산', '남양주 수석', '남양주 지금', '남양주 도농'
+                    ], label: '과밀억제권역급', maxDeposit: 8000, priorityAmt: 2700 },
+                    
+                    // 2. 광역시급 예외 (중복 기재되어 있던 '김포' 1개 제거 완료)
+                    { keywords: [
+                        '안산', '용인', '김포', '광주'
+                    ], label: '광역시급', maxDeposit: 6000, priorityAmt: 2000 }
+                ]
+            },
+            '강원': { default: { label: '기타', maxDeposit: 4500, priorityAmt: 1500 } },
+            '충북': { default: { label: '기타', maxDeposit: 4500, priorityAmt: 1500 } },
+            '충남': { default: { label: '기타', maxDeposit: 4500, priorityAmt: 1500 } },
+            '전북': { default: { label: '기타', maxDeposit: 4500, priorityAmt: 1500 } },
+            '전남': { default: { label: '기타', maxDeposit: 4500, priorityAmt: 1500 } },
+            '경북': { default: { label: '기타', maxDeposit: 4500, priorityAmt: 1500 } },
+            '경남': { default: { label: '기타', maxDeposit: 4500, priorityAmt: 1500 } },
+            '제주': { default: { label: '기타', maxDeposit: 4500, priorityAmt: 1500 } }
+        }
+    },
+   {
+        startDate: '2010-07-26',
+        regions: {
+            '서울': { 
+                default: { label: '서울', maxDeposit: 7500, priorityAmt: 2500 } 
+            },
+            '부산': { 
+                default: { label: '광역시급', maxDeposit: 5500, priorityAmt: 1900 },
+                exceptions: [
+                    { keywords: ['기장'], label: '기타', maxDeposit: 4000, priorityAmt: 1400 }
+                ]
+            },
+            '대구': { 
+                default: { label: '광역시급', maxDeposit: 5500, priorityAmt: 1900 },
+                exceptions: [
+                    { keywords: ['달성', '군위'], label: '기타', maxDeposit: 4000, priorityAmt: 1400 }
+                ]
+            },
+            '인천': { 
+                default: { label: '과밀억제권역급', maxDeposit: 6500, priorityAmt: 2200 },
+                exceptions: [
+                    { keywords: [
+                        '백령', '자월', '강화', '옹진', 
+                        '서구 대곡', '서구 불로', '서구 마전', '서구 금곡', '서구 오류', '서구 왕길', '서구 당하', '서구 원당', '서구 경서', '서구 연희', '서구 원창', 
+                        '중구 운서', '중구 영종', '중구 용유', 
+                        '연수구 송도', 
+                        '남동구 논현', '남동구 남촌', '남동구 고잔', '남동구 도림'
+                    ], label: '기타', maxDeposit: 4000, priorityAmt: 1400 }
+                ]
+            },
+            '광주': { 
+                default: { label: '광역시급', maxDeposit: 5500, priorityAmt: 1900 } 
+            },
+            '대전': { 
+                default: { label: '광역시급', maxDeposit: 5500, priorityAmt: 1900 } 
+            },
+            '울산': { 
+                default: { label: '광역시급', maxDeposit: 5500, priorityAmt: 1900 },
+                exceptions: [
+                    { keywords: ['울주'], label: '기타', maxDeposit: 4000, priorityAmt: 1400 }
+                ]
+            },
+            '세종': { 
+                // 이 시기에는 세종시가 법령상 명시되지 않아 '기타' 지역으로 들어갑니다.
+                default: { label: '기타', maxDeposit: 4000, priorityAmt: 1400 } 
+            },
+            '경기': { 
+                default: { label: '기타', maxDeposit: 4000, priorityAmt: 1400 },
+                exceptions: [
+                    // 1. 과밀억제권역급 예외
+                    { keywords: [
+                        '의정부', '하남', '고양', '수원', '성남', '안양', '부천', '광명', '과천', '의왕', '군포', '시흥',
+                        '남양주 호평', '남양주 평내', '남양주 금곡', '남양주 일패', '남양주 이패', '남양주 삼패', '남양주 다산', '남양주 수석', '남양주 지금', '남양주 도농'
+                    ], label: '과밀억제권역급', maxDeposit: 6500, priorityAmt: 2200 },
+                    
+                    // 2. 광역시급 예외
+                    { keywords: [
+                        '안산', '용인', '김포', '광주'
+                    ], label: '광역시급', maxDeposit: 5500, priorityAmt: 1900 }
+                ]
+            },
+            '강원': { default: { label: '기타', maxDeposit: 4000, priorityAmt: 1400 } },
+            '충북': { default: { label: '기타', maxDeposit: 4000, priorityAmt: 1400 } },
+            '충남': { default: { label: '기타', maxDeposit: 4000, priorityAmt: 1400 } },
+            '전북': { default: { label: '기타', maxDeposit: 4000, priorityAmt: 1400 } },
+            '전남': { default: { label: '기타', maxDeposit: 4000, priorityAmt: 1400 } },
+            '경북': { default: { label: '기타', maxDeposit: 4000, priorityAmt: 1400 } },
+            '경남': { default: { label: '기타', maxDeposit: 4000, priorityAmt: 1400 } },
+            '제주': { default: { label: '기타', maxDeposit: 4000, priorityAmt: 1400 } }
+        }
+    },
+   {
+        startDate: '2008-08-21',
+        regions: {
+            '서울': { 
+                default: { label: '서울', maxDeposit: 6000, priorityAmt: 2000 } 
+            },
+            '부산': { 
+                default: { label: '광역시급', maxDeposit: 5000, priorityAmt: 1700 },
+                exceptions: [
+                    { keywords: ['기장'], label: '기타', maxDeposit: 4000, priorityAmt: 1400 }
+                ]
+            },
+            '대구': { 
+                default: { label: '광역시급', maxDeposit: 5000, priorityAmt: 1700 },
+                exceptions: [
+                    { keywords: ['달성', '군위'], label: '기타', maxDeposit: 4000, priorityAmt: 1400 }
+                ]
+            },
+            '인천': { 
+                default: { label: '과밀억제권역급', maxDeposit: 6000, priorityAmt: 2000 },
+                exceptions: [
+                    { keywords: [
+                        '백령', '자월', '강화', '옹진', 
+                        '서구 대곡', '서구 불로', '서구 마전', '서구 금곡', '서구 오류', '서구 왕길', '서구 당하', '서구 원당', '서구 경서', '서구 연희', '서구 원창', 
+                        '중구 운서', '중구 영종', '중구 용유', 
+                        '연수구 송도', 
+                        '남동구 논현', '남동구 남촌', '남동구 고잔', '남동구 도림'
+                    ], label: '기타', maxDeposit: 4000, priorityAmt: 1400 }
+                ]
+            },
+            '광주': { 
+                default: { label: '광역시급', maxDeposit: 5000, priorityAmt: 1700 } 
+            },
+            '대전': { 
+                default: { label: '광역시급', maxDeposit: 5000, priorityAmt: 1700 } 
+            },
+            '울산': { 
+                default: { label: '광역시급', maxDeposit: 5000, priorityAmt: 1700 },
+                exceptions: [
+                    { keywords: ['울주'], label: '기타', maxDeposit: 4000, priorityAmt: 1400 }
+                ]
+            },
+            '세종': { 
+                // 이 시기에는 세종시가 법령상 명시되지 않아 '기타' 지역으로 들어갑니다.
+                default: { label: '기타', maxDeposit: 4000, priorityAmt: 1400 } 
+            },
+            '경기': { 
+                default: { label: '기타', maxDeposit: 4000, priorityAmt: 1400 },
+                exceptions: [
+                    // 1. 과밀억제권역급 예외
+                    { keywords: [
+                        '의정부', '하남', '고양', '수원', '성남', '안양', '부천', '광명', '과천', '의왕', '군포', '시흥',
+                        '남양주 호평', '남양주 평내', '남양주 금곡', '남양주 일패', '남양주 이패', '남양주 삼패', '남양주 다산', '남양주 수석', '남양주 지금', '남양주 도농'
+                    ], label: '과밀억제권역급', maxDeposit: 6000, priorityAmt: 2000 }
+                    
+                    // (이 시기에는 경기도 내 '광역시급' 예외 지역이 존재하지 않으므로 생략)
+                ]
+            },
+            '강원': { default: { label: '기타', maxDeposit: 4000, priorityAmt: 1400 } },
+            '충북': { default: { label: '기타', maxDeposit: 4000, priorityAmt: 1400 } },
+            '충남': { default: { label: '기타', maxDeposit: 4000, priorityAmt: 1400 } },
+            '전북': { default: { label: '기타', maxDeposit: 4000, priorityAmt: 1400 } },
+            '전남': { default: { label: '기타', maxDeposit: 4000, priorityAmt: 1400 } },
+            '경북': { default: { label: '기타', maxDeposit: 4000, priorityAmt: 1400 } },
+            '경남': { default: { label: '기타', maxDeposit: 4000, priorityAmt: 1400 } },
+            '제주': { default: { label: '기타', maxDeposit: 4000, priorityAmt: 1400 } }
+        }
+    },
+   {
+        startDate: '2001-09-15',
+        regions: {
+            '서울': { 
+                default: { label: '서울', maxDeposit: 4000, priorityAmt: 1600 } 
+            },
+            '부산': { 
+                default: { label: '광역시급', maxDeposit: 3500, priorityAmt: 1400 },
+                exceptions: [
+                    { keywords: ['기장'], label: '기타', maxDeposit: 3000, priorityAmt: 1200 }
+                ]
+            },
+            '대구': { 
+                default: { label: '광역시급', maxDeposit: 3500, priorityAmt: 1400 },
+                exceptions: [
+                    { keywords: ['달성', '군위'], label: '기타', maxDeposit: 3000, priorityAmt: 1200 }
+                ]
+            },
+            '인천': { 
+                default: { label: '과밀억제권역급', maxDeposit: 4000, priorityAmt: 1600 },
+                exceptions: [
+                    { keywords: [
+                        '백령', '자월', '강화', '옹진', 
+                        '서구 대곡', '서구 불로', '서구 마전', '서구 금곡', '서구 오류', '서구 왕길', '서구 당하', '서구 원당', '서구 경서', '서구 연희', '서구 원창', 
+                        '중구 운서', '중구 영종', '중구 용유', 
+                        '연수구 송도', 
+                        '남동구 논현', '남동구 남촌', '남동구 고잔', '남동구 도림'
+                    ], label: '기타', maxDeposit: 3000, priorityAmt: 1200 }
+                ]
+            },
+            '광주': { 
+                default: { label: '광역시급', maxDeposit: 3500, priorityAmt: 1400 } 
+            },
+            '대전': { 
+                default: { label: '광역시급', maxDeposit: 3500, priorityAmt: 1400 } 
+            },
+            '울산': { 
+                default: { label: '광역시급', maxDeposit: 3500, priorityAmt: 1400 },
+                exceptions: [
+                    { keywords: ['울주'], label: '기타', maxDeposit: 3000, priorityAmt: 1200 }
+                ]
+            },
+            '세종': { 
+                // 이 시기에는 세종시가 법령상 명시되지 않아 '기타' 지역으로 들어갑니다.
+                default: { label: '기타', maxDeposit: 3000, priorityAmt: 1200 } 
+            },
+            '경기': { 
+                default: { label: '기타', maxDeposit: 3000, priorityAmt: 1200 },
+                exceptions: [
+                    // 1. 과밀억제권역급 예외
+                    { keywords: [
+                        '의정부', '하남', '고양', '수원', '성남', '안양', '부천', '광명', '과천', '의왕', '군포', '시흥',
+                        '남양주 호평', '남양주 평내', '남양주 금곡', '남양주 일패', '남양주 이패', '남양주 삼패', '남양주 다산', '남양주 수석', '남양주 지금', '남양주 도농'
+                    ], label: '과밀억제권역급', maxDeposit: 4000, priorityAmt: 1600 }
+                    
+                    // (이 시기에는 경기도 내 '광역시급' 예외 지역이 존재하지 않으므로 생략)
+                ]
+            },
+            '강원': { default: { label: '기타', maxDeposit: 3000, priorityAmt: 1200 } },
+            '충북': { default: { label: '기타', maxDeposit: 3000, priorityAmt: 1200 } },
+            '충남': { default: { label: '기타', maxDeposit: 3000, priorityAmt: 1200 } },
+            '전북': { default: { label: '기타', maxDeposit: 3000, priorityAmt: 1200 } },
+            '전남': { default: { label: '기타', maxDeposit: 3000, priorityAmt: 1200 } },
+            '경북': { default: { label: '기타', maxDeposit: 3000, priorityAmt: 1200 } },
+            '경남': { default: { label: '기타', maxDeposit: 3000, priorityAmt: 1200 } },
+            '제주': { default: { label: '기타', maxDeposit: 3000, priorityAmt: 1200 } }
+        }
+    },
+   {
+        startDate: '1995-10-19',
+        regions: {
+            '서울': { 
+                default: { label: '서울', maxDeposit: 3000, priorityAmt: 1200 } 
+            },
+            '부산': { 
+                default: { label: '광역시급', maxDeposit: 3000, priorityAmt: 1200 },
+                exceptions: [
+                    { keywords: ['기장'], label: '기타', maxDeposit: 2000, priorityAmt: 800 }
+                ]
+            },
+            '대구': { 
+                default: { label: '광역시급', maxDeposit: 3000, priorityAmt: 1200 },
+                exceptions: [
+                    { keywords: ['달성', '군위'], label: '기타', maxDeposit: 2000, priorityAmt: 800 }
+                ]
+            },
+            '인천': { 
+                default: { label: '과밀억제권역급', maxDeposit: 3000, priorityAmt: 1200 },
+                exceptions: [
+                    { keywords: [
+                        '백령', '자월', '강화', '옹진', 
+                        '서구 대곡', '서구 불로', '서구 마전', '서구 금곡', '서구 오류', '서구 왕길', '서구 당하', '서구 원당', '서구 경서', '서구 연희', '서구 원창', 
+                        '중구 운서', '중구 영종', '중구 용유', 
+                        '연수구 송도', 
+                        '남동구 논현', '남동구 남촌', '남동구 고잔', '남동구 도림'
+                    ], label: '기타', maxDeposit: 2000, priorityAmt: 800 }
+                ]
+            },
+            '광주': { 
+                default: { label: '광역시급', maxDeposit: 3000, priorityAmt: 1200 } 
+            },
+            '대전': { 
+                default: { label: '광역시급', maxDeposit: 3000, priorityAmt: 1200 } 
+            },
+            '울산': { 
+                default: { label: '광역시급', maxDeposit: 3000, priorityAmt: 1200 },
+                exceptions: [
+                    { keywords: ['울주'], label: '기타', maxDeposit: 2000, priorityAmt: 800 }
+                ]
+            },
+            '세종': { 
+                // 이 시기에는 세종시가 법령상 명시되지 않아 '기타' 지역으로 들어갑니다.
+                default: { label: '기타', maxDeposit: 2000, priorityAmt: 800 } 
+            },
+            '경기': { 
+                default: { label: '기타', maxDeposit: 2000, priorityAmt: 800 },
+                exceptions: [
+                    // 1. 과밀억제권역급 예외
+                    { keywords: [
+                        '의정부', '하남', '고양', '수원', '성남', '안양', '부천', '광명', '과천', '의왕', '군포', '시흥',
+                        '남양주 호평', '남양주 평내', '남양주 금곡', '남양주 일패', '남양주 이패', '남양주 삼패', '남양주 다산', '남양주 수석', '남양주 지금', '남양주 도농'
+                    ], label: '과밀억제권역급', maxDeposit: 3000, priorityAmt: 1200 }
+                    
+                    // (이 시기에는 경기도 내 '광역시급' 예외 지역이 존재하지 않으므로 생략)
+                ]
+            },
+            '강원': { default: { label: '기타', maxDeposit: 2000, priorityAmt: 800 } },
+            '충북': { default: { label: '기타', maxDeposit: 2000, priorityAmt: 800 } },
+            '충남': { default: { label: '기타', maxDeposit: 2000, priorityAmt: 800 } },
+            '전북': { default: { label: '기타', maxDeposit: 2000, priorityAmt: 800 } },
+            '전남': { default: { label: '기타', maxDeposit: 2000, priorityAmt: 800 } },
+            '경북': { default: { label: '기타', maxDeposit: 2000, priorityAmt: 800 } },
+            '경남': { default: { label: '기타', maxDeposit: 2000, priorityAmt: 800 } },
+            '제주': { default: { label: '기타', maxDeposit: 2000, priorityAmt: 800 } }
         }
     },
     {
-        startDate: '2008-08-21', // 2008.08.21 ~ 2010.07.25
+        startDate: '1995-03-01',
         regions: {
-            '서울': { maxDeposit: 4500, priorityAmt: 1350 },
-            '과밀억제권역급': { maxDeposit: 3900, priorityAmt: 1170 },
-            '광역시급': { maxDeposit: 2500, priorityAmt: 750 },
-            '기타': { maxDeposit: 2000, priorityAmt: 600 }
+            '서울': { default: { label: '서울', maxDeposit: 2000, priorityAmt: 700 } },
+            '부산': { 
+                default: { label: '광역시급', maxDeposit: 2000, priorityAmt: 700 },
+                exceptions: [
+                    { keywords: ['기장'], label: '기타', maxDeposit: 1500, priorityAmt: 500 }
+                ]
+            },
+            '대구': { 
+                default: { label: '광역시급', maxDeposit: 2000, priorityAmt: 700 },
+                exceptions: [
+                    { keywords: ['달성'], label: '기타', maxDeposit: 1500, priorityAmt: 500 }
+                ]
+            },
+            '인천': { default: { label: '과밀억제권역급', maxDeposit: 2000, priorityAmt: 700 } },
+            '광주': { default: { label: '광역시급', maxDeposit: 2000, priorityAmt: 700 } },
+            '대전': { default: { label: '광역시급', maxDeposit: 2000, priorityAmt: 700 } },
+            '울산': { default: { label: '광역시급', maxDeposit: 2000, priorityAmt: 700 } },
+            '세종': { default: { label: '기타', maxDeposit: 2000, priorityAmt: 700 } },
+            '경기': { default: { label: '기타', maxDeposit: 2000, priorityAmt: 700 } },
+            '강원': { default: { label: '기타', maxDeposit: 2000, priorityAmt: 700 } },
+            '충북': { default: { label: '기타', maxDeposit: 2000, priorityAmt: 700 } },
+            '충남': { default: { label: '기타', maxDeposit: 2000, priorityAmt: 700 } },
+            '전북': { default: { label: '기타', maxDeposit: 2000, priorityAmt: 700 } },
+            '전남': { default: { label: '기타', maxDeposit: 2000, priorityAmt: 700 } },
+            '경북': { default: { label: '기타', maxDeposit: 2000, priorityAmt: 700 } },
+            '경남': { default: { label: '기타', maxDeposit: 2000, priorityAmt: 700 } },
+            '제주': { default: { label: '기타', maxDeposit: 2000, priorityAmt: 700 } }
         }
     },
     {
-        startDate: '2002-11-01', // 2002.11.01 ~ 2008.08.20
+        startDate: '1990-02-19',
         regions: {
-            '서울': { maxDeposit: 4500, priorityAmt: 1350 },
-            '과밀억제권역급': { maxDeposit: 3900, priorityAmt: 1170 },
-            '광역시급': { maxDeposit: 2500, priorityAmt: 750 },
-            '기타': { maxDeposit: 2000, priorityAmt: 600 }
+            '서울': { default: { label: '서울', maxDeposit: 2000, priorityAmt: 700 } },
+            '부산': { default: { label: '광역시급', maxDeposit: 2000, priorityAmt: 700 } },
+            '대구': { default: { label: '광역시급', maxDeposit: 2000, priorityAmt: 700 } },
+            '인천': { default: { label: '직할시급', maxDeposit: 2000, priorityAmt: 700 } },
+            '광주': { default: { label: '광역시급', maxDeposit: 2000, priorityAmt: 700 } },
+            '대전': { default: { label: '광역시급', maxDeposit: 2000, priorityAmt: 700 } },
+            '울산': { default: { label: '광역시급', maxDeposit: 2000, priorityAmt: 700 } },
+            '세종': { default: { label: '기타', maxDeposit: 2000, priorityAmt: 700 } },
+            '경기': { default: { label: '기타', maxDeposit: 2000, priorityAmt: 700 } },
+            '강원': { default: { label: '기타', maxDeposit: 2000, priorityAmt: 700 } },
+            '충북': { default: { label: '기타', maxDeposit: 2000, priorityAmt: 700 } },
+            '충남': { default: { label: '기타', maxDeposit: 2000, priorityAmt: 700 } },
+            '전북': { default: { label: '기타', maxDeposit: 2000, priorityAmt: 700 } },
+            '전남': { default: { label: '기타', maxDeposit: 2000, priorityAmt: 700 } },
+            '경북': { default: { label: '기타', maxDeposit: 2000, priorityAmt: 700 } },
+            '경남': { default: { label: '기타', maxDeposit: 2000, priorityAmt: 700 } },
+            '제주': { default: { label: '기타', maxDeposit: 2000, priorityAmt: 700 } }
         }
     }
 ];

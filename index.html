@@ -2638,10 +2638,21 @@ function analyzePriorityRepayment() {
         return;
     }
 
-    // 2. 주택 vs 상가 데이터 선택
-    const dataArray = (bldgType === 'house') ? housingLawData : commercialProtectionData;
+    // 2. 상가 데이터 변수명이 다를 경우를 대비한 안전 장치
+    let dataArray;
+    if (bldgType === 'house') {
+        dataArray = typeof housingLawData !== 'undefined' ? housingLawData : [];
+    } else {
+        // ※ 주의: 스크립트 상단에 정의하신 상가 데이터 변수명이 정확히 commercialProtectionData 인지 확인해 주세요.
+        dataArray = typeof commercialProtectionData !== 'undefined' ? commercialProtectionData : [];
+    }
 
-    // 3. 연도 2자리를 4자리로 변환
+    if (dataArray.length === 0) {
+        if (amountDisplay) amountDisplay.innerText = "데이터 배열을 찾을 수 없습니다. 변수명을 확인해주세요.";
+        return;
+    }
+
+    // 3. 연도 2자리를 4자리로 변환 (90 -> 1990)
     const yyInt = parseInt(yy, 10);
     const fullYear = yyInt > 50 ? 1900 + yyInt : 2000 + yyInt;
 
@@ -2663,7 +2674,7 @@ function analyzePriorityRepayment() {
         targetDepositForCheck = convertedDeposit;
     }
 
-    // 5. 만능 함수로 정보 가져오기 (에러 방지 처리)
+    // 5. 만능 함수로 정보 가져오기 시도
     let limitInfo = null;
     try {
         if (typeof getProtectionLimit === 'function') {
@@ -2673,23 +2684,42 @@ function analyzePriorityRepayment() {
         console.error("데이터 추출 중 에러:", e);
     }
 
-    // ★ [핵심 해결] 만능 함수가 데이터를 못 찾고 뱉어낸 경우, 강제로 데이터 구출 ★
-    if (!limitInfo && targetLawData && targetLawData.regions) {
+    // ★ [진짜 원인 해결!] 만능 함수가 상가 데이터를 놓쳤을 때, 주택과 동일한 '.default' 구조를 파고들어 구출합니다! ★
+    if ((!limitInfo || !limitInfo.maxDeposit) && targetLawData && targetLawData.regions) {
         const regionKeys = Object.keys(targetLawData.regions);
         
-        // 주소에 서울이 있으면 서울, 아니면 가장 마지막 지역(기타)으로 강제 매핑
-        let fallbackKey = regionKeys[regionKeys.length - 1]; 
-        if (address.includes('서울') && regionKeys.includes('서울')) fallbackKey = '서울';
-        else if (regionKeys.includes('기타')) fallbackKey = '기타';
-        else if (regionKeys.includes('그밖의지역')) fallbackKey = '그밖의지역';
+        // 주소 텍스트와 일치하는 지역명 찾기
+        let fallbackKey = null;
+        for (let k of regionKeys) {
+            if (k !== '기타' && k !== '그밖의지역' && address.includes(k)) {
+                fallbackKey = k;
+                break;
+            }
+        }
+        
+        // 못 찾으면 '기타'로 강제 지정
+        if (!fallbackKey) {
+            if (regionKeys.includes('기타')) fallbackKey = '기타';
+            else if (regionKeys.includes('그밖의지역')) fallbackKey = '그밖의지역';
+            else fallbackKey = regionKeys[regionKeys.length - 1]; 
+        }
 
         const foundData = targetLawData.regions[fallbackKey];
         if (foundData) {
-            limitInfo = {
-                label: foundData.label || fallbackKey,
-                maxDeposit: foundData.maxDeposit || 0,
-                priorityAmt: foundData.priorityAmt || 0
-            };
+            // ★ 이전 코드에서 빼먹었던 부분! foundData 안에 .default가 있다면 그 안으로 들어가서 값을 뺍니다.
+            if (foundData.default) {
+                limitInfo = {
+                    label: foundData.default.label || fallbackKey,
+                    maxDeposit: foundData.default.maxDeposit || 0,
+                    priorityAmt: foundData.default.priorityAmt || 0
+                };
+            } else {
+                limitInfo = {
+                    label: foundData.label || fallbackKey,
+                    maxDeposit: foundData.maxDeposit || 0,
+                    priorityAmt: foundData.priorityAmt || 0
+                };
+            }
         }
     }
 
@@ -2703,11 +2733,11 @@ function analyzePriorityRepayment() {
             const maxDeposit = limitInfo ? (limitInfo.maxDeposit || 0) : 0;
             
             if (maxDeposit > 0) {
-                // 정상적으로 기준 금액을 찾은 경우
+                // 정상적으로 값을 찾았을 때
                 convertedAmountSpan.innerText = `${maxDeposit.toLocaleString()}만 원 / ${convertedDeposit.toLocaleString()}만 원`;
                 convertedAmountSpan.style.color = (convertedDeposit <= maxDeposit) ? 'black' : 'red';
             } else {
-                // 만약 기준 금액을 끝내 못 찾았더라도 환산보증금은 무조건 계산해서 띄움
+                // 만약 데이터 배열 자체에 문제가 있어 못 찾았을 때 표기
                 convertedAmountSpan.innerText = `기준금액 확인불가 / ${convertedDeposit.toLocaleString()}만 원`;
                 convertedAmountSpan.style.color = 'red';
             }

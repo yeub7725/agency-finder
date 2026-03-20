@@ -581,7 +581,7 @@
                                 <span class="contact-label">인터넷등기소</span>
                                 <span class="sub-desc" style="margin-left: 6px;">홈페이지 하단부 소액임차인 안내</span>
                             </div>
-                            <a href="https://www.reb.or.kr/" target="_blank" style="color: var(--gov-red); text-decoration: none; font-weight: 900; font-size: 14px;">www.iros.go.kr</a>
+                            <a href="https://www.iros.go.kr/" target="_blank" style="color: var(--gov-red); text-decoration: none; font-weight: 900; font-size: 14px;">www.iros.go.kr</a>
                         </div>
                         <div class="contact-item">
                             <div style="display: flex; align-items: center;">
@@ -1185,14 +1185,11 @@ const housingLawData = [
             '인천': { 
                 default: { label: '과밀억제권역급', maxDeposit: 14500, priorityAmt: 4800 },
                 exceptions: [
-                    // 인천 내 기타 지역 (기존에 '인천' 글자가 중복되던 것을 깔끔하게 키워드만 남김)
-                    { keywords: [
-                        '백령', '자월', '강화', '옹진', 
-                        '서구 대곡', '서구 불로', '서구 마전', '서구 금곡', '서구 오류', '서구 왕길', '서구 당하', '서구 원당', '서구 경서', '서구 연희', '서구 원창', 
+                    { keywords: ['서구 대곡', '서구 불로', '서구 마전', '서구 금곡', '서구 오류', '서구 왕길', '서구 당하', '서구 원당', '서구 경서', '서구 연희', '서구 원창', 
                         '중구 운서', '중구 영종', '중구 용유', 
                         '연수구 송도', 
-                        '남동구 논현', '남동구 남촌', '남동구 고잔', '남동구 도림'
-                    ], label: '기타', maxDeposit: 7500, priorityAmt: 2500 }
+                        '남동구 논현', '남동구 남촌', '남동구 고잔', '남동구 도림'], label: '광역시급', maxDeposit: 8500, priorityAmt: 2800 },
+                    { keywords: ['강화', '옹진'], label: '기타', maxDeposit: 7500, priorityAmt: 2500 }
                 ]
             },
             '광주': { 
@@ -1259,13 +1256,11 @@ const housingLawData = [
             '인천': { 
                 default: { label: '과밀억제권역급', maxDeposit: 13000, priorityAmt: 4300 },
                 exceptions: [
-                    { keywords: [
-                        '백령', '자월', '강화', '옹진', 
-                        '서구 대곡', '서구 불로', '서구 마전', '서구 금곡', '서구 오류', '서구 왕길', '서구 당하', '서구 원당', '서구 경서', '서구 연희', '서구 원창', 
+                    { keywords: ['서구 대곡', '서구 불로', '서구 마전', '서구 금곡', '서구 오류', '서구 왕길', '서구 당하', '서구 원당', '서구 경서', '서구 연희', '서구 원창', 
                         '중구 운서', '중구 영종', '중구 용유', 
                         '연수구 송도', 
-                        '남동구 논현', '남동구 남촌', '남동구 고잔', '남동구 도림'
-                    ], label: '기타', maxDeposit: 6000, priorityAmt: 2000 }
+                        '남동구 논현', '남동구 남촌', '남동구 고잔', '남동구 도림'], label: '광역시급', maxDeposit: 7000, priorityAmt: 2300 },
+                    { keywords: ['강화', '옹진'], label: '기타', maxDeposit: 6000, priorityAmt: 2000 }
                 ]
             },
             '광주': { 
@@ -1328,14 +1323,12 @@ const housingLawData = [
             },
             '인천': { 
                 default: { label: '과밀억제권역급', maxDeposit: 10000, priorityAmt: 3400 },
-                exceptions: [
-                    { keywords: [
-                        '백령', '자월', '강화', '옹진', 
-                        '서구 대곡', '서구 불로', '서구 마전', '서구 금곡', '서구 오류', '서구 왕길', '서구 당하', '서구 원당', '서구 경서', '서구 연희', '서구 원창', 
+          exceptions: [
+                    { keywords: ['서구 대곡', '서구 불로', '서구 마전', '서구 금곡', '서구 오류', '서구 왕길', '서구 당하', '서구 원당', '서구 경서', '서구 연희', '서구 원창', 
                         '중구 운서', '중구 영종', '중구 용유', 
                         '연수구 송도', 
-                        '남동구 논현', '남동구 남촌', '남동구 고잔', '남동구 도림'
-                    ], label: '기타', maxDeposit: 5000, priorityAmt: 1700 }
+                        '남동구 논현', '남동구 남촌', '남동구 고잔', '남동구 도림'], label: '광역시급', maxDeposit: 6000, priorityAmt: 2000 },
+                    { keywords: ['강화', '옹진'], label: '기타', maxDeposit: 5000, priorityAmt: 1700 }
                 ]
             },
             '광주': { 
@@ -1398,14 +1391,12 @@ const housingLawData = [
             },
             '인천': { 
                 default: { label: '과밀억제권역급', maxDeposit: 8000, priorityAmt: 2700 },
-                exceptions: [
-                    { keywords: [
-                        '백령', '자월', '강화', '옹진', 
-                        '서구 대곡', '서구 불로', '서구 마전', '서구 금곡', '서구 오류', '서구 왕길', '서구 당하', '서구 원당', '서구 경서', '서구 연희', '서구 원창', 
+              exceptions: [
+                    { keywords: ['서구 대곡', '서구 불로', '서구 마전', '서구 금곡', '서구 오류', '서구 왕길', '서구 당하', '서구 원당', '서구 경서', '서구 연희', '서구 원창', 
                         '중구 운서', '중구 영종', '중구 용유', 
                         '연수구 송도', 
-                        '남동구 논현', '남동구 남촌', '남동구 고잔', '남동구 도림'
-                    ], label: '기타', maxDeposit: 5000, priorityAmt: 1700 }
+                        '남동구 논현', '남동구 남촌', '남동구 고잔', '남동구 도림'], label: '광역시급', maxDeposit: 6000, priorityAmt: 2000 },
+                    { keywords: ['강화', '옹진'], label: '기타', maxDeposit: 5000, priorityAmt: 1700 }
                 ]
             },
             '광주': { 
@@ -1470,13 +1461,11 @@ const housingLawData = [
             '인천': { 
                 default: { label: '과밀억제권역급', maxDeposit: 8000, priorityAmt: 2700 },
                 exceptions: [
-                    { keywords: [
-                        '백령', '자월', '강화', '옹진', 
-                        '서구 대곡', '서구 불로', '서구 마전', '서구 금곡', '서구 오류', '서구 왕길', '서구 당하', '서구 원당', '서구 경서', '서구 연희', '서구 원창', 
+                    { keywords: ['서구 대곡', '서구 불로', '서구 마전', '서구 금곡', '서구 오류', '서구 왕길', '서구 당하', '서구 원당', '서구 경서', '서구 연희', '서구 원창', 
                         '중구 운서', '중구 영종', '중구 용유', 
                         '연수구 송도', 
-                        '남동구 논현', '남동구 남촌', '남동구 고잔', '남동구 도림'
-                    ], label: '기타', maxDeposit: 4500, priorityAmt: 1500 }
+                        '남동구 논현', '남동구 남촌', '남동구 고잔', '남동구 도림'], label: '광역시급', maxDeposit: 6000, priorityAmt: 2000 },
+                    { keywords: ['강화', '옹진'], label: '기타', maxDeposit: 4500, priorityAmt: 1500 }
                 ]
             },
             '광주': { 
@@ -1540,14 +1529,12 @@ const housingLawData = [
             },
             '인천': { 
                 default: { label: '과밀억제권역급', maxDeposit: 6500, priorityAmt: 2200 },
-                exceptions: [
-                    { keywords: [
-                        '백령', '자월', '강화', '옹진', 
-                        '서구 대곡', '서구 불로', '서구 마전', '서구 금곡', '서구 오류', '서구 왕길', '서구 당하', '서구 원당', '서구 경서', '서구 연희', '서구 원창', 
+                      exceptions: [
+                    { keywords: ['서구 대곡', '서구 불로', '서구 마전', '서구 금곡', '서구 오류', '서구 왕길', '서구 당하', '서구 원당', '서구 경서', '서구 연희', '서구 원창', 
                         '중구 운서', '중구 영종', '중구 용유', 
                         '연수구 송도', 
-                        '남동구 논현', '남동구 남촌', '남동구 고잔', '남동구 도림'
-                    ], label: '기타', maxDeposit: 4000, priorityAmt: 1400 }
+                        '남동구 논현', '남동구 남촌', '남동구 고잔', '남동구 도림'], label: '광역시급', maxDeposit: 5500, priorityAmt: 1900 },
+                    { keywords: ['강화', '옹진'], label: '기타', maxDeposit: 4000, priorityAmt: 1400 }
                 ]
             },
             '광주': { 
@@ -1611,14 +1598,12 @@ const housingLawData = [
             },
             '인천': { 
                 default: { label: '과밀억제권역급', maxDeposit: 6000, priorityAmt: 2000 },
-                exceptions: [
-                    { keywords: [
-                        '백령', '자월', '강화', '옹진', 
-                        '서구 대곡', '서구 불로', '서구 마전', '서구 금곡', '서구 오류', '서구 왕길', '서구 당하', '서구 원당', '서구 경서', '서구 연희', '서구 원창', 
+                 exceptions: [
+                    { keywords: ['서구 대곡', '서구 불로', '서구 마전', '서구 금곡', '서구 오류', '서구 왕길', '서구 당하', '서구 원당', '서구 경서', '서구 연희', '서구 원창', 
                         '중구 운서', '중구 영종', '중구 용유', 
                         '연수구 송도', 
-                        '남동구 논현', '남동구 남촌', '남동구 고잔', '남동구 도림'
-                    ], label: '기타', maxDeposit: 4000, priorityAmt: 1400 }
+                        '남동구 논현', '남동구 남촌', '남동구 고잔', '남동구 도림'], label: '광역시급', maxDeposit: 5000, priorityAmt: 1700 },
+                    { keywords: ['강화', '옹진'], label: '기타', maxDeposit: 4000, priorityAmt: 1400 }
                 ]
             },
             '광주': { 
@@ -1680,13 +1665,11 @@ const housingLawData = [
             '인천': { 
                 default: { label: '과밀억제권역급', maxDeposit: 4000, priorityAmt: 1600 },
                 exceptions: [
-                    { keywords: [
-                        '백령', '자월', '강화', '옹진', 
-                        '서구 대곡', '서구 불로', '서구 마전', '서구 금곡', '서구 오류', '서구 왕길', '서구 당하', '서구 원당', '서구 경서', '서구 연희', '서구 원창', 
+                    { keywords: ['서구 대곡', '서구 불로', '서구 마전', '서구 금곡', '서구 오류', '서구 왕길', '서구 당하', '서구 원당', '서구 경서', '서구 연희', '서구 원창', 
                         '중구 운서', '중구 영종', '중구 용유', 
                         '연수구 송도', 
-                        '남동구 논현', '남동구 남촌', '남동구 고잔', '남동구 도림'
-                    ], label: '기타', maxDeposit: 3000, priorityAmt: 1200 }
+                        '남동구 논현', '남동구 남촌', '남동구 고잔', '남동구 도림'], label: '광역시급', maxDeposit: 3500, priorityAmt: 1400 },
+                    { keywords: ['강화', '옹진'], label: '기타', maxDeposit: 3000, priorityAmt: 1200 }
                 ]
             },
             '광주': { 
@@ -1746,16 +1729,8 @@ const housingLawData = [
                 ]
             },
             '인천': { 
-                default: { label: '과밀억제권역급', maxDeposit: 3000, priorityAmt: 1200 },
-                exceptions: [
-                    { keywords: [
-                        '백령', '자월', '강화', '옹진', 
-                        '서구 대곡', '서구 불로', '서구 마전', '서구 금곡', '서구 오류', '서구 왕길', '서구 당하', '서구 원당', '서구 경서', '서구 연희', '서구 원창', 
-                        '중구 운서', '중구 영종', '중구 용유', 
-                        '연수구 송도', 
-                        '남동구 논현', '남동구 남촌', '남동구 고잔', '남동구 도림'
-                    ], label: '기타', maxDeposit: 2000, priorityAmt: 800 }
-                ]
+                default: { label: '광역시급', maxDeposit: 3000, priorityAmt: 1200 },
+                 exceptions: [ { keywords: ['강화', '옹진'], label: '기타', maxDeposit: 2000, priorityAmt: 800 } ]
             },
             '광주': { 
                 default: { label: '광역시급', maxDeposit: 3000, priorityAmt: 1200 } 
@@ -1811,7 +1786,7 @@ const housingLawData = [
                     { keywords: ['달성'], label: '기타', maxDeposit: 1500, priorityAmt: 500 }
                 ]
             },
-            '인천': { default: { label: '과밀억제권역급', maxDeposit: 2000, priorityAmt: 700 } },
+            '인천': { default: { label: '직할시급', maxDeposit: 2000, priorityAmt: 700 } },
             '광주': { default: { label: '광역시급', maxDeposit: 2000, priorityAmt: 700 } },
             '대전': { default: { label: '광역시급', maxDeposit: 2000, priorityAmt: 700 } },
             '울산': { default: { label: '광역시급', maxDeposit: 2000, priorityAmt: 700 } },
@@ -1851,7 +1826,7 @@ const housingLawData = [
     }
 ];
 const commercialLawData = [
-   {
+{
         startDate: '2023-02-21',
         regions: {
             '서울': { 
@@ -1872,14 +1847,11 @@ const commercialLawData = [
             '인천': { 
                 default: { label: '과밀억제권역급', maxDeposit: 14500, priorityAmt: 4800 },
                 exceptions: [
-                    // 인천 내 기타 지역 (기존에 '인천' 글자가 중복되던 것을 깔끔하게 키워드만 남김)
-                    { keywords: [
-                        '백령', '자월', '강화', '옹진', 
-                        '서구 대곡', '서구 불로', '서구 마전', '서구 금곡', '서구 오류', '서구 왕길', '서구 당하', '서구 원당', '서구 경서', '서구 연희', '서구 원창', 
+                    { keywords: ['서구 대곡', '서구 불로', '서구 마전', '서구 금곡', '서구 오류', '서구 왕길', '서구 당하', '서구 원당', '서구 경서', '서구 연희', '서구 원창', 
                         '중구 운서', '중구 영종', '중구 용유', 
                         '연수구 송도', 
-                        '남동구 논현', '남동구 남촌', '남동구 고잔', '남동구 도림'
-                    ], label: '기타', maxDeposit: 7500, priorityAmt: 2500 }
+                        '남동구 논현', '남동구 남촌', '남동구 고잔', '남동구 도림'], label: '광역시급', maxDeposit: 8500, priorityAmt: 2800 },
+                    { keywords: ['강화', '옹진'], label: '기타', maxDeposit: 7500, priorityAmt: 2500 }
                 ]
             },
             '광주': { 
@@ -1946,13 +1918,11 @@ const commercialLawData = [
             '인천': { 
                 default: { label: '과밀억제권역급', maxDeposit: 13000, priorityAmt: 4300 },
                 exceptions: [
-                    { keywords: [
-                        '백령', '자월', '강화', '옹진', 
-                        '서구 대곡', '서구 불로', '서구 마전', '서구 금곡', '서구 오류', '서구 왕길', '서구 당하', '서구 원당', '서구 경서', '서구 연희', '서구 원창', 
+                    { keywords: ['서구 대곡', '서구 불로', '서구 마전', '서구 금곡', '서구 오류', '서구 왕길', '서구 당하', '서구 원당', '서구 경서', '서구 연희', '서구 원창', 
                         '중구 운서', '중구 영종', '중구 용유', 
                         '연수구 송도', 
-                        '남동구 논현', '남동구 남촌', '남동구 고잔', '남동구 도림'
-                    ], label: '기타', maxDeposit: 6000, priorityAmt: 2000 }
+                        '남동구 논현', '남동구 남촌', '남동구 고잔', '남동구 도림'], label: '광역시급', maxDeposit: 7000, priorityAmt: 2300 },
+                    { keywords: ['강화', '옹진'], label: '기타', maxDeposit: 6000, priorityAmt: 2000 }
                 ]
             },
             '광주': { 
@@ -2015,14 +1985,12 @@ const commercialLawData = [
             },
             '인천': { 
                 default: { label: '과밀억제권역급', maxDeposit: 10000, priorityAmt: 3400 },
-                exceptions: [
-                    { keywords: [
-                        '백령', '자월', '강화', '옹진', 
-                        '서구 대곡', '서구 불로', '서구 마전', '서구 금곡', '서구 오류', '서구 왕길', '서구 당하', '서구 원당', '서구 경서', '서구 연희', '서구 원창', 
+          exceptions: [
+                    { keywords: ['서구 대곡', '서구 불로', '서구 마전', '서구 금곡', '서구 오류', '서구 왕길', '서구 당하', '서구 원당', '서구 경서', '서구 연희', '서구 원창', 
                         '중구 운서', '중구 영종', '중구 용유', 
                         '연수구 송도', 
-                        '남동구 논현', '남동구 남촌', '남동구 고잔', '남동구 도림'
-                    ], label: '기타', maxDeposit: 5000, priorityAmt: 1700 }
+                        '남동구 논현', '남동구 남촌', '남동구 고잔', '남동구 도림'], label: '광역시급', maxDeposit: 6000, priorityAmt: 2000 },
+                    { keywords: ['강화', '옹진'], label: '기타', maxDeposit: 5000, priorityAmt: 1700 }
                 ]
             },
             '광주': { 
@@ -2085,14 +2053,12 @@ const commercialLawData = [
             },
             '인천': { 
                 default: { label: '과밀억제권역급', maxDeposit: 8000, priorityAmt: 2700 },
-                exceptions: [
-                    { keywords: [
-                        '백령', '자월', '강화', '옹진', 
-                        '서구 대곡', '서구 불로', '서구 마전', '서구 금곡', '서구 오류', '서구 왕길', '서구 당하', '서구 원당', '서구 경서', '서구 연희', '서구 원창', 
+              exceptions: [
+                    { keywords: ['서구 대곡', '서구 불로', '서구 마전', '서구 금곡', '서구 오류', '서구 왕길', '서구 당하', '서구 원당', '서구 경서', '서구 연희', '서구 원창', 
                         '중구 운서', '중구 영종', '중구 용유', 
                         '연수구 송도', 
-                        '남동구 논현', '남동구 남촌', '남동구 고잔', '남동구 도림'
-                    ], label: '기타', maxDeposit: 5000, priorityAmt: 1700 }
+                        '남동구 논현', '남동구 남촌', '남동구 고잔', '남동구 도림'], label: '광역시급', maxDeposit: 6000, priorityAmt: 2000 },
+                    { keywords: ['강화', '옹진'], label: '기타', maxDeposit: 5000, priorityAmt: 1700 }
                 ]
             },
             '광주': { 
@@ -2157,13 +2123,11 @@ const commercialLawData = [
             '인천': { 
                 default: { label: '과밀억제권역급', maxDeposit: 8000, priorityAmt: 2700 },
                 exceptions: [
-                    { keywords: [
-                        '백령', '자월', '강화', '옹진', 
-                        '서구 대곡', '서구 불로', '서구 마전', '서구 금곡', '서구 오류', '서구 왕길', '서구 당하', '서구 원당', '서구 경서', '서구 연희', '서구 원창', 
+                    { keywords: ['서구 대곡', '서구 불로', '서구 마전', '서구 금곡', '서구 오류', '서구 왕길', '서구 당하', '서구 원당', '서구 경서', '서구 연희', '서구 원창', 
                         '중구 운서', '중구 영종', '중구 용유', 
                         '연수구 송도', 
-                        '남동구 논현', '남동구 남촌', '남동구 고잔', '남동구 도림'
-                    ], label: '기타', maxDeposit: 4500, priorityAmt: 1500 }
+                        '남동구 논현', '남동구 남촌', '남동구 고잔', '남동구 도림'], label: '광역시급', maxDeposit: 6000, priorityAmt: 2000 },
+                    { keywords: ['강화', '옹진'], label: '기타', maxDeposit: 4500, priorityAmt: 1500 }
                 ]
             },
             '광주': { 
@@ -2227,14 +2191,12 @@ const commercialLawData = [
             },
             '인천': { 
                 default: { label: '과밀억제권역급', maxDeposit: 6500, priorityAmt: 2200 },
-                exceptions: [
-                    { keywords: [
-                        '백령', '자월', '강화', '옹진', 
-                        '서구 대곡', '서구 불로', '서구 마전', '서구 금곡', '서구 오류', '서구 왕길', '서구 당하', '서구 원당', '서구 경서', '서구 연희', '서구 원창', 
+                      exceptions: [
+                    { keywords: ['서구 대곡', '서구 불로', '서구 마전', '서구 금곡', '서구 오류', '서구 왕길', '서구 당하', '서구 원당', '서구 경서', '서구 연희', '서구 원창', 
                         '중구 운서', '중구 영종', '중구 용유', 
                         '연수구 송도', 
-                        '남동구 논현', '남동구 남촌', '남동구 고잔', '남동구 도림'
-                    ], label: '기타', maxDeposit: 4000, priorityAmt: 1400 }
+                        '남동구 논현', '남동구 남촌', '남동구 고잔', '남동구 도림'], label: '광역시급', maxDeposit: 5500, priorityAmt: 1900 },
+                    { keywords: ['강화', '옹진'], label: '기타', maxDeposit: 4000, priorityAmt: 1400 }
                 ]
             },
             '광주': { 
@@ -2298,14 +2260,12 @@ const commercialLawData = [
             },
             '인천': { 
                 default: { label: '과밀억제권역급', maxDeposit: 6000, priorityAmt: 2000 },
-                exceptions: [
-                    { keywords: [
-                        '백령', '자월', '강화', '옹진', 
-                        '서구 대곡', '서구 불로', '서구 마전', '서구 금곡', '서구 오류', '서구 왕길', '서구 당하', '서구 원당', '서구 경서', '서구 연희', '서구 원창', 
+                 exceptions: [
+                    { keywords: ['서구 대곡', '서구 불로', '서구 마전', '서구 금곡', '서구 오류', '서구 왕길', '서구 당하', '서구 원당', '서구 경서', '서구 연희', '서구 원창', 
                         '중구 운서', '중구 영종', '중구 용유', 
                         '연수구 송도', 
-                        '남동구 논현', '남동구 남촌', '남동구 고잔', '남동구 도림'
-                    ], label: '기타', maxDeposit: 4000, priorityAmt: 1400 }
+                        '남동구 논현', '남동구 남촌', '남동구 고잔', '남동구 도림'], label: '광역시급', maxDeposit: 5000, priorityAmt: 1700 },
+                    { keywords: ['강화', '옹진'], label: '기타', maxDeposit: 4000, priorityAmt: 1400 }
                 ]
             },
             '광주': { 
@@ -2367,13 +2327,11 @@ const commercialLawData = [
             '인천': { 
                 default: { label: '과밀억제권역급', maxDeposit: 4000, priorityAmt: 1600 },
                 exceptions: [
-                    { keywords: [
-                        '백령', '자월', '강화', '옹진', 
-                        '서구 대곡', '서구 불로', '서구 마전', '서구 금곡', '서구 오류', '서구 왕길', '서구 당하', '서구 원당', '서구 경서', '서구 연희', '서구 원창', 
+                    { keywords: ['서구 대곡', '서구 불로', '서구 마전', '서구 금곡', '서구 오류', '서구 왕길', '서구 당하', '서구 원당', '서구 경서', '서구 연희', '서구 원창', 
                         '중구 운서', '중구 영종', '중구 용유', 
                         '연수구 송도', 
-                        '남동구 논현', '남동구 남촌', '남동구 고잔', '남동구 도림'
-                    ], label: '기타', maxDeposit: 3000, priorityAmt: 1200 }
+                        '남동구 논현', '남동구 남촌', '남동구 고잔', '남동구 도림'], label: '광역시급', maxDeposit: 3500, priorityAmt: 1400 },
+                    { keywords: ['강화', '옹진'], label: '기타', maxDeposit: 3000, priorityAmt: 1200 }
                 ]
             },
             '광주': { 
@@ -2433,16 +2391,8 @@ const commercialLawData = [
                 ]
             },
             '인천': { 
-                default: { label: '과밀억제권역급', maxDeposit: 3000, priorityAmt: 1200 },
-                exceptions: [
-                    { keywords: [
-                        '백령', '자월', '강화', '옹진', 
-                        '서구 대곡', '서구 불로', '서구 마전', '서구 금곡', '서구 오류', '서구 왕길', '서구 당하', '서구 원당', '서구 경서', '서구 연희', '서구 원창', 
-                        '중구 운서', '중구 영종', '중구 용유', 
-                        '연수구 송도', 
-                        '남동구 논현', '남동구 남촌', '남동구 고잔', '남동구 도림'
-                    ], label: '기타', maxDeposit: 2000, priorityAmt: 800 }
-                ]
+                default: { label: '광역시급', maxDeposit: 3000, priorityAmt: 1200 },
+                 exceptions: [ { keywords: ['강화', '옹진'], label: '기타', maxDeposit: 2000, priorityAmt: 800 } ]
             },
             '광주': { 
                 default: { label: '광역시급', maxDeposit: 3000, priorityAmt: 1200 } 
@@ -2498,7 +2448,7 @@ const commercialLawData = [
                     { keywords: ['달성'], label: '기타', maxDeposit: 1500, priorityAmt: 500 }
                 ]
             },
-            '인천': { default: { label: '과밀억제권역급', maxDeposit: 2000, priorityAmt: 700 } },
+            '인천': { default: { label: '직할시급', maxDeposit: 2000, priorityAmt: 700 } },
             '광주': { default: { label: '광역시급', maxDeposit: 2000, priorityAmt: 700 } },
             '대전': { default: { label: '광역시급', maxDeposit: 2000, priorityAmt: 700 } },
             '울산': { default: { label: '광역시급', maxDeposit: 2000, priorityAmt: 700 } },

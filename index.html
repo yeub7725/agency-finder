@@ -2391,6 +2391,18 @@ const commercialLawData = [
     {
         startDate: '2014-01-01',
         regions: { '서울': 40000, '과밀억제권역급': 30000, '광역시급': 24000, '기타': 18000 }
+    },
+    {
+        startDate: '2010-07-26',
+        regions: { '서울': 30000, '과밀억제권역급': 25000, '광역시급': 18000, '기타': 15000 }
+    },
+    {
+        startDate: '2008-08-21',
+        regions: { '서울': 26000, '과밀억제권역급': 21000, '광역시급': 16000, '기타': 15000 }
+    },
+    {
+        startDate: '2002-11-01',
+        regions: { '서울': 24000, '과밀억제권역급': 19000, '광역시급': 15000, '기타': 14000 }
     }
 ];
 
@@ -2480,12 +2492,11 @@ function analyzePriorityRepayment() {
         return;
     }
 
-    // ★ [핵심 수정] 질문자님이 새로 만드신 commercialLawData 변수명을 정확히 매핑합니다! ★
+    // 2. 소액임차인 범위 데이터 배열 매핑
     const dataArray = (bldgType === 'house') ? 
         (typeof housingLawData !== 'undefined' ? housingLawData : []) : 
-        (typeof commercialLawData !== 'undefined' ? commercialLawData : (typeof commercialProtectionData !== 'undefined' ? commercialProtectionData : []));
+        (typeof commercialLawData !== 'undefined' ? commercialLawData : []);
 
-    // 데이터 배열이 비어있으면 종료
     if (!dataArray || dataArray.length === 0) {
         if (amountDisplay) amountDisplay.innerText = "-";
         return;
@@ -2496,7 +2507,7 @@ function analyzePriorityRepayment() {
     const fullYear = yyInt > 50 ? 1900 + yyInt : 2000 + yyInt;
     const inputDateForCompare = fullYear + '-' + mm.padStart(2, '0') + '-' + dd.padStart(2, '0');
     
-    // 법령 데이터에서 기간에 맞는 객체 찾기
+    // 소액임차인 법령 데이터 찾기
     let targetLawData = dataArray[dataArray.length - 1]; 
     for (let i = 0; i < dataArray.length; i++) {
         if (inputDateForCompare >= dataArray[i].startDate) {
@@ -2513,7 +2524,7 @@ function analyzePriorityRepayment() {
         targetDepositForCheck = convertedDeposit;
     }
 
-    // 5. 만능 함수(getProtectionLimit) 호출 - 주택/상가 완전 동일
+    // 5. 만능 함수(getProtectionLimit)로 하단에 표기할 '소액임차인 한도' 추출
     let limitInfo = { label: '-', maxDeposit: 0, priorityAmt: 0 };
     try {
         if (typeof getProtectionLimit === 'function') {
@@ -2524,17 +2535,48 @@ function analyzePriorityRepayment() {
         console.error("데이터 추출 에러:", e);
     }
 
-    // 6. 환산보증금 UI 출력 (상가인 경우만: 기준금액 / 환산금액 표기)
+    // ★ 6. 상가임대차보호법 적용 기준이 되는 [환산보증금 기준금액]을 별도의 배열에서 따로 찾기 ★
+    let conversionLimitAmount = 0;
+    if (bldgType === 'com') {
+        // 기존에 등록된 90000, 69000 등의 숫자가 있는 환산보증금 배열 사용
+        const conversionDataArray = typeof commercialProtectionData !== 'undefined' ? commercialProtectionData : [];
+        if (conversionDataArray.length > 0) {
+            let targetConvData = conversionDataArray[conversionDataArray.length - 1];
+            for (let i = 0; i < conversionDataArray.length; i++) {
+                if (inputDateForCompare >= conversionDataArray[i].startDate) {
+                    targetConvData = conversionDataArray[i];
+                    break;
+                }
+            }
+            if (targetConvData && targetConvData.regions) {
+                // 한글 지역명(label)을 매칭하여 기준 금액을 가져옴
+                const labelKey = limitInfo.label; 
+                if (targetConvData.regions[labelKey]) {
+                    conversionLimitAmount = targetConvData.regions[labelKey];
+                } else if (labelKey.includes('광역시') && targetConvData.regions['광역시급']) {
+                    conversionLimitAmount = targetConvData.regions['광역시급'];
+                } else if (labelKey.includes('과밀') && targetConvData.regions['과밀억제권역급']) {
+                    conversionLimitAmount = targetConvData.regions['과밀억제권역급'];
+                } else if (address.includes('서울') && targetConvData.regions['서울']) {
+                    conversionLimitAmount = targetConvData.regions['서울'];
+                } else {
+                    conversionLimitAmount = targetConvData.regions['기타'] || 0;
+                }
+            }
+        }
+    }
+
+    // 7. 상단 환산보증금 UI 출력 (기준금액 / 환산금액 및 색상 표기)
     const convertedRow = document.getElementById('calc-converted-deposit'); 
     const convertedAmountSpan = convertedRow ? convertedRow.querySelector('.highlight') : null;
 
     if (bldgType === 'com') {
         if (convertedRow) convertedRow.style.display = 'flex';
         if (convertedAmountSpan) {
-            if (limitInfo.maxDeposit > 0) {
-                convertedAmountSpan.innerText = `${limitInfo.maxDeposit.toLocaleString()}만 원 / ${convertedDeposit.toLocaleString()}만 원`;
-                // 한도 이내면 검정, 초과면 빨강
-                convertedAmountSpan.style.color = (convertedDeposit <= limitInfo.maxDeposit) ? 'black' : 'red';
+            if (conversionLimitAmount > 0) {
+                convertedAmountSpan.innerText = `${conversionLimitAmount.toLocaleString()}만 원 / ${convertedDeposit.toLocaleString()}만 원`;
+                // 환산보증금이 기준금액 이내면 검정, 범위 밖이면 빨강색
+                convertedAmountSpan.style.color = (convertedDeposit <= conversionLimitAmount) ? 'black' : 'red';
             } else {
                 convertedAmountSpan.innerText = `- / ${convertedDeposit.toLocaleString()}만 원`;
                 convertedAmountSpan.style.color = 'red';
@@ -2547,7 +2589,7 @@ function analyzePriorityRepayment() {
     // 결과 박스 보여주기
     if (container) container.style.display = 'block';
 
-    // 7. 결과 화면 텍스트 매핑 (주택/상가 동일)
+    // 8. 하단 결과 화면 텍스트 매핑 (소액임차인 범위, 최우선 변제금 출력)
     if (regionDisplay) {
         regionDisplay.innerText = limitInfo.label || '-';
     }
@@ -2555,11 +2597,10 @@ function analyzePriorityRepayment() {
     if (limitInfo.maxDeposit > 0) {
         if (rangeMaxDisplay) rangeMaxDisplay.innerText = `${limitInfo.maxDeposit.toLocaleString()}만 원 이하`;
         
-        // 무조건 주택처럼 최우선변제금 금액 표시
         const priorityAmtText = `최대 ${limitInfo.priorityAmt.toLocaleString()}만 원 보장`;
 
         if (amountDisplay) {
-            // 비교 대상: 상가면 환산보증금액, 주택이면 보증금액이 들어있는 targetDepositForCheck 활용
+            // 비교는 당연히 (입력된 환산보증금액) vs (소액임차인 범위 한도)
             if (targetDepositForCheck <= limitInfo.maxDeposit && targetDepositForCheck > 0) {
                 amountDisplay.innerText = priorityAmtText;
                 amountDisplay.className = 'highlight-red';

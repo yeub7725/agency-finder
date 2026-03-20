@@ -366,6 +366,14 @@
     color: #333;
     word-break: break-all;
 }
+        #priority-repayment-container > div {
+    margin-bottom: 6px !important; /* 줄과 줄 사이의 간격 (숫자를 줄이면 더 붙고, 늘리면 벌어집니다) */
+    line-height: 1.4 !important;   /* 글자 자체의 위아래 간격 */
+}
+
+#priority-repayment-container {
+    gap: 6px !important; /* 만약 flex 레이아웃으로 작성하셨을 경우를 대비한 설정 */
+}
     </style>
 </head>
 <body>
@@ -444,11 +452,11 @@
         </div>
     </div>
     
-    <div class="priority-warning" style="font-size: 11px; padding: 5px; margin-top: 5px; line-height: 1.4; word-break: keep-all;">
-         단순히 *계약일*을 기준으로 출력한 범위입니다. 
-        <br>기준시점은 담보물권(저당권, 근저당권, 가등기담보권 등) *설정일자 기준*임(대법원 2001다84824 판결 참조)
-        <br>정확한 권리분석은 반드시 대법공의 자문을 받으시기 바랍니다.
-    </div>
+   <div style="line-height: 1.4; font-size: 13px; color: rgb(100, 116, 139); margin-top: 15px;">
+    ※ 단순히 <span style="color: red; font-weight: bold;">계약일</span>을 기준으로 출력한 범위입니다.<br>
+     기준시점은 담보물권(저당권, 근저당권, 가등기담보권 등) <span style="color: red; font-weight: bold;">설정일자</span>기준임(대법원 2001다84824 판결 참조)<br>
+     정확한 권리분석은 반드시 대법공의 자문을 받으시기 바랍니다.
+</div>
 </div>
         
     </div>

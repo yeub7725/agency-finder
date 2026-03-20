@@ -2629,7 +2629,7 @@ function analyzePriorityRepayment() {
     const regionDisplay = document.getElementById('priority-region');
     const container = document.getElementById('priority-repayment-container') || document.querySelector('.priority-content');
 
-    // 1. 입력값이 덜 채워졌으면 대기
+    // 1. 입력 대기
     if (!yy || !mm || !dd || !address) {
         if (container) container.style.display = 'none'; 
         if(rangeMaxDisplay) rangeMaxDisplay.innerText = '-';
@@ -2638,25 +2638,21 @@ function analyzePriorityRepayment() {
         return;
     }
 
-    // 2. 상가 데이터 변수명이 다를 경우를 대비한 안전 장치
-    let dataArray;
-    if (bldgType === 'house') {
-        dataArray = typeof housingLawData !== 'undefined' ? housingLawData : [];
-    } else {
-        // ※ 주의: 스크립트 상단에 정의하신 상가 데이터 변수명이 정확히 commercialProtectionData 인지 확인해 주세요.
-        dataArray = typeof commercialProtectionData !== 'undefined' ? commercialProtectionData : [];
-    }
+    // 2. 데이터 배열 확인
+    const dataArray = (bldgType === 'house') ? 
+        (typeof housingLawData !== 'undefined' ? housingLawData : []) : 
+        (typeof commercialProtectionData !== 'undefined' ? commercialProtectionData : []);
 
-    if (dataArray.length === 0) {
-        if (amountDisplay) amountDisplay.innerText = "데이터 배열을 찾을 수 없습니다. 변수명을 확인해주세요.";
+    if (!dataArray || dataArray.length === 0) {
+        if (amountDisplay) amountDisplay.innerText = "데이터 배열을 찾을 수 없습니다.";
         return;
     }
 
-    // 3. 연도 2자리를 4자리로 변환 (90 -> 1990)
+    // 3. 기준일 적용 (90 -> 1990)
     const yyInt = parseInt(yy, 10);
     const fullYear = yyInt > 50 ? 1900 + yyInt : 2000 + yyInt;
-
     const inputDateForCompare = fullYear + '-' + mm.padStart(2, '0') + '-' + dd.padStart(2, '0');
+    
     let targetLawData = dataArray[dataArray.length - 1]; 
     for (let i = 0; i < dataArray.length; i++) {
         if (inputDateForCompare >= dataArray[i].startDate) {
@@ -2665,60 +2661,67 @@ function analyzePriorityRepayment() {
         }
     }
 
-    // 4. 비교 대상 금액 설정 (상가는 환산보증금)
+    // 4. 금액 설정 (상가는 환산보증금)
     let targetDepositForCheck = deposit;
     let convertedDeposit = 0; 
-
     if (bldgType === 'com') {
         convertedDeposit = deposit + (rent * 100);
         targetDepositForCheck = convertedDeposit;
     }
 
-    // 5. 만능 함수로 정보 가져오기 시도
-    let limitInfo = null;
+    // 5. 한도액 추출 (★どんな 형태의 데이터든 다 찾아내는 만능 추출기 적용★)
+    let limitInfo = { label: '분류 불가', maxDeposit: 0, priorityAmt: 0 };
+    
+    // 기존 getProtectionLimit 함수 시도
     try {
         if (typeof getProtectionLimit === 'function') {
-            limitInfo = getProtectionLimit(address, targetLawData);
+            const res = getProtectionLimit(address, targetLawData);
+            if (res && res.maxDeposit) limitInfo = res;
         }
-    } catch (e) {
-        console.error("데이터 추출 중 에러:", e);
-    }
+    } catch (e) { }
 
-    // ★ [진짜 원인 해결!] 만능 함수가 상가 데이터를 놓쳤을 때, 주택과 동일한 '.default' 구조를 파고들어 구출합니다! ★
-    if ((!limitInfo || !limitInfo.maxDeposit) && targetLawData && targetLawData.regions) {
-        const regionKeys = Object.keys(targetLawData.regions);
+    // 값이 안 뽑혔을 경우 강제 추출 (상가 데이터가 단순 숫자 배열일 경우 대비)
+    if (!limitInfo.maxDeposit && targetLawData) {
+        let searchTarget = targetLawData.regions || targetLawData;
+        let keys = Object.keys(searchTarget).filter(k => k !== 'startDate' && k !== 'endDate');
         
-        // 주소 텍스트와 일치하는 지역명 찾기
-        let fallbackKey = null;
-        for (let k of regionKeys) {
-            if (k !== '기타' && k !== '그밖의지역' && address.includes(k)) {
-                fallbackKey = k;
+        let foundData = null;
+        let foundLabel = "기타";
+        
+        // 주소 키워드 매칭 (서울, 경기 등)
+        for (let k of keys) {
+            if (address.includes(k) && k !== '기타') {
+                foundData = searchTarget[k];
+                foundLabel = k;
                 break;
             }
         }
         
-        // 못 찾으면 '기타'로 강제 지정
-        if (!fallbackKey) {
-            if (regionKeys.includes('기타')) fallbackKey = '기타';
-            else if (regionKeys.includes('그밖의지역')) fallbackKey = '그밖의지역';
-            else fallbackKey = regionKeys[regionKeys.length - 1]; 
+        // 매칭되는 지역이 없으면 '기타' 또는 남은 값 강제 선택
+        if (!foundData) {
+            if (keys.includes('기타')) {
+                foundData = searchTarget['기타'];
+                foundLabel = '기타';
+            } else if (keys.length > 0) {
+                foundData = searchTarget[keys[keys.length - 1]]; 
+                foundLabel = keys[keys.length - 1];
+            }
         }
 
-        const foundData = targetLawData.regions[fallbackKey];
-        if (foundData) {
-            // ★ 이전 코드에서 빼먹었던 부분! foundData 안에 .default가 있다면 그 안으로 들어가서 값을 뺍니다.
-            if (foundData.default) {
-                limitInfo = {
-                    label: foundData.default.label || fallbackKey,
-                    maxDeposit: foundData.default.maxDeposit || 0,
-                    priorityAmt: foundData.default.priorityAmt || 0
-                };
-            } else {
-                limitInfo = {
-                    label: foundData.label || fallbackKey,
-                    maxDeposit: foundData.maxDeposit || 0,
-                    priorityAmt: foundData.priorityAmt || 0
-                };
+        // 찾아낸 데이터에서 실제 숫자를 뜯어냅니다.
+        if (foundData !== null && foundData !== undefined) {
+            let targetObj = (typeof foundData === 'object' && foundData.default) ? foundData.default : foundData;
+            
+            // ★ 상가 데이터가 그냥 숫자(예: 45000) 딸랑 하나로 적혀있을 경우
+            if (typeof targetObj === 'number') {
+                limitInfo.maxDeposit = targetObj;
+                limitInfo.label = foundLabel;
+            } 
+            // 주택처럼 완벽한 객체 형태인 경우
+            else if (typeof targetObj === 'object') {
+                limitInfo.label = targetObj.label || foundData.label || foundLabel;
+                limitInfo.maxDeposit = targetObj.maxDeposit || targetObj.deposit || 0;
+                limitInfo.priorityAmt = targetObj.priorityAmt || targetObj.priority || 0;
             }
         }
     }
@@ -2730,14 +2733,10 @@ function analyzePriorityRepayment() {
     if (bldgType === 'com') {
         if (convertedRow) convertedRow.style.display = 'flex';
         if (convertedAmountSpan) {
-            const maxDeposit = limitInfo ? (limitInfo.maxDeposit || 0) : 0;
-            
-            if (maxDeposit > 0) {
-                // 정상적으로 값을 찾았을 때
-                convertedAmountSpan.innerText = `${maxDeposit.toLocaleString()}만 원 / ${convertedDeposit.toLocaleString()}만 원`;
-                convertedAmountSpan.style.color = (convertedDeposit <= maxDeposit) ? 'black' : 'red';
+            if (limitInfo.maxDeposit > 0) {
+                convertedAmountSpan.innerText = `${limitInfo.maxDeposit.toLocaleString()}만 원 / ${convertedDeposit.toLocaleString()}만 원`;
+                convertedAmountSpan.style.color = (convertedDeposit <= limitInfo.maxDeposit) ? 'black' : 'red';
             } else {
-                // 만약 데이터 배열 자체에 문제가 있어 못 찾았을 때 표기
                 convertedAmountSpan.innerText = `기준금액 확인불가 / ${convertedDeposit.toLocaleString()}만 원`;
                 convertedAmountSpan.style.color = 'red';
             }
@@ -2746,25 +2745,33 @@ function analyzePriorityRepayment() {
         if (convertedRow) convertedRow.style.display = 'none';
     }
 
-    // 박스 표시
+    // 결과 박스 보여주기
     if (container) container.style.display = 'block';
 
-    // 7. 결과 화면 출력
+    // 7. 결과 화면 텍스트 매핑
     if (regionDisplay) {
-        regionDisplay.innerText = limitInfo && limitInfo.label ? limitInfo.label : '-';
+        regionDisplay.innerText = limitInfo.label || '-';
     }
 
-    if (limitInfo && limitInfo.maxDeposit > 0) {
+    if (limitInfo.maxDeposit > 0) {
         if (rangeMaxDisplay) rangeMaxDisplay.innerText = `${limitInfo.maxDeposit.toLocaleString()}만 원 이하`;
-        const priorityAmtText = `최대 ${limitInfo.priorityAmt.toLocaleString()}만 원 보장`;
+        
+        // 상가 데이터에 최우선변제금이 없을 경우를 대비한 문구 처리
+        let priorityAmtText = '';
+        if (limitInfo.priorityAmt > 0) {
+            priorityAmtText = `최대 ${limitInfo.priorityAmt.toLocaleString()}만 원 보장`;
+        } else {
+            priorityAmtText = `상가임대차보호법 적용`;
+        }
 
         if (amountDisplay) {
+            // 비교 대상: 주택은 보증금, 상가는 환산보증금
             if (targetDepositForCheck <= limitInfo.maxDeposit && targetDepositForCheck > 0) {
                 amountDisplay.innerText = priorityAmtText;
                 amountDisplay.className = 'highlight-red';
                 amountDisplay.style.color = ''; 
             } else {
-                amountDisplay.innerText = `${priorityAmtText} (소액임차인 미해당)`;
+                amountDisplay.innerText = `${priorityAmtText} (범위 초과)`;
                 amountDisplay.className = ''; 
                 amountDisplay.style.color = 'rgb(100, 116, 139)'; 
             }

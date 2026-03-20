@@ -445,7 +445,9 @@
     </div>
     
     <div class="priority-warning" style="font-size: 11px; padding: 5px; margin-top: 5px; line-height: 1.4; word-break: keep-all;">
-        ※ 단순히 계약일을 기준으로 출력한 범위입니다. <br>정확한 권리분석은 반드시 대법공의 자문을 받으시기 바랍니다.
+         단순히 *계약일*을 기준으로 출력한 범위입니다. 
+        <br>기준시점은 담보물권(저당권, 근저당권, 가등기담보권 등) *설정일자 기준*임(대법원 2001다84824 판결 참조)
+        <br>정확한 권리분석은 반드시 대법공의 자문을 받으시기 바랍니다.
     </div>
 </div>
         
@@ -2516,12 +2518,14 @@ function analyzePriorityRepayment() {
         }
     }
 
-    // 4. 비교 금액 산출 (주택 = 보증금, 상가 = 환산보증금)
-    let targetDepositForCheck = deposit;
+    // ★ 4. 비교 금액 산출 (핵심 수정 부분) ★
+    // 소액임차인 해당 여부는 무조건 '순수 보증금'만으로 비교합니다!
+    let targetDepositForCheck = deposit; 
     let convertedDeposit = 0; 
+    
     if (bldgType === 'com') {
         convertedDeposit = deposit + (rent * 100);
-        targetDepositForCheck = convertedDeposit;
+        // 이전 코드에 있던 targetDepositForCheck = convertedDeposit; 를 삭제하여 보증금만 남깁니다.
     }
 
     // 5. 만능 함수(getProtectionLimit)로 하단에 표기할 '소액임차인 한도' 추출
@@ -2535,10 +2539,9 @@ function analyzePriorityRepayment() {
         console.error("데이터 추출 에러:", e);
     }
 
-    // ★ 6. 상가임대차보호법 적용 기준이 되는 [환산보증금 기준금액]을 별도의 배열에서 따로 찾기 ★
+    // 6. 상가임대차보호법 적용 기준이 되는 [환산보증금 기준금액]을 별도의 배열에서 따로 찾기
     let conversionLimitAmount = 0;
     if (bldgType === 'com') {
-        // 기존에 등록된 90000, 69000 등의 숫자가 있는 환산보증금 배열 사용
         const conversionDataArray = typeof commercialProtectionData !== 'undefined' ? commercialProtectionData : [];
         if (conversionDataArray.length > 0) {
             let targetConvData = conversionDataArray[conversionDataArray.length - 1];
@@ -2549,7 +2552,6 @@ function analyzePriorityRepayment() {
                 }
             }
             if (targetConvData && targetConvData.regions) {
-                // 한글 지역명(label)을 매칭하여 기준 금액을 가져옴
                 const labelKey = limitInfo.label; 
                 if (targetConvData.regions[labelKey]) {
                     conversionLimitAmount = targetConvData.regions[labelKey];
@@ -2574,8 +2576,8 @@ function analyzePriorityRepayment() {
         if (convertedRow) convertedRow.style.display = 'flex';
         if (convertedAmountSpan) {
             if (conversionLimitAmount > 0) {
+                // 상단은 환산보증금끼리만 비교!
                 convertedAmountSpan.innerText = `${conversionLimitAmount.toLocaleString()}만 원 / ${convertedDeposit.toLocaleString()}만 원`;
-                // 환산보증금이 기준금액 이내면 검정, 범위 밖이면 빨강색
                 convertedAmountSpan.style.color = (convertedDeposit <= conversionLimitAmount) ? 'black' : 'red';
             } else {
                 convertedAmountSpan.innerText = `- / ${convertedDeposit.toLocaleString()}만 원`;
@@ -2600,7 +2602,7 @@ function analyzePriorityRepayment() {
         const priorityAmtText = `최대 ${limitInfo.priorityAmt.toLocaleString()}만 원 보장`;
 
         if (amountDisplay) {
-            // 비교는 당연히 (입력된 환산보증금액) vs (소액임차인 범위 한도)
+            // ★ 하단 소액임차인 비교는 무조건 '순수 보증금(targetDepositForCheck)'으로만 비교! ★
             if (targetDepositForCheck <= limitInfo.maxDeposit && targetDepositForCheck > 0) {
                 amountDisplay.innerText = priorityAmtText;
                 amountDisplay.className = 'highlight-red';

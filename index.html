@@ -510,10 +510,46 @@
         </div>
     </div>
 </div>
-                    <div id="lease period" class="info-panel">
-                        <h3>임대차 기간 관련 안내</h3>
-                        <p>여기에 임대차 기간 관련 내용 및 검색 결과가 출력됩니다.</p>
-                    </div>
+                 <div id="lease period" class="info-panel">
+    
+    <div style="margin-bottom: 20px; padding: 15px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px;">
+        <div style="font-size: 14px; font-weight: 900; color: var(--gov-blue); margin-bottom: 12px;">갱신계약 해지 시점</div>
+        <div style="display: flex; gap: 15px; align-items: center; margin-bottom: 10px;">
+            <label style="font-weight: 800; color: var(--gov-gray); font-size: 13px; width: 80px;">해지 통보일</label>
+            <input type="date" id="noticeDate" style="padding: 5px 10px; border: 1px solid #cbd5e1; border-radius: 4px; flex: 1; outline: none; font-family: 'Noto Sans KR'; font-weight: 700; color: #333;">
+        </div>
+        <div style="display: flex; gap: 15px; align-items: center; margin-bottom: 15px;">
+            <label style="font-weight: 800; color: var(--gov-gray); font-size: 13px; width: 80px;">기존 만료일</label>
+            <input type="date" id="expiryDate" style="padding: 5px 10px; border: 1px solid #cbd5e1; border-radius: 4px; flex: 1; outline: none; font-family: 'Noto Sans KR'; font-weight: 700; color: #333;">
+        </div>
+        <button onclick="calculateTermination()" style="width: 100%; background: var(--gov-blue); color: white; border: none; padding: 10px 15px; font-weight: 800; border-radius: 4px; cursor: pointer; font-family: 'Noto Sans KR'; font-size: 14px; transition: 0.2s;">최적 퇴거일 및 보증금 반환일 계산</button>
+    </div>
+
+    <div id="terminationResult" style="display: none; margin-bottom: 25px;"></div>
+
+    <div class="law-item">
+        <div class="law-title">
+            <a href="https://casenote.kr/Supreme_Court/2008Da240" target="_blank" style="color: var(--gov-blue); text-decoration: none;">대법원 2008다240</a>
+        </div>
+        <div class="law-content">
+            <span style="color: #000000; font-size: 13.5px; font-weight: 900;">판결요지 (중개보수 부담 주체)</span><br>
+            임대차계약이 묵시적으로 갱신(또는 갱신요구권 행사)된 경우, 임차인은 언제든지 임대인에게 계약해지를 통지할 수 있다. 이때 <span style="color: var(--gov-red); font-weight: 800;">약정한 기간을 채우지 못하고 나간다고 하여 임차인이 중개보수를 부담해야 한다는 특별한 약정이 없는 한, 중개보수는 임대인이 부담해야 한다.</span><br>
+            <span style="color: #64748b; font-size: 12.5px; font-weight: 700;">(※ 갱신 계약 중 해지 시, 효력 발생 전이라도 임차인에게 중개수수료를 전가할 수 없음)</span>
+        </div>
+    </div>
+    
+    <div class="law-item">
+        <div class="law-title">
+            <a href="https://www.law.go.kr/법령/주택임대차보호법/제6조의2" target="_blank" style="color: var(--gov-blue); text-decoration: none;">주임법 제6조의2</a>
+        </div>
+        <div class="law-content">
+            <span style="color: #000000; font-size: 13.5px; font-weight: 900;">묵시적 갱신의 경우 계약의 해지</span> <span style="color: #64748b; font-size: 12px; font-weight: 700;">(제6조의3 4항에 의해 갱신요구권 사용 시에도 준용)</span><br>
+            ① 임차인은 언제든지 임대인에게 계약해지를 통지할 수 있다.<br>
+            ② 제1항에 따른 해지는 임대인이 그 통지를 받은 날부터 <span style="color: var(--gov-red); font-weight: 800;">3개월이 지나면</span> 그 효력이 발생한다.
+        </div>
+    </div>
+
+</div>
                     <div id="deposit return" class="info-panel">
                         <h3>보증금 반환 관련 안내</h3>
                         <p>여기에 보증금 반환 관련 내용 및 검색 결과가 출력됩니다.</p>
@@ -2651,6 +2687,84 @@ inputFields.forEach(id => {
 document.querySelectorAll('input[name="bldgType"]').forEach(radio => {
     radio.addEventListener('change', analyzePriorityRepayment);
 });
+       // [임대차 기간 탭] 갱신 계약 해지 시점 및 비용 부담 계산 함수
+function calculateTermination() {
+    const noticeDateVal = document.getElementById("noticeDate").value;
+    const expiryDateVal = document.getElementById("expiryDate").value;
+
+    if (!noticeDateVal || !expiryDateVal) {
+        alert("해지 통보일과 기존 만료일을 모두 선택해주세요.");
+        return;
+    }
+
+    const notice = new Date(noticeDateVal);
+    const expiry = new Date(expiryDateVal);
+    
+    // 해지 효력 발생일 (통보일 + 3개월)
+    let effectDate = new Date(notice);
+    effectDate.setMonth(effectDate.getMonth() + 3);
+
+    let scenario = "";
+    let bestDate = null;
+    let description = "";
+
+    // 3가지 시나리오 분석 로직
+    if (effectDate < expiry) {
+        scenario = "Case 1: 조기 해지 (만기 전 퇴거)";
+        bestDate = effectDate;
+        description = "해지 효력 발생일(3개월 뒤)이 기존 계약 만기보다 빠릅니다.<br>따라서 만기까지 기다릴 필요 없이 <b>효력 발생일</b>을 기준으로 보증금을 반환받고 퇴거할 수 있습니다.";
+    } else if (effectDate.getTime() === expiry.getTime()) {
+        scenario = "Case 2: 만기 당일 퇴거";
+        bestDate = expiry;
+        description = "해지 효력 발생일과 기존 계약 만기가 같습니다.<br><b>해당 날짜</b>를 기준으로 보증금을 반환받고 퇴거할 수 있습니다.";
+    } else {
+        scenario = "Case 3: 만기 즉시 퇴거 (3개월 대기 불필요)";
+        bestDate = expiry; 
+        description = "기존 계약 만기일이 해지 효력 발생일(3개월 뒤)보다 빠릅니다.<br>따라서 3개월을 기다릴 필요 없이, <b>원래 약속된 만기일</b>을 기준으로 보증금을 반환받고 퇴거할 수 있습니다.";
+    }
+
+    // 결과 출력 HTML 템플릿 (사이트 디자인 톤앤매너 적용)
+    const resultHtml = `
+        <div class="animate-update" style="padding: 15px; border: 2px solid var(--gov-blue); border-radius: 6px; background: #fff;">
+            <div style="font-size: 15px; font-weight: 900; color: var(--gov-blue); margin-bottom: 12px; border-bottom: 1px dashed #cbd5e1; padding-bottom: 10px;">
+                분석 결과: <span style="color: var(--gov-red);">${scenario}</span>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 8px; font-size: 13px; color: #333;">
+                <div style="display: flex; justify-content: space-between;">
+                    <span style="font-weight: 800;">해지 통보일:</span> 
+                    <span>${notice.toLocaleDateString()}</span>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                    <span style="font-weight: 800;">해지 효력 발생일 (3개월 뒤):</span> 
+                    <span>${effectDate.toLocaleDateString()}</span>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                    <span style="font-weight: 800;">기존 계약 만료일:</span> 
+                    <span>${expiry.toLocaleDateString()}</span>
+                </div>
+                
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 5px; padding-top: 10px; border-top: 1.5px solid #e2e8f0;">
+                    <span style="color: var(--gov-red); font-weight: 900; font-size: 14px;">최종 보증금 반환 기준일:</span> 
+                    <span style="color: var(--gov-red); font-weight: 900; font-size: 15px;">${bestDate.toLocaleDateString()}</span>
+                </div>
+                
+                <div style="margin-top: 5px; font-size: 12px; color: #64748b; line-height: 1.4; font-weight: 700;">
+                    ${description}
+                </div>
+                
+                <div style="margin-top: 12px; background: #f8fbff; padding: 12px; border-radius: 6px; border: 1px solid #dbeafe; line-height: 1.6;">
+                    <div style="font-weight: 900; color: var(--gov-blue); margin-bottom: 5px; font-size: 13px;">비용 부담 원칙 (법적 기준)</div>
+                    <div style="font-weight: 700;"><span style="color: var(--gov-red);">• 중개보수(복비):</span> <b>무조건 임대인 부담</b> (효력발생 전/후 무관)</div>
+                    <div style="font-weight: 700;"><span>• 월세 정산:</span> ${bestDate.toLocaleDateString()} (계약종료일)까지만 부담</div>
+                    <div style="font-weight: 700;"><span>• 관리비 정산:</span> 실제 짐을 빼고 열쇠를 반납한 날까지만 부담</div>
+                </div>
+            </div>
+        </div>
+    `;
+
+    document.getElementById("terminationResult").innerHTML = resultHtml;
+    document.getElementById("terminationResult").style.display = "block";
+}
     </script>
 </body>
 </html>
